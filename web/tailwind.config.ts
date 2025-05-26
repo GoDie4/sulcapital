@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        main: "rgba(60, 64, 67, 0.2) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 4px 2px",
+      },
       fontFamily: {
         TypographBold: ["Typograph-Bold", "sans-serif"],
       },

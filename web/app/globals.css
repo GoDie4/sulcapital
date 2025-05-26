@@ -17,3 +17,71 @@
 body {
   font-family: var(--font-geist-montserrat);
 }
+
+.swp--Inmuebles .swiper-wrapper {
+  padding: 10px 0;
+}
+
+.swp--Inmuebles .swiper-slide {
+  height: calc((200% - 40px) / 2) !important;
+}
+
+.swp--Inmuebles--images .swiper-wrapper {
+  padding: 0;
+}
+
+.swp--Inmuebles--images .swiper-slide {
+   height: auto !important; 
+}
+
+.swp--Inmuebles--images {
+  position: relative;
+}
+
+.swp--Inmuebles--images .swiper-button-prev,
+.swp--Inmuebles--images .swiper-button-next {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out,
+    visibility 0s 0.3s;
+  z-index: 20;
+  background-color: rgb(30, 48, 98, 0.4);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  bottom: 0;
+  margin: auto;
+  justify-content: center;
+  top: 0;
+  transition: all 200ms;
+}
+
+.swp--Inmuebles--images .swiper-button-prev:hover,
+.swp--Inmuebles--images .swiper-button-next:hover {
+  background-color: rgb(30, 48, 98, 8);
+}
+
+.swp--Inmuebles--images .swiper-button-prev::after,
+.swp--Inmuebles--images .swiper-button-next::after {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.swp--Inmuebles--images .swiper-button-prev {
+  transform: translateX(-150%);
+}
+
+.swp--Inmuebles--images .swiper-button-next {
+  transform: translateX(150%);
+}
+
+.swp--Inmuebles--images:hover .swiper-button-prev,
+.swp--Inmuebles--images:hover .swiper-button-next {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  transition-delay: 0s, 0s, 0s;
+}

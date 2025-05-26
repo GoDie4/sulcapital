@@ -8,7 +8,7 @@ const SearchSection = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("vender");
   const [propertyType, setPropertyType] = useState("");
-  const [location, setLocation] = useState("");
+  const [locacion, setLocacion] = useState("");
 
   const handleSearch = () => {
     console.log("Búsqueda realizada:", {
@@ -59,8 +59,8 @@ const SearchSection = () => {
             {/* Select: Ubicación */}
             <div className="w-full lg:w-fit h-[60px]">
               <select
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                value={locacion}
+                onChange={(e) => setLocacion(e.target.value)}
                 className="w-full  lg:w-fit h-full px-4 border-2 border-gray-200 rounded-xl focus:border-secondary-main focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white-main"
               >
                 <option value="">Ubicación</option>
