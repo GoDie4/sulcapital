@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-geist-montserrat: "var(--font-geist-montserrat)", monospace;
+}
+
+@font-face {
+  font-family: "Typograph-Bold";
+  src: url("../src/assets/fonts/typograph/typograph_extra_bold.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: var(--font-geist-montserrat);
+}
