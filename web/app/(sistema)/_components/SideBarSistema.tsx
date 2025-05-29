@@ -9,11 +9,10 @@ import DropdownMenu from "./DropdownMenu";
 
 const menuItems = [
   {
-    title: "Ubicaciones",
+    title: "Ciudades",
     icon: <BsBarChart />,
-    route: "ubicaciones",
+    route: "ciudades",
   },
-
 ];
 
 export const SideBarSistema = ({

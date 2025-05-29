@@ -1,19 +1,20 @@
 // routes/ubicaciones.ts
 import { Router } from "express";
-import {
-  createUbicacion,
-  deleteUbicacion,
-  getUbicaciones,
-  updateUbicacion,
-} from "../controllers/ubicaciones.controller";
+
 import { handleImageUpload, upload } from "../middlewares/images/uploadImage";
 import path from "path";
+import {
+  createCiudad,
+  deleteCiudad,
+  getCiudades,
+  updateCiudad,
+} from "../controllers/ciudades.controller";
 
 const router = Router();
-const UPLOAD_DIR = path.resolve(__dirname, "../public/ubicaciones");
+const UPLOAD_DIR = path.resolve(__dirname, "../public/ciudades");
 
 // Listar
-router.get("/", getUbicaciones);
+router.get("/", getCiudades);
 
 // Crear con imagen
 router.post(
@@ -21,10 +22,10 @@ router.post(
   upload.single("imagen"),
   handleImageUpload("imagen", {
     uploadDir: UPLOAD_DIR,
-    filePrefix: "ubicacion",
+    filePrefix: "ciudad",
     thumbnailSize: { width: 120, height: 120 },
   }),
-  createUbicacion
+  createCiudad
 );
 
 // Actualizar con posible nueva imagen
@@ -33,13 +34,13 @@ router.put(
   upload.single("imagen"),
   handleImageUpload("imagen", {
     uploadDir: UPLOAD_DIR,
-    filePrefix: "ubicacion",
+    filePrefix: "ciudad",
     thumbnailSize: { width: 120, height: 120 },
   }),
-  updateUbicacion
+  updateCiudad
 );
 
 // Eliminar
-router.delete("/eliminar/:id", deleteUbicacion);
+router.delete("/eliminar/:id", deleteCiudad);
 
 export default router;

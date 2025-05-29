@@ -34,6 +34,7 @@ export const columns: ColumnDef<Ubicacion>[] = [
       />
     ),
   },
+  
  
 ];
 

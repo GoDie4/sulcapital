@@ -56,11 +56,12 @@ model PasswordResetToken {
     @@map("password_reset_tokens")
 }
 
-model Ubicaciones {
+model Ciudades {
     id          Int    @id @default(autoincrement())
     nombre      String
     descripcion String @db.VarChar(30)
     imagen      String
+    coordenadas String @db.VarChar(100)
 
-    @@map("ubicaciones")
+    @@map("ciudades")
 }

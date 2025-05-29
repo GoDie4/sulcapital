@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 
 import userRoutes from "../src/routes/user.routes";
 import authRoutes from "../src/routes/auth.routes";
-import ubicacionesRoutes from "../src/routes/ubicaciones.routes";
+import ciudadesRoutes from "../src/routes/ciudades.routes";
 
 app.use(express.static("public"));
 
@@ -26,4 +26,4 @@ prisma
 
 app.use("/api", authRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/ubicaciones", ubicacionesRoutes);
+app.use("/api/ciudades", ciudadesRoutes);

@@ -30,10 +30,10 @@ export const InputForm = ({
 
   return (
     <>
-      <label htmlFor={name} className="flex gap-1 text-sm text-black-800">
+      <label htmlFor={name} className="flex gap-1 text-sm text-black-900">
         {label}
       </label>
-      <div className="relative w-full">
+      <div className="relative w-full mt-1">
         <input
           type={type === "password" && verContrasena ? "text" : type}
           name={name}
@@ -42,7 +42,7 @@ export const InputForm = ({
           value={value}
           step={step}
           disabled={disabled}
-          className={`border w-full placeholder:text-sm focus:border-secondary-main outline-none  rounded-main p-2 ${
+          className={`border w-full placeholder:text-sm focus:border-secondary-main outline-none  rounded-main py-2 px-3 ${
             className ?? ""
           } ${disabled ? "bg-white-100" : ""}`}
           placeholder={placeholder}

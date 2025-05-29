@@ -3,6 +3,7 @@ import { Geist, Montserrat } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/assets/context/AuthContext";
 import { ModalRender } from "./_components/modal/ModalRender";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,17 @@ export default function RootLayout({
           {children}
           <ModalRender />
         </AuthProvider>
+        <Toaster
+          position="top-center"
+          richColors
+          closeButton
+          duration={4000}
+          toastOptions={{
+            style: {
+              fontFamily: "inherit",
+            },
+          }}
+        />
       </body>
     </html>
   );

@@ -47,7 +47,7 @@ export function ContentSistema({ children }: { children: React.ReactNode }) {
             showMenu={menuShow}
           />
           <div
-            className={`w-full p-4 md:p-6 h-[calc(100dvh-90px)] overflow-y-auto ${
+            className={`w-full p-4 md:p-6 md:pt-0 h-[calc(100dvh-90px)] overflow-y-auto ${
               scrolled ? "mt-20" : ""
             } scroll_layout`}
           >
