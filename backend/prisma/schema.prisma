@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model Rol {
+    id        Int       @id @default(autoincrement())
+    nombre    String    @unique @db.VarChar(20)
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    Usuario   Usuario[]
+
+    @@map("roles")
+}
+
+model Usuario {
+    id             String   @id @default(cuid()) @db.Char(36)
+    nombres        String   @db.VarChar(255)
+    apellidos      String   @db.VarChar(255)
+    tipo_documento String?  @db.VarChar(50)
+    documento      String?  @unique @db.VarChar(50)
+    email          String   @unique @db.VarChar(255)
+    celular        String   @db.VarChar(20)
+    activo         Boolean  @default(false)
+    password       String
+    rol_id         Int      @default(3)
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+
+    PasswordResetToken PasswordResetToken[]
+    rol                Rol                  @relation(fields: [rol_id], references: [id], onDelete: Cascade)
+
+    @@index([rol_id], map: "usuarios_rol_id_fkey")
+    @@map("usuarios")
+}
+
+model PasswordResetToken {
+    id        Int      @id @default(autoincrement())
+    token     String   @unique
+    expiresAt DateTime
+    userId    String
+    createdAt DateTime @default(now())
+    user      Usuario  @relation(fields: [userId], references: [id])
+
+    @@index([userId], map: "password_reset_tokens_userId_fkey")
+    @@map("password_reset_tokens")
+}
+
+model Ubicaciones {
+    id          Int    @id @default(autoincrement())
+    nombre      String
+    descripcion String @db.VarChar(30)
+    imagen      String
+
+    @@map("ubicaciones")
+}

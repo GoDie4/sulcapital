@@ -16,7 +16,7 @@ import { UbicacionProps } from "../inicio/lugares/CardUbicacion";
 export const Footer = () => {
   return (
     <footer className="bg-secondary-main">
-      <ContentMain className="pt-16 pb-5 flex flex-wrap justify-between gap-10 lg:gap-6">
+      <ContentMain className="pt-16 pb-10 flex flex-wrap justify-between gap-10 lg:gap-6">
         <div className="">
           <h5 className="text-xl mb-8 font-TypographBold text-white-main">
             Contáctanos
@@ -59,13 +59,13 @@ export const Footer = () => {
           </h5>
           <ul className="space-y-4">
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={""}>Alquilar</Link>
+              <Link href={"/buscar"}>Alquilar</Link>
             </li>
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={""}>Vender</Link>
+              <Link href={"/buscar"}>Vender</Link>
             </li>
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={""}>Comprar</Link>
+              <Link href={"/buscar"}>Comprar</Link>
             </li>
           </ul>
         </div>
@@ -75,19 +75,19 @@ export const Footer = () => {
           </h5>
           <ul className="space-y-4">
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={""}>Locales</Link>
+              <Link href={"/buscar"}>Locales</Link>
             </li>
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={""}>Terrenos</Link>
+              <Link href={"/buscar"}>Terrenos</Link>
             </li>
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={""}>Casas</Link>
+              <Link href={"/buscar"}>Casas</Link>
             </li>
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={""}>Lotes</Link>
+              <Link href={"/buscar"}>Lotes</Link>
             </li>
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={""}>Alquiler</Link>
+              <Link href={"/buscar"}>Alquiler</Link>
             </li>
           </ul>
         </div>
@@ -101,17 +101,17 @@ export const Footer = () => {
                 key={ubicacion.id}
                 className="flex items-center gap-3 text-white-200 hover:text-white-main"
               >
-                <Link href={""}>{ubicacion.nombre}</Link>
+                <Link href={"/buscar"}>{ubicacion.nombre}</Link>
               </li>
             ))}
           </ul>
         </div>
       </ContentMain>
-      <ContentMain className="flex justify-between border-t py-4">
-        <p className="text-white-main">
+      <ContentMain className="flex flex-col lg:flex-row gap-4 justify-between border-t py-4">
+        <p className="text-white-main flex gap-2 items-center">
           SULCAPITAL © 2025 | Todos los derechos reservados - Design by:{" "}
-          <a href="">
-            <img src="" alt="" className="block w-[18px]" />
+          <a href="https://logosperu.com.pe/" target="_blank">
+            <img src="/images/logo/lp.svg" alt="" className="block w-[18px]" />
           </a>
         </p>
         <ul className="flex items-center gap-3 text-white-main">

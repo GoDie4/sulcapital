@@ -16,7 +16,7 @@ export const CardTipoInmueble = ({
 }) => {
   return (
     <Link
-      href={""}
+      href={"/buscar"}
       className="relative shadow-main z-10 h-96 group rounded-main overflow-hidden"
     >
       <div className="absolute w-full h-full bg-gradient-to-b from-transparent to-black-main opacity-50 group-hover:opacity-80 left-0 top-0 -z-10 transition-all duration-200"></div>

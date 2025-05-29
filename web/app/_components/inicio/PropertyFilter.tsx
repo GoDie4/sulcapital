@@ -17,7 +17,7 @@ const PropertyFilter = ({
   ];
 
   return (
-    <div className="w-full radio-buttons-container border-b rounded-main rounded-b-none bg-white-main lg:w-fit px-8 py-4">
+    <div className="w-full radio-buttons-container border-b rounded-main rounded-b-none bg-white-main lg:w-fit px-3 md:px-8 py-4">
       {filters.map((filter) => {
         const isSelected = selectedFilter === filter.id;
         return (
@@ -89,6 +89,9 @@ const PropertyFilter = ({
           transform: translateY(-50%) scale(1.2);
           border-color: #1e3062;
           box-shadow: 0 0 10px #1e306280;
+        }
+        @media (max-width: 520px) {
+          .radio-buttons-container { gap: 5px;}
         }
       `}</style>
     </div>

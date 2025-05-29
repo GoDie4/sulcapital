@@ -17,7 +17,7 @@ export const NavItem = ({ title, propertyTypes, locations }: NavItemProps) => {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <button className="flex items-center gap-1 px-4 py-2  hover:bg-primary-main text-white-main rounded-full transition-colors duration-200">
+      <button className="flex items-center gap-1 px-4 py-2  hover:bg-primary-main rounded-full transition-colors duration-200">
         {title}
         <BsChevronDown
           size={16}

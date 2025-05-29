@@ -27,7 +27,7 @@ const SearchSection = () => {
             onFilterChange={setSelectedFilter}
           />
 
-          <div className="flex bg-white-main flex-col md:flex-row gap-4 rounded-tr-none md:rounded-tr-main rounded-tl-none rounded-main px-8 py-5 border border-gray-100 items-center">
+          <div className="flex bg-white-main flex-col md:flex-row gap-4 rounded-tr-none md:rounded-tr-main rounded-tl-none rounded-main px-3 md:px-8 py-5 border border-gray-100 items-center">
             {/* Input de texto */}
             <div className="w-full  flex-1 h-[60px] relative">
               <MdSearch className="absolute left-3 h-[60px] top-0 transform bottom-0 my-auto text-gray-400 w-5" />

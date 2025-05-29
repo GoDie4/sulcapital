@@ -11,7 +11,7 @@ export interface UbicacionProps {
 
 export const CardUbicacion = ({ ubicacion }: { ubicacion: UbicacionProps }) => {
   return (
-    <Link href={''} className="w-full bg-white-main group hover:bg-secondary-main shadow-main p-2 flex rounded-[1.4rem] overflow-hidden transition-all hover:scale-[1.05] duration-300">
+    <Link href={'/buscar'} className="w-full bg-white-main group hover:bg-secondary-main shadow-main p-2 flex rounded-[1.4rem] overflow-hidden transition-all hover:scale-[1.05] duration-300">
       <div className="w-fit">
         <img
           src={ubicacion.imagen}

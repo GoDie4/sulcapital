@@ -1,0 +1,32 @@
+export interface LoginInterface {
+  email: string;
+  password: string;
+}
+
+export type RegisterInterface = {
+  email: string;
+  nombres: string;
+  apellidos: string;
+  celular: string;
+  password: string;
+  confirmPassword: string;
+  rol: string;
+};
+
+export type UserInterface = {
+  id: string;
+  email: string;
+  nombres: string;
+  apellidos: string;
+  celular: string;
+  rol?: RolesInterface;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export interface RolesInterface {
+  id: number;
+  nombre: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

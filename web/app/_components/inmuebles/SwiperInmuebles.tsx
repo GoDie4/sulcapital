@@ -54,11 +54,7 @@ export const SwiperInmuebles = ({
           <CardInmueble data={item} />
         </SwiperSlide>
       ))}
-      {newInmuebles.map((item) => (
-        <SwiperSlide key={item.id}>
-          <CardInmueble data={item} />
-        </SwiperSlide>
-      ))}
+   
     </Swiper>
   );
 };

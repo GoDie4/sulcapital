@@ -1,11 +1,10 @@
-'use client'
+"use client";
 import {
   sampleProperties,
   TiposPropiedad,
   ubicaciones,
 } from "@/assets/data/DataGeneral";
 import { ContentMain } from "./_components/estructura/ContentMain";
-import { Header } from "./_components/estructura/Header";
 import SearchSection from "./_components/inicio/SearchSection";
 import InnovativeSlider from "./_components/inicio/Slides";
 import { SwiperInmuebles } from "./_components/inmuebles/SwiperInmuebles";
@@ -17,6 +16,11 @@ import {
 import Link from "next/link";
 import { MapaGeneral } from "./_components/inicio/lugares/MapaGeneral";
 import { BsFacebook, BsInstagram, BsTiktok } from "react-icons/bs";
+import CardInmueble, {
+  CardInmuebleProps,
+} from "./_components/inmuebles/CardInmueble";
+import { Paginacion } from "./_components/estructura/Paginacion";
+import { Header } from "./_components/estructura/Header";
 import { Footer } from "./_components/estructura/Footer";
 
 export default function Home() {
@@ -33,10 +37,10 @@ export default function Home() {
       </section>
       <section className="bg-white-main">
         <ContentMain className="py-20 ">
-          <h2 className="text-center text-3xl mb-5  text-secondary-main md:text-4xl font-TypographBold">
+          <h2 className="text-center text-2xl  md:text-3xl mb-5  text-secondary-main lg:text-4xl font-TypographBold">
             Descubre nuestros inmuebles
           </h2>
-          <p className="mb-14 text-center text-xl text-black-900">
+          <p className="mb-14 text-center text-lg md:text-xl text-black-900">
             Oportunidades únicas para cada estilo de vida
           </p>
           <SwiperInmuebles inmuebles={sampleProperties} />
@@ -46,7 +50,7 @@ export default function Home() {
 
       <section className="relative after:absolute after:w-full after:h-full after:top-0 after:left-0 after:bg-secondary-main after:opacity-50 after:-z-20 z-10 before:absolute before:w-full before:h-full before:top-0 before:left-0 before:bg-secondary-main before:bg-[url(/images/fondos/fondo_ubicaciones.webp)] before:-z-20 before:bg-fixed before:bg-cover">
         <ContentMain className="py-20">
-          <h2 className="text-center text-3xl mb-16  text-white-main md:text-4xl font-TypographBold">
+          <h2 className="text-center text-2xl md:text-3xl mb-16  text-white-main lg:text-4xl font-TypographBold">
             Explora diferentes{" "}
             <span className="text-primary-main"> ciudades</span>
           </h2>
@@ -60,11 +64,11 @@ export default function Home() {
       </section>
       <section>
         <ContentMain className="py-20">
-          <h2 className="text-center text-3xl mb-5  text-secondary-main md:text-4xl font-TypographBold">
+          <h2 className="text-center text-2xl md:text-3xl mb-5  text-secondary-main lg:text-4xl font-TypographBold">
             Diferentes tipos de propiedades{" "}
             <span className="text-primary-main"> para ti</span>
           </h2>
-          <p className="mb-14 text-center text-xl text-black-900">
+          <p className="mb-14 text-center text-lg md:text-xl text-black-900">
             Conoce lo mejor de cada ciudad y encuentra tu nuevo hogar
           </p>
           <div className="w-full grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -79,11 +83,11 @@ export default function Home() {
       </section>
       <section className="bg-primary-main">
         <ContentMain className="py-20">
-          <h2 className="text-3xl mb-6 font-TypographBold text-white-main text-center">
+          <h2 className="text-2xl md:text-3xl mb-6 font-TypographBold text-white-main text-center">
             Tienes preguntas sobre tu próximo inmueble. Contáctanos y te
             ayudamos a encontrar la mejor opción.
           </h2>
-          <p className="text-white-100 text-center text-lg">
+          <p className="text-white-100 text-center  text-base md:text-lg">
             Estamos aquí para brindarte asesoría personalizada y encontrar
             juntos la mejor opción para tu inversión o nuevo hogar.
           </p>
@@ -93,6 +97,20 @@ export default function Home() {
           >
             Contactar
           </Link>
+        </ContentMain>
+      </section>
+      <section>
+        <ContentMain className="py-20">
+          <h2 className="text-center text-3xl mb-16  text-secondary-main md:text-4xl font-TypographBold">
+            Explora diferentes{" "}
+            <span className="text-primary-main"> ciudades</span>
+          </h2>
+          <div className="w-full grid md:grid-cols-2 gap-5">
+            {sampleProperties.map((inmueble: CardInmuebleProps) => (
+              <CardInmueble data={inmueble} type="list" key={inmueble.id} />
+            ))}
+          </div>
+          <Paginacion />
         </ContentMain>
       </section>
       <section>
