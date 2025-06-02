@@ -118,6 +118,8 @@ model Imagen {
     /// FK para la relación “fondoPortada”
     propiedadFondoPortadaId String?
     propiedadFondoPortada   Propiedad? @relation("PropiedadFondoPortada", fields: [propiedadFondoPortadaId], references: [id], map: "FK_imagen_propiedadFondo")
+
+    @@map("imagenes_propiedades")
 }
 
 enum Disponibilidad {

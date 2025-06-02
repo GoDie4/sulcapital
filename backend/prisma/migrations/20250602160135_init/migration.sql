@@ -90,7 +90,7 @@ CREATE TABLE `propiedades` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Imagen` (
+CREATE TABLE `imagenes_propiedades` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `url` VARCHAR(191) NOT NULL,
     `propiedadImagenId` VARCHAR(191) NULL,
@@ -112,7 +112,7 @@ ALTER TABLE `propiedades` ADD CONSTRAINT `propiedades_tipoPropiedadId_fkey` FORE
 ALTER TABLE `propiedades` ADD CONSTRAINT `propiedades_ciudadId_fkey` FOREIGN KEY (`ciudadId`) REFERENCES `ciudades`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Imagen` ADD CONSTRAINT `FK_imagen_propiedadImagen` FOREIGN KEY (`propiedadImagenId`) REFERENCES `propiedades`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `imagenes_propiedades` ADD CONSTRAINT `FK_imagen_propiedadImagen` FOREIGN KEY (`propiedadImagenId`) REFERENCES `propiedades`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Imagen` ADD CONSTRAINT `FK_imagen_propiedadFondo` FOREIGN KEY (`propiedadFondoPortadaId`) REFERENCES `propiedades`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `imagenes_propiedades` ADD CONSTRAINT `FK_imagen_propiedadFondo` FOREIGN KEY (`propiedadFondoPortadaId`) REFERENCES `propiedades`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
