@@ -71,6 +71,7 @@ const mapOptions = {
 };
 
 export const MapaGeneral = () => {
+
   return (
     <LoadScript googleMapsApiKey={config.GOOGLE_MAPS_KEY}>
       <GoogleMap
@@ -83,7 +84,8 @@ export const MapaGeneral = () => {
           <Marker
             key={index}
             position={{ lat: ubicacion.lat, lng: ubicacion.lng }}
-            label={ubicacion.label}
+            //label={ubicacion.label}
+            icon={"/images/logo/mapa.png"}
           />
         ))}
       </GoogleMap>

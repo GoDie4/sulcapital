@@ -29,9 +29,6 @@ export default async function page({ searchParams }: { searchParams: any }) {
     }/ciudades?page=${safePage}&limit=${limit}&search=${encodeURIComponent(
       search
     )}`,
-    {
-      cache: "no-store",
-    }
   );
   const { data, pagination } = await res.json();
   return (

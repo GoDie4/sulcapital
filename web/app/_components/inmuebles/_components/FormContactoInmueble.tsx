@@ -6,7 +6,7 @@ export const FormContactoInmueble = () => {
     <div className="rounded-main border bg-secondary-main border-secondary-main/40 flex justify-center p-4">
       <div className=" p-2 sm:p-3 w-full max-w-lg">
         <h2 className="text-xlfont-medium font-TypographBold text-white-main mb-6">
-          Contáctate para la casa en Satipo
+          Déjanos tus datos para contactarte
         </h2>
 
         <form>
@@ -73,7 +73,7 @@ export const FormContactoInmueble = () => {
               id="mensaje"
               placeholder="Mensaje"
               className="w-full p-3 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px] resize-y"
-              defaultValue="¡Hola! Quiero que se comuniquen conmigo por esta casa en venta que vi en SULCAPITAL."
+              defaultValue="¡Hola! Quiero que se comuniquen conmigo."
             ></textarea>
           </div>
 

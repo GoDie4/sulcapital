@@ -137,7 +137,10 @@ const CardInmuebleGrid = ({
 }) => {
   const { setModalContent, openModal } = useAuth();
   return (
-    <div className="w-full block rounded-main shadow-main overflow-hidden hover:-translate-y-2 transition-all duration-200">
+    <Link
+      href={`/propiedad/${data.id}/try`}
+      className="w-full block rounded-main shadow-main overflow-hidden hover:-translate-y-2 transition-all duration-200"
+    >
       <div className="relative">
         <div className="relative group overflow-hidden">
           <Swiper
@@ -179,10 +182,7 @@ const CardInmuebleGrid = ({
         )}
       </div>
 
-      <Link
-        href={`/propiedad/${data.id}/try`}
-        className="block p-4 space-y-3 bg-white-main"
-      >
+      <div className="block p-4 space-y-3 bg-white-main">
         <div className="flex flex-col gap-1">
           <span className="text-sm text-black-700">Desde</span>
           <div className="text-lg font-bold text-secondary-main font-TypographBold ">
@@ -202,8 +202,8 @@ const CardInmuebleGrid = ({
             </span>
           </p>
         </div>
-      </Link>
-    </div>
+      </div>
+    </Link>
   );
 };
 

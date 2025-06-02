@@ -34,9 +34,6 @@ export default async function page({ searchParams }: { searchParams: any }) {
 
   const res = await fetch(
     `${config.API_URL}/propiedades/buscar?${query.toString()}`,
-    {
-      cache: "no-store",
-    }
   );
 
   const { data, pagination } = await res.json();

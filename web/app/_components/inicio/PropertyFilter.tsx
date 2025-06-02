@@ -18,7 +18,7 @@ const PropertyFilter = ({
   ];
 
   return (
-    <div className="w-full radio-buttons-container border-b rounded-main rounded-b-none bg-white-main lg:w-fit px-3 md:px-4 py-2">
+    <div key={'PropertyFilters'} className="w-full radio-buttons-container border-b rounded-main rounded-b-none bg-white-main lg:w-fit px-3 md:px-4 py-2">
       {filters.map((filter) => {
         const isSelected = selectedFilter === filter.id;
         return (

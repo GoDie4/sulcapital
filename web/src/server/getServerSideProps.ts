@@ -6,7 +6,6 @@ export async function getServerSideProps(url: string) {
   // const token = cookieStore.get("token")?.value;
   try {
     const res = await fetch(`${config.API_URL}/${url}`, {
-      cache: "no-store",
 
       headers: {
         // 'Authorization': `Bearer ${localStorage.getItem('token')}`,

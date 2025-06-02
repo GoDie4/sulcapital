@@ -9,6 +9,8 @@ import CardInmueble, {
 import { Propiedad } from "../../../(sistema)/sistema/propiedades/_components/table/ColumnasPropiedades";
 import { Pagination } from "../../../(sistema)/_components/interfaces/Pagination";
 import { initialFiltros } from "./FiltrosBusqueda";
+import { useAuth } from "@/assets/context/AuthContext";
+import { FormContactoInmueble } from "../../../_components/inmuebles/_components/FormContactoInmueble";
 export const ContenedorBusqueda = ({
   data,
   dataFiltrosActivos,
@@ -17,7 +19,7 @@ export const ContenedorBusqueda = ({
   pagination: Pagination;
   dataFiltrosActivos: initialFiltros;
 }) => {
-  console.log("cont: ", data);
+  const { setModalContent, openModal } = useAuth();
   const [gridOrList, setGridOrList] = useState<CardInmuebleDesign>("grid");
   return (
     <>
@@ -123,12 +125,28 @@ export const ContenedorBusqueda = ({
         </div>
       </div>
       <div
-        className={`w-full grid  ${
+        className={`w-full relative grid  ${
           gridOrList === "grid"
             ? "md:grid-cols-2 lg:grid-cols-3"
             : "grid-cols-1"
         }  gap-5`}
       >
+        {data.length === 0 && (
+          <p className="min-h-[300px] flex items-center flex-col justify-center gap-2 absolute left-0 right-0 top-0 m-auto">
+            No se encontraron resultados para esta búsqueda:{" "}
+            <button
+              type="button"
+              onClick={() => {
+                setModalContent(<FormContactoInmueble />);
+                openModal();
+              }}
+              className="text-red-500"
+            >
+              {" "}
+              Avísame cuando haya una propiedad que coincida con mi búsqueda
+            </button>
+          </p>
+        )}
         {data.map((inmueble: Propiedad) => (
           <CardInmueble data={inmueble} key={inmueble.id} type={gridOrList} />
         ))}

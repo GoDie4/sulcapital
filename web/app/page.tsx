@@ -8,12 +8,10 @@ import { CardTipoInmueble } from "./_components/inicio/tiposInmuebles/CardTipoIn
 import Link from "next/link";
 import { MapaGeneral } from "./_components/inicio/lugares/MapaGeneral";
 import { BsFacebook, BsInstagram, BsTiktok } from "react-icons/bs";
-import CardInmueble from "./_components/inmuebles/CardInmueble";
 import { Paginacion } from "./_components/estructura/Paginacion";
 import { Header } from "./_components/estructura/Header";
 import { Footer } from "./_components/estructura/Footer";
 import { useAuth } from "@/assets/context/AuthContext";
-import { Propiedad } from "./(sistema)/sistema/propiedades/_components/table/ColumnasPropiedades";
 import { CiudadList } from "./(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
 import { TipoPropiedad } from "./(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 
@@ -43,6 +41,8 @@ export default function Home() {
           </p>
           <SwiperInmuebles inmuebles={dataPropiedades} />
           <SwiperInmuebles inmuebles={dataPropiedades} reverse />
+          <Paginacion />
+
         </ContentMain>
       </section>
 
@@ -97,7 +97,7 @@ export default function Home() {
           </Link>
         </ContentMain>
       </section>
-      <section>
+      {/* <section>
         <ContentMain className="py-20">
           <h2 className="text-center text-3xl mb-16  text-secondary-main md:text-4xl font-TypographBold">
             Explora diferentes{" "}
@@ -108,9 +108,8 @@ export default function Home() {
               <CardInmueble data={inmueble} type="list" key={inmueble.id} />
             ))}
           </div>
-          <Paginacion />
         </ContentMain>
-      </section>
+      </section> */}
       <section>
         <MapaGeneral />
       </section>

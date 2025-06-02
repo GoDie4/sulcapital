@@ -14,7 +14,7 @@ interface SlideData {
 const slides: SlideData[] = [
   {
     id: 1,
-    title: " Encuentra tu hogar ideal",
+    title: " Tu portal inmobiliario en la selva central",
     description:
       "Descubre propiedades únicas que se adaptan a tu estilo de vida.",
     imageUrl: "/images/slides/slide1.webp",
