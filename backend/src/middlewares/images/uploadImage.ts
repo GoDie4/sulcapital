@@ -28,23 +28,24 @@ export function handleImageUpload(
   fs.mkdir(uploadDir, { recursive: true }).catch(console.error);
 
   return async (req: Request, res: Response, next: NextFunction) => {
-    const file = (req as any).file as Express.Multer.File;
-    if (!file) return next();
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const fileField = files[fieldName]?.[0];
+    if (!fileField) return next();
 
     // Extensión original
-    const ext = path.extname(file.originalname).toLowerCase();
+    const ext = path.extname(fileField.originalname).toLowerCase();
     const baseName = `${filePrefix}-${Date.now()}`;
 
     // Nombres de salida
     const originalName = `${baseName}${ext}`;
-    const thumbName = `${baseName}-thumb${ext}`;
+    const thumbName = `${baseName}-${fieldName}${ext}`;
 
     try {
       // Guardar original
-      await sharp(file.buffer).toFile(path.join(uploadDir, originalName));
+    //   await sharp(file.buffer).toFile(path.join(uploadDir, originalName));
 
       // Generar y guardar miniatura
-      await sharp(file.buffer)
+      await sharp(fileField.buffer)
         .resize(thumbnailSize.width, thumbnailSize.height)
         .toFile(path.join(uploadDir, thumbName));
 

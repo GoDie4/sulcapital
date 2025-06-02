@@ -7,58 +7,31 @@ import { NavItem } from "./NavItem";
 import Link from "next/link";
 import { LiaUserSolid } from "react-icons/lia";
 import { HiMenu } from "react-icons/hi";
-export const Header = () => {
+import { TipoPropiedad } from "../../(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
+import { CiudadList } from "../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
+export const Header = ({
+  tipoPropiedades,
+  ciudades,
+}: {
+  tipoPropiedades: TipoPropiedad[];
+  ciudades: CiudadList[];
+}) => {
   const menuItems = [
     {
       title: "Vender",
-      propertyTypes: ["Locales", "Terrenos", "Casas", "Lotes", "Alquiler"],
-      locations: [
-        "Pichanaki",
-        "Satipo",
-        "Río Negro",
-        "Mazamari",
-        "Pangoa",
-        "La Merced",
-        "Perené",
-        "Sangani",
-        "San Ramón",
-        "Villa Rica",
-        "Oxapampa",
-      ],
+      propertyTypes: tipoPropiedades,
+      locations: ciudades,
     },
-    {
-      title: "Alquilar",
-      propertyTypes: ["Locales", "Terrenos", "Casas", "Lotes", "Alquiler"],
-      locations: [
-        "Pichanaki",
-        "Satipo",
-        "Río Negro",
-        "Mazamari",
-        "Pangoa",
-        "La Merced",
-        "Perené",
-        "Sangani",
-        "San Ramón",
-        "Villa Rica",
-        "Oxapampa",
-      ],
-    },
+
     {
       title: "Comprar",
-      propertyTypes: ["Locales", "Terrenos", "Casas", "Lotes", "Alquiler"],
-      locations: [
-        "Pichanaki",
-        "Satipo",
-        "Río Negro",
-        "Mazamari",
-        "Pangoa",
-        "La Merced",
-        "Perené",
-        "Sangani",
-        "San Ramón",
-        "Villa Rica",
-        "Oxapampa",
-      ],
+      propertyTypes: tipoPropiedades,
+      locations: ciudades,
+    },
+    {
+      title: "Alquiler",
+      propertyTypes: tipoPropiedades,
+      locations: ciudades,
     },
   ];
 
@@ -88,7 +61,7 @@ export const Header = () => {
           <Link
             href={"/"}
             className={`block ${
-              scrollY ? "w-[160px]" : "w-[200px]"
+              scrollY ? "w-[130px]" : "w-[180px]"
             }  transition-all duration-200`}
           >
             <img
@@ -122,7 +95,7 @@ export const Header = () => {
           </ul>
           <div className="w-fit flex items-center gap-4">
             <Link
-              href={""}
+              href={"/registro"}
               className={`flex w-fit text-4xl ${
                 scrollY ? "text-secondary-main" : "text-white-main"
               }`}

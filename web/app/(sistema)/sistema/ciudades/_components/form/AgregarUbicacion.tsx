@@ -13,11 +13,25 @@ import { config } from "@/assets/config/config";
 import { Ciudad } from "../interfaces/CiudadesInterfaces";
 import { Errors } from "@/components/form/Errors";
 import { useAuth } from "@/assets/context/AuthContext";
+import { Pagination } from "../../../../_components/interfaces/Pagination";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export const AgregarUbicacion = () => {
-  const [files, setFiles] = useState<File[]>([]);
+export const AgregarUbicacion = ({
+  pagination,
+  totalItems,
+}: {
+  pagination: Pagination;
+  totalItems: number;
+}) => {
+  const [files, setFiles] = useState<(File | string)[]>([]);
   const { closeModal } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get("page") ?? "1") || 1;
+
+  const router = useRouter();
+  const pathname = usePathname();
 
   const agregarCiudad = async (values: Ciudad): Promise<void> => {
     setLoading(true);
@@ -27,7 +41,6 @@ export const AgregarUbicacion = () => {
       return;
     }
     try {
-      console.log("FILES: ", files);
       const formData = new FormData();
       formData.append("nombre", values.nombre);
       formData.append("descripcion", values.descripcion);
@@ -45,6 +58,15 @@ export const AgregarUbicacion = () => {
         }
       );
       if (response.status === 201) {
+        const newTotalItems = totalItems + 1;
+        const totalPagesAfterAdd = Math.ceil(newTotalItems / pagination.limit);
+
+        if (page === pagination.totalPages && totalPagesAfterAdd > page) {
+          router.push(`${pathname}?page=${page + 1}`);
+        } else {
+          const currentPath = `${pathname}?${searchParams.toString()}`;
+          router.push(currentPath);
+        }
         closeModal();
         toast.success(response.data.mensaje);
       }
@@ -113,9 +135,9 @@ export const AgregarUbicacion = () => {
           </div>
           <div className="w-full md:w-1/2">
             <InputForm
-              label="Coordenadas de Google Maps"
+              label="Coordenadas "
               name="coordenadas"
-              placeholder="Pegar coordenadas"
+              placeholder="Pegar coordenadas de Google Maps"
               type="text"
               value={values.coordenadas}
               onChange={handleChange}
@@ -149,12 +171,11 @@ export const AgregarUbicacion = () => {
         <div className="w-full">
           <UploadImages
             maxFiles={1}
-            maxHeight={120}
-            maxWidth={120}
+            maxHeight={1024}
+            maxWidth={1024}
             maxSize={2 * 1024 * 1024}
             onChange={setFiles}
           />
-          <p className="mt-4">Seleccionaste {files.length} archivo(s).</p>
         </div>
       </div>
       <div className="w-full flex flex-col md:flex-row gap-2 md:gap-4 items-center justify-center mt-6">
@@ -162,7 +183,7 @@ export const AgregarUbicacion = () => {
         <ButtonSubmit
           loading={loading}
           text="Agregar ciudad"
-          textLoading="Agregando ciudad..."
+          textLoading="Agregando..."
         />
       </div>
     </form>

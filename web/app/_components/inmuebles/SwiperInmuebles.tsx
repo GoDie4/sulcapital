@@ -5,12 +5,13 @@ import { Autoplay } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/autoplay";
-import CardInmueble, { CardInmuebleProps } from "./CardInmueble";
+import CardInmueble from "./CardInmueble";
+import { Propiedad } from "../../(sistema)/sistema/propiedades/_components/table/ColumnasPropiedades";
 export const SwiperInmuebles = ({
   inmuebles,
   reverse,
 }: {
-  inmuebles: CardInmuebleProps[];
+  inmuebles: Propiedad[];
   reverse?: boolean;
 }) => {
   const newInmuebles = reverse ? inmuebles.reverse() : inmuebles;
@@ -28,7 +29,7 @@ export const SwiperInmuebles = ({
       loop={true}
       breakpoints={{
         320: {
-          slidesPerView: 1,
+          slidesPerView: 2,
           grid: { rows: 1 },
         },
         640: {
@@ -54,7 +55,6 @@ export const SwiperInmuebles = ({
           <CardInmueble data={item} />
         </SwiperSlide>
       ))}
-   
     </Swiper>
   );
 };

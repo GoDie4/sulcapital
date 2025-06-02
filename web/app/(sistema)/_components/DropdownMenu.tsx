@@ -2,6 +2,8 @@ import { ReactNode, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { GoChevronDown } from "react-icons/go";
+import { usePathname } from "next/navigation";
+
 type Option = {
   label: string;
   route: string;
@@ -25,6 +27,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 }) => {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
+  const pathname = usePathname();
   const toggleMenu = (title: string) => {
     setOpenMenu(openMenu === title ? null : title);
   };
@@ -52,7 +55,16 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
               <button
                 type="button"
                 onClick={() => toggleMenu(menuItem.title)}
-                className="flex items-center justify-between w-full px-3 py-2 space-x-2 bg-transparent rounded-md outline-none min-h-10 text-white-main hover:bg-secondary-800"
+                className={`flex items-center ${
+                  menuItem.route
+                } justify-between w-full px-3 py-2 space-x-2 bg-transparent rounded-md outline-none min-h-10 text-white-main hover:bg-secondary-800 
+                    
+                    ${
+                      pathname === `/${menuItem.route?.toLocaleLowerCase()}`
+                        ? "bg-primary-main text-white"
+                        : "bg-transparent text-white-main hover:bg-secondary-800"
+                    }
+                    `}
               >
                 <div
                   className={`flex items-center  w-full ${
@@ -85,9 +97,22 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
             ) : (
               <Link
                 href={`/sistema/${menuItem.route}` || "/sistema"}
-                className="flex items-center w-full px-7 py-3 border-l-4 group border-transparent space-x-2 bg-transparent text-white-main hover:bg-secondary-800 hover:border-primary-main transition-all duration-200"
+                className={`flex items-center w-full ${
+                  menuItem.route
+                } ${pathname} px-7 py-3 border-l-4 group border-transparent space-x-2    transition-all duration-200 
+                     ${
+                       pathname.includes(`${menuItem.route}`)
+                         ? "bg-secondary-800 text-white-main border-primary-main"
+                         : "bg-transparent text-white-main hover:bg-secondary-800 hover:border-primary-main"
+                     }`}
               >
-                <span className="text-white-main group-hover:text-primary-main transition-all duration-200">
+                <span
+                  className={` group-hover:text-primary-main  ${
+                    pathname.includes(`${menuItem.route}`)
+                      ? "text-primary-main"
+                      : "group-hover:text-primary-main text-white-main"
+                  } transition-all duration-200`}
+                >
                   {menuItem.icon}
                 </span>
                 <motion.span

@@ -1,37 +1,35 @@
 "use client";
-import {
-  sampleProperties,
-  TiposPropiedad,
-  ubicaciones,
-} from "@/assets/data/DataGeneral";
 import { ContentMain } from "./_components/estructura/ContentMain";
 import SearchSection from "./_components/inicio/SearchSection";
 import InnovativeSlider from "./_components/inicio/Slides";
 import { SwiperInmuebles } from "./_components/inmuebles/SwiperInmuebles";
 import { CardUbicacion } from "./_components/inicio/lugares/CardUbicacion";
-import {
-  CardTipoInmueble,
-  TipoInmueble,
-} from "./_components/inicio/tiposInmuebles/CardTipoInmueble";
+import { CardTipoInmueble } from "./_components/inicio/tiposInmuebles/CardTipoInmueble";
 import Link from "next/link";
 import { MapaGeneral } from "./_components/inicio/lugares/MapaGeneral";
 import { BsFacebook, BsInstagram, BsTiktok } from "react-icons/bs";
-import CardInmueble, {
-  CardInmuebleProps,
-} from "./_components/inmuebles/CardInmueble";
+import CardInmueble from "./_components/inmuebles/CardInmueble";
 import { Paginacion } from "./_components/estructura/Paginacion";
 import { Header } from "./_components/estructura/Header";
 import { Footer } from "./_components/estructura/Footer";
+import { useAuth } from "@/assets/context/AuthContext";
+import { Propiedad } from "./(sistema)/sistema/propiedades/_components/table/ColumnasPropiedades";
+import { CiudadList } from "./(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
+import { TipoPropiedad } from "./(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 
 export default function Home() {
+  const { dataPropiedades, dataCiudades, dataTiposPropiedades } = useAuth();
   return (
     <>
-      <Header />
+      <Header ciudades={dataCiudades} tipoPropiedades={dataTiposPropiedades} />
       <section className="relative">
         <InnovativeSlider />
-        <div className="w-full absolute bottom-0 lg:bottom-8 left-0 z-[100]">
+        <div className="w-full absolute bottom-0  left-0 z-[100]">
           <ContentMain>
-            <SearchSection />
+            <SearchSection
+              ciudades={dataCiudades}
+              tipoPropiedades={dataTiposPropiedades}
+            />
           </ContentMain>
         </div>
       </section>
@@ -43,8 +41,8 @@ export default function Home() {
           <p className="mb-14 text-center text-lg md:text-xl text-black-900">
             Oportunidades únicas para cada estilo de vida
           </p>
-          <SwiperInmuebles inmuebles={sampleProperties} />
-          <SwiperInmuebles inmuebles={sampleProperties} reverse />
+          <SwiperInmuebles inmuebles={dataPropiedades} />
+          <SwiperInmuebles inmuebles={dataPropiedades} reverse />
         </ContentMain>
       </section>
 
@@ -56,7 +54,7 @@ export default function Home() {
           </h2>
 
           <div className="w-full grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {ubicaciones.map((ubicacion) => (
+            {dataCiudades.map((ubicacion: CiudadList) => (
               <CardUbicacion key={ubicacion.id} ubicacion={ubicacion} />
             ))}
           </div>
@@ -72,7 +70,7 @@ export default function Home() {
             Conoce lo mejor de cada ciudad y encuentra tu nuevo hogar
           </p>
           <div className="w-full grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {TiposPropiedad.map((tipoinmueble: TipoInmueble) => (
+            {dataTiposPropiedades.map((tipoinmueble: TipoPropiedad) => (
               <CardTipoInmueble
                 tipoinmueble={tipoinmueble}
                 key={tipoinmueble.id}
@@ -106,7 +104,7 @@ export default function Home() {
             <span className="text-primary-main"> ciudades</span>
           </h2>
           <div className="w-full grid md:grid-cols-2 gap-5">
-            {sampleProperties.map((inmueble: CardInmuebleProps) => (
+            {dataPropiedades.map((inmueble: Propiedad) => (
               <CardInmueble data={inmueble} type="list" key={inmueble.id} />
             ))}
           </div>
@@ -210,7 +208,7 @@ export default function Home() {
           </div>
         </ContentMain>
       </section>
-      <Footer />
+      <Footer ciudades={dataCiudades} tipoPropiedades={dataTiposPropiedades} />
     </>
   );
 }

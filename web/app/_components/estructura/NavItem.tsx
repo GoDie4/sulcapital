@@ -1,11 +1,14 @@
 "use client";
 import React, { useState } from "react";
 import { BsChevronDown } from "react-icons/bs";
+import { TipoPropiedad } from "../../(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
+import { CiudadList } from "../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
+import Link from "next/link";
 
 interface NavItemProps {
   title: string;
-  propertyTypes: string[];
-  locations: string[];
+  propertyTypes: TipoPropiedad[];
+  locations: CiudadList[];
 }
 
 export const NavItem = ({ title, propertyTypes, locations }: NavItemProps) => {
@@ -37,12 +40,20 @@ export const NavItem = ({ title, propertyTypes, locations }: NavItemProps) => {
               <ul className="space-y-2">
                 {propertyTypes.map((type, index) => (
                   <li key={index}>
-                    <a
-                      href="#"
+                    <Link
+                      href={`/buscar?tipo_propiedad=${type.nombre.toLocaleLowerCase()}&disponibilidad=${
+                        title === "Vender"
+                          ? "EN_VENTA"
+                          : title === "Comprar"
+                          ? "EN_COMPRA"
+                          : title === "Alquiler"
+                          ? "EN_ALQUILER"
+                          : ""
+                      }`}
                       className="block text-gray-600 hover:text-primary-main hover:bg-primary-50 px-3 py-1 rounded-full transition-colors duration-150"
                     >
-                      {type}
-                    </a>
+                      {type.nombre}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -55,12 +66,20 @@ export const NavItem = ({ title, propertyTypes, locations }: NavItemProps) => {
               <ul className="space-y-2">
                 {locations.map((location, index) => (
                   <li key={index}>
-                    <a
-                      href="#"
+                    <Link
+                      href={`/buscar?ciudad=${location.nombre.toLocaleLowerCase()}&disponibilidad=${
+                        title === "Vender"
+                          ? "EN_VENTA"
+                          : title === "Comprar"
+                          ? "EN_COMPRA"
+                          : title === "Alquiler"
+                          ? "EN_ALQUILER"
+                          : ""
+                      }`}
                       className="block text-gray-600 hover:text-primary-main hover:bg-primary-50 px-3 py-1 rounded-main transition-colors duration-150"
                     >
-                      {location}
-                    </a>
+                      {location.nombre}
+                    </Link>
                   </li>
                 ))}
               </ul>

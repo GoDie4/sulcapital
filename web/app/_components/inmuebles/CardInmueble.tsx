@@ -12,25 +12,27 @@ import Link from "next/link";
 import { BsEnvelope, BsWhatsapp } from "react-icons/bs";
 import { useAuth } from "@/assets/context/AuthContext";
 import { VistaRapidaInmueble } from "./VistaRapidaInmueble";
+import { Propiedad } from "../../(sistema)/sistema/propiedades/_components/table/ColumnasPropiedades";
+import { config } from "@/assets/config/config";
 export type CardInmuebleDesign = "grid" | "list";
 export interface CardInmuebleProps {
   id: string;
-  images: string[];
-  price: string;
-  ubicacion: string;
-  propertyType: string;
-  address: string;
-  isExclusive?: boolean;
+  imagenes: string[];
+  precio: string;
+  direccion: string;
+  tipo: string;
+  exclusivo?: boolean;
+  ciudad: string;
 }
 
 const CardInmueble = ({
   data,
   type = "grid",
 }: {
-  data: CardInmuebleProps;
+  data: Propiedad;
   type?: CardInmuebleDesign;
 }) => {
-  const variasImagenes = data.images.length > 1;
+  const variasImagenes = data.imagenes.length > 1;
   return (
     <>
       {type === "grid" ? (
@@ -46,12 +48,12 @@ const CardInmuebleList = ({
   data,
   variasImagenes,
 }: {
-  data: CardInmuebleProps;
+  data: Propiedad;
   variasImagenes: boolean;
 }) => {
   return (
     <Link
-      href="/inmueble"
+      href={`/propiedad/${data.id}/try`}
       className="rounded-main shadow-main p-2 bg-white-main flex items-center justify-between"
     >
       <div className="w-fit flex">
@@ -64,11 +66,11 @@ const CardInmuebleList = ({
               navigation={variasImagenes}
               className="w-full  swp--Inmuebles--images"
             >
-              {data.images.map((image: string, index: number) => (
-                <SwiperSlide key={index}>
+              {data.imagenes.map((image) => (
+                <SwiperSlide key={image.id}>
                   <img
-                    src={image}
-                    alt={`${data.propertyType} en ${data.ubicacion}`}
+                    src={`${config.API_IMAGE_URL}${image.url}`}
+                    alt={`${data.tipoPropiedad.nombre} en ${data.ciudad.nombre}`}
                     className="w-full h-32 sm:h-40 object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </SwiperSlide>
@@ -78,7 +80,7 @@ const CardInmuebleList = ({
             <div className=" absolute z-10 w-full h-full inset-0 bg-black-main/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
           </div>
 
-          {data.isExclusive && (
+          {data.exclusivo && (
             <span className="absolute top-3 z-40 right-2 flex items-center gap-1 rounded-full from-secondary-700 to-secondary-main text-white-main bg-gradient-to-r px-3 py-1 shadow-lg">
               <MdStar className="w-3 h-3 mr-1 fill-current" />
               <p className="hidden sm:block">Exclusivo</p>
@@ -90,17 +92,17 @@ const CardInmuebleList = ({
           <div className="flex flex-col gap-1">
             <span className="text-sm text-black-700">Desde</span>
             <div className="text-base sm:text-lg font-bold text-secondary-main font-TypographBold ">
-              {data.price}
+              S/ {data.precio}
             </div>
           </div>
-          <div className="text-black-800 mt-3 text-sm leading-relaxed line-clamp-2">
-            {data.address}
+          <div className="text-black-800 lin mt-3 text-sm leading-relaxed line-clamp-1">
+            {data.direccion}
           </div>
           <div className="w-full flex gap-1 mt-1 items-center">
             <p className="text-sm line-clamp-1 ">
-              <span className="">{data.propertyType}</span> en{" "}
+              <span className="">{data.tipoPropiedad.nombre}</span> en{" "}
               <span className="cursor-pointer text-secondary-main underline">
-                {data.ubicacion}
+                {data.ciudad.nombre}
               </span>
             </p>
           </div>
@@ -130,7 +132,7 @@ const CardInmuebleGrid = ({
   data,
   variasImagenes,
 }: {
-  data: CardInmuebleProps;
+  data: Propiedad;
   variasImagenes: boolean;
 }) => {
   const { setModalContent, openModal } = useAuth();
@@ -143,13 +145,13 @@ const CardInmuebleGrid = ({
             slidesPerView={1}
             loop={variasImagenes}
             navigation={variasImagenes}
-            className="w-full h-40 swp--Inmuebles--images"
+            className="w-full h-32 sm:h-40 swp--Inmuebles--images"
           >
-            {data.images.map((image: string, index: number) => (
-              <SwiperSlide key={index}>
+            {data.fondoPortada.map((image) => (
+              <SwiperSlide key={image.id}>
                 <img
-                  src={image}
-                  alt={`${data.propertyType} en ${data.ubicacion}`}
+                  src={`${config.API_IMAGE_URL}${image.url}`}
+                  alt={`${data.tipoPropiedad.nombre} en ${data.ciudad.nombre}`}
                   className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
                 />
               </SwiperSlide>
@@ -169,7 +171,7 @@ const CardInmuebleGrid = ({
           </button>
         </div>
 
-        {data.isExclusive && (
+        {data.exclusivo && (
           <span className="absolute top-3 z-40 right-2 flex items-center gap-1 rounded-full from-secondary-700 to-secondary-main text-white-main bg-gradient-to-r px-3 py-1 shadow-lg">
             <MdStar className="w-3 h-3 mr-1 fill-current" />
             Exclusivo
@@ -177,23 +179,26 @@ const CardInmuebleGrid = ({
         )}
       </div>
 
-      <Link href={"/inmueble"} className="block p-4 space-y-3 bg-white-main">
+      <Link
+        href={`/propiedad/${data.id}/try`}
+        className="block p-4 space-y-3 bg-white-main"
+      >
         <div className="flex flex-col gap-1">
           <span className="text-sm text-black-700">Desde</span>
           <div className="text-lg font-bold text-secondary-main font-TypographBold ">
-            {data.price}
+            S/ {data.precio}
           </div>
         </div>
 
-        <div className="text-black-800 text-sm leading-relaxed line-clamp-2">
-          {data.address}
+        <div className="text-black-800 text-sm leading-relaxed line-clamp-1">
+          {data.direccion}
         </div>
 
         <div className="w-full flex gap-1 items-center">
           <p className="text-sm line-clamp-1 ">
-            <span className="">{data.propertyType}</span> en{" "}
+            <span className="">{data.tipoPropiedad.nombre}</span> en{" "}
             <span className="cursor-pointer text-secondary-main underline">
-              {data.ubicacion}
+              {data.ciudad.nombre}
             </span>
           </p>
         </div>

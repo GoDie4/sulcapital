@@ -25,7 +25,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"; // Ajusta la ruta
-import { Input } from "@/components/ui/input"; // Ajusta la ruta
 import {
   Table,
   TableBody,
@@ -36,6 +35,9 @@ import {
 } from "@/components/ui/table"; // Ajusta la ruta
 import { ActionDefinition, DataTableRowActions } from "./DataTableRowActions";
 import { useAuth } from "@/assets/context/AuthContext";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Pagination } from "../interfaces/Pagination";
+import { ModalSizes } from "../../../_components/modal/ModalWrapper";
 
 // Importa DataTableRowActions y su tipo ActionDefinition
 
@@ -55,10 +57,11 @@ interface ReusableShadcnDataTableProps<TData, TValue> {
   rowActionsTriggerIcon?: React.ReactNode;
 
   renderAddForm?: React.ReactNode;
-
+  pagination: Pagination;
   // Opción 2: Render prop para máxima flexibilidad (anula la Opción 1 si se provee)
   renderRowActions?: (row: Row<TData>) => React.ReactNode;
 
+  modalSize?: ModalSizes;
   // Opcional: para controlar el estado de la paginación desde fuera si es necesario
   // pageCount?: number;
   // pagination?: { pageIndex: number; pageSize: number };
@@ -68,8 +71,6 @@ interface ReusableShadcnDataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns: initialColumns,
   data,
-  searchColumnId,
-  searchPlaceholder = "Filtrar...",
   actionColumnId = "actions",
   actionColumnHeaderText = "Acciones",
   rowActions,
@@ -77,8 +78,10 @@ export function DataTable<TData, TValue>({
   rowActionsTriggerIcon,
   renderRowActions,
   renderAddForm,
+  pagination,
+  modalSize,
 }: ReusableShadcnDataTableProps<TData, TValue>) {
-  const { setModalContent, openModal } = useAuth();
+  const { setModalContent, openModal, setModalSize } = useAuth();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -88,7 +91,15 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = React.useState({});
   // Si controlas la paginación externamente, usarías las props, sino el estado interno de la tabla
   // const [paginationState, setPaginationState] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
+  const [searchTerm, setSearchTerm] = React.useState<string>("");
+
+  const [paginationState, setPaginationState] = React.useState({
+    pageIndex: pagination.page - 1, // porque TanStack usa 0-based index
+    pageSize: pagination.limit,
+  });
   const columns = React.useMemo(() => {
     const memoizedColumns = [...initialColumns];
     let effectiveActionsCellRenderer:
@@ -145,35 +156,67 @@ export function DataTable<TData, TValue>({
       columnFilters,
       columnVisibility,
       rowSelection,
-      // pagination: paginationState, // Si controlas la paginación
+      pagination: paginationState,
     },
-    // onPaginationChange: setPaginationState, // Si controlas la paginación
-    // pageCount: pageCount ?? -1, // Si controlas la paginación y conoces el total de páginas
-    // manualPagination: !!pageCount, // Si la paginación es manual (backend)
+    onPaginationChange: setPaginationState,
+    manualPagination: true,
+    pageCount: pagination.totalPages,
   });
+  const getPageUrl = (newPage: number) => {
+    const params = new URLSearchParams(searchParams?.toString());
+    params.set("page", newPage.toString());
+    return `${pathname}?${params.toString()}`;
+  };
 
+  const router = useRouter();
+
+  const nextPage = () => {
+    router.push(getPageUrl(pagination.page + 1));
+  };
+
+  const prevPage = () => {
+    router.push(getPageUrl(pagination.page - 1));
+  };
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (searchTerm.length >= 3) {
+      params.set("search", searchTerm);
+      params.set("page", "1");
+    } else {
+      params.delete("search");
+    }
+
+    const newUrl = `${pathname}?${params.toString()}`;
+    const currentUrl = `${pathname}?${searchParams.toString()}`;
+
+    if (newUrl !== currentUrl) {
+      router.push(newUrl);
+    }
+  }, [searchTerm, pathname, searchParams, router]);
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        {searchColumnId && table.getColumn(searchColumnId) && (
-          <Input
-            placeholder={searchPlaceholder}
-            value={
-              (table.getColumn(searchColumnId)?.getFilterValue() as string) ??
-              ""
-            }
-            onChange={(event) =>
-              table
-                .getColumn(searchColumnId)
-                ?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
+        <form className="w-fit flex items-center gap-2">
+          <input
+            placeholder={"Buscar..."}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="max-w-sm border w-full placeholder:text-sm focus:border-secondary-main outline-none  rounded-main py-2 px-3"
           />
-        )}
+          {/* <button
+            type="button"
+            className="flex px-6 py-2 bg-secondary-main rounded-md text-center justify-center text-white-main"
+          >
+            Buscar
+          </button> */}
+        </form>
         <div className="w-fit gap-4 flex ml-auto">
           <button
             type="button"
             onClick={() => {
+              setModalSize(modalSize ?? "small");
               setModalContent(renderAddForm);
               openModal();
             }}
@@ -225,15 +268,19 @@ export function DataTable<TData, TValue>({
           </DropdownMenu>
         </div>
       </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
+      <div className="rounded-lg overflow-hidden border">
+        <Table className=" overflow-hidden">
+          <TableHeader className="bg-secondary-main rounded-main text-white-main">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow
+                key={headerGroup.id}
+                className="hover:bg-secondary-main"
+              >
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
                       key={header.id}
+                      className="text-white-main "
                       style={{
                         width:
                           header.getSize() !== 150
@@ -283,25 +330,44 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
+      <div className="flex items-center justify-between relative gap-2 py-4">
+        <div className="w-fit flex items-center gap-2">
+          <select
+            id="limit"
+            className="py-2 px-3 outline-none text-sm border text-black-main bg-white-main rounded-main"
+            value={searchParams.get("limit") || pagination.limit}
+            onChange={(e) => {
+              const params = new URLSearchParams(searchParams.toString());
+              params.set("limit", e.target.value);
+              params.set("page", "1");
+              router.push(`${pathname}?${params.toString()}`);
+            }}
+          >
+            {[10, 20, 50, 100].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          <p className="text-sm text-black-800">registros por página</p>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className=" text-sm text-muted-foreground">
+          {data.length} de {pagination.total} registros
+        </div>
+        <div className="max-w-lg w-full absolute justify-center left-0 right-0 mx-auto flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => prevPage()}
+            disabled={pagination.page === 1}
           >
             Anterior
           </Button>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => nextPage()}
+            disabled={pagination.page === pagination.totalPages}
           >
             Siguiente
           </Button>

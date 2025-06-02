@@ -4,10 +4,10 @@ import { useAuth } from "@/assets/context/AuthContext";
 import ModalWrapper from "./ModalWrapper";
 
 export const ModalRender = () => {
-  const { modalContent } = useAuth();
+  const { modalContent, modalSize } = useAuth();
   return (
     <>
-      <ModalWrapper componente={modalContent} />
+      <ModalWrapper componente={modalContent} modalSize={modalSize} />
     </>
   );
 };

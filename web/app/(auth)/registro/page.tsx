@@ -1,28 +1,26 @@
 /* eslint-disable @next/next/no-img-element */
 import { FormRegistro } from "./_components/FormRegistro";
 import Link from "next/link";
-import { BannerInternas } from "../../_components/estructura/BannerInternas";
 
 const Register = () => {
   return (
-    <>
-      <BannerInternas
-        title="Registrarse"
-        image="/images/fondos/fondo_registro.webp"
-      />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white-main to-blue-50">
-        <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-          <div className="w-full max-w-md animate-fade-in">
+    <section className="h-screen flex items-center justify-center bg-[url(/images/fondos/portada_registro.webp)] relative z-10 before:absolute before:w-full before:h-full before:inset-0 before:bg-black-main before:opacity-30 before:-z-10">
+      <div className=" bg-transparent">
+        <div className="flex items-center justify-center  py-8 px-4 sm:px-6 lg:px-8">
+          <div className="w-full max-w-xl animate-fade-in">
             <div className="shadow-xl border-0 bg-white-main p-6">
-              <div className="text-center pb-6 mb-6">
+              <div className="text-center pb-5 mb-4">
                 <div className="flex justify-center mb-4">
-                  <div className="p-3 bg-primary-main/10 rounded-full">
+                  <Link
+                    href={"/"}
+                    className="p-3 bg-primary-main/10 rounded-full"
+                  >
                     <img
                       src="/images/logo/ico_color.png"
                       alt=""
-                      className="w-[50px]"
+                      className="w-[40px]"
                     />
-                  </div>
+                  </Link>
                 </div>
                 <div className="text-2xl font-bold text-secondary-main font-TypographBold">
                   Crear Cuenta
@@ -51,7 +49,7 @@ const Register = () => {
           </div>
         </div>
       </div>
-    </>
+    </section>
   );
 };
 

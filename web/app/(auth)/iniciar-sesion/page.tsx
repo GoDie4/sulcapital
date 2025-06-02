@@ -1,28 +1,25 @@
 import Link from "next/link";
 import { FormLogin } from "./_components/FormLogin";
-import { BannerInternas } from "../../_components/estructura/BannerInternas";
 
 /* eslint-disable @next/next/no-img-element */
 export default function page() {
   return (
-    <>
-      <BannerInternas
-        title="Ingresar"
-        image="/images/fondos/fondo_login.webp"
-      />
-
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md animate-fade-in">
+    <section className="h-screen flex items-center justify-center bg-[url(/images/fondos/portada_login.webp)] relative z-10 before:absolute before:w-full before:h-full before:inset-0 before:bg-black-main before:opacity-30 before:-z-10">
+      <div className="py-8 ">
+        <div className="w-full min-w-[450px] animate-fade-in">
           <div className="shadow-xl border-0 bg-white-main p-6">
             <div className="text-center pb-6 mb-6">
               <div className="flex justify-center mb-4">
-                <div className="p-3 bg-primary-main/10 rounded-full">
+                <Link
+                  href={"/"}
+                  className="p-3 bg-primary-main/10 rounded-full"
+                >
                   <img
                     src="/images/logo/ico_color.png"
                     alt=""
                     className="w-[50px]"
                   />
-                </div>
+                </Link>
               </div>
               <div className="text-2xl font-bold text-secondary-main font-TypographBold">
                 Iniciar Sesión
@@ -50,6 +47,6 @@ export default function page() {
           </div>
         </div>
       </div>
-    </>
+    </section>
   );
 }

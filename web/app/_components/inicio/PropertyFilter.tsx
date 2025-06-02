@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React from "react";
 
 interface PropertyFilterProps {
@@ -11,31 +12,42 @@ const PropertyFilter = ({
   onFilterChange,
 }: PropertyFilterProps) => {
   const filters = [
-    { id: "vender", label: "Vender" },
-    { id: "alquilar", label: "Alquilar" },
-    { id: "comprar", label: "Comprar" },
+    { id: "EN_VENTA", label: "Vender" },
+    { id: "EN_ALQUILER", label: "Alquilar" },
+    { id: "EN_COMPRA", label: "Comprar" },
   ];
 
   return (
-    <div className="w-full radio-buttons-container border-b rounded-main rounded-b-none bg-white-main lg:w-fit px-3 md:px-8 py-4">
+    <div className="w-full radio-buttons-container border-b rounded-main rounded-b-none bg-white-main lg:w-fit px-3 md:px-4 py-2">
       {filters.map((filter) => {
         const isSelected = selectedFilter === filter.id;
         return (
-          <div key={filter.id} className="w-full radio-button items-center">
-            <input
-              type="radio"
-              name="propertyFilter"
-              id={filter.id}
-              value={filter.id}
-              checked={isSelected}
-              onChange={(e) => onFilterChange(e.target.value)}
-              className="radio-button__input"
-            />
-            <label htmlFor={filter.id} className="radio-button__label">
-              <span className="radio-button__custom" />
-              {filter.label}
-            </label>
-          </div>
+          <>
+            {filter.id === "EN_VENTA" ? (
+              <Link
+                href={"/registro"}
+                className="flex w-fit bg-secondary-main rounded-full text-white-main px-5 py-2 text-sm"
+              >
+                Vender
+              </Link>
+            ) : (
+              <div key={filter.id} className="w-full radio-button items-center">
+                <input
+                  type="radio"
+                  name="propertyFilter"
+                  id={filter.id}
+                  value={filter.id}
+                  checked={isSelected}
+                  onChange={(e) => onFilterChange(e.target.value)}
+                  className="radio-button__input"
+                />
+                <label htmlFor={filter.id} className="radio-button__label">
+                  <span className="radio-button__custom" />
+                  {filter.label}
+                </label>
+              </div>
+            )}
+          </>
         );
       })}
       <style jsx>{`
@@ -91,7 +103,9 @@ const PropertyFilter = ({
           box-shadow: 0 0 10px #1e306280;
         }
         @media (max-width: 520px) {
-          .radio-buttons-container { gap: 5px;}
+          .radio-buttons-container {
+            gap: 5px;
+          }
         }
       `}</style>
     </div>

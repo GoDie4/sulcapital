@@ -86,7 +86,7 @@ export const FormRegistro = () => {
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <div className="relative">
-            <FaUser className="absolute left-3 bottom-4 z-10 h-4 w-4 text-gray-400" />
+            <FaUser className="absolute left-3 bottom-3 z-10 h-4 w-4 text-gray-400" />
             <InputForm
               name="nombres"
               type="text"
@@ -130,51 +130,58 @@ export const FormRegistro = () => {
         </div>
       </div>
 
-      <div className="space-y-2">
-        <div className="relative">
-          <FaEnvelope className="absolute left-3 bottom-4 z-10 h-4 w-4 text-gray-400" />
-          <InputForm
-            name="email"
-            type="email"
-            placeholder="juan@email.com"
-            value={values.email}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className={`pl-10 ${
-              errors.email && touched.email
-                ? "border-red-500 focus:border-red-500"
-                : "border-secondary-main focus:border-secondary-main"
-            }`}
-            label="Email"
-          />
+      <div className="w-full flex gap-2">
+        <div className="w-1/2">
+          <div className="space-y-2">
+            <div className="relative">
+              <FaEnvelope className="absolute left-3 bottom-3 z-10 h-4 w-4 text-gray-400" />
+              <InputForm
+                name="email"
+                type="email"
+                placeholder="juan@email.com"
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`pl-10 ${
+                  errors.email && touched.email
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-secondary-main focus:border-secondary-main"
+                }`}
+                label="Email"
+              />
+            </div>
+            {errors.email && (
+              <Errors errors={errors.email} touched={touched.email} />
+            )}
+          </div>
         </div>
-        {errors.email && (
-          <Errors errors={errors.email} touched={touched.email} />
-        )}
+
+        <div className="w-1/2">
+          <div className="space-y-2">
+            <div className="relative">
+              <FaPhone className="absolute left-3 bottom-3 z-10 h-4 w-4 text-gray-400" />
+              <InputForm
+                name="celular"
+                label="Celular"
+                type="tel"
+                placeholder="+34 600 000 000"
+                value={values.celular}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`pl-10  ${
+                  errors.celular && touched.celular
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-secondary-main focus:border-secondary-main"
+                }`}
+              />
+            </div>
+            {errors.celular && (
+              <Errors errors={errors.celular} touched={touched.celular} />
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="space-y-2">
-        <div className="relative">
-          <FaPhone className="absolute left-3 bottom-4 z-10 h-4 w-4 text-gray-400" />
-          <InputForm
-            name="celular"
-            label="Celular"
-            type="tel"
-            placeholder="+34 600 000 000"
-            value={values.celular}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className={`pl-10  ${
-              errors.celular && touched.celular
-                ? "border-red-500 focus:border-red-500"
-                : "border-secondary-main focus:border-secondary-main"
-            }`}
-          />
-        </div>
-        {errors.celular && (
-          <Errors errors={errors.celular} touched={touched.celular} />
-        )}
-      </div>
       <div className="w-full">
         <label className="text-black-800">¿Qué quieres realizar?</label>
         <select
@@ -183,7 +190,7 @@ export const FormRegistro = () => {
           value={values.rol}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={` border w-full placeholder:text-sm focus:border-secondary-main outline-none  rounded-main p-2 ${
+          className={` border w-full placeholder:text-sm text-sm focus:border-secondary-main outline-none  rounded-main p-2 ${
             errors.rol && touched.rol
               ? "border-red-500 focus:border-red-500"
               : "border-secondary-main focus:border-secondary-main"
@@ -196,50 +203,55 @@ export const FormRegistro = () => {
         {errors.rol && <Errors errors={errors.rol} touched={touched.rol} />}
       </div>
 
-      <div className="space-y-2">
-        <div className="relative">
-          <FaLock className="absolute left-3 bottom-4 z-10 h-4 w-4 text-gray-400" />
-          <InputForm
-            label="Contraseña"
-            name="password"
-            type={"password"}
-            placeholder="Mínimo 8 caracteres"
-            value={values.password}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className="pl-10 pr-12 h-12 border-gray-200 focus:border-primary focus:ring-primary"
-          />
+      <div className="w-full flex gap-2">
+        <div className="w-1/2">
+          <div className="space-y-2">
+            <div className="relative">
+              <FaLock className="absolute left-3 bottom-3 z-10 h-4 w-4 text-gray-400" />
+              <InputForm
+                label="Contraseña"
+                name="password"
+                type={"password"}
+                placeholder="Mínimo 8 caracteres"
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="pl-10 pr-12  border-gray-200 focus:border-primary focus:ring-primary"
+              />
+            </div>
+            {errors.password && (
+              <Errors errors={errors.password} touched={touched.password} />
+            )}
+          </div>
         </div>
-        {errors.password && (
-          <Errors errors={errors.password} touched={touched.password} />
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <div className="relative">
-          <FaLock className="absolute left-3 bottom-4 z-10 h-4 w-4 text-gray-400" />
-          <InputForm
-            label="Repite tu contraseña"
-            name="confirmPassword"
-            type={"password"}
-            placeholder="Repite tu contraseña"
-            value={values.confirmPassword}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className="pl-10 pr-12 h-12 border-gray-200 focus:border-primary focus:ring-primary"
-          />
+        <div className="w-1/2">
+          <div className="space-y-2">
+            <div className="relative">
+              <FaLock className="absolute left-3 bottom-3 z-10 h-4 w-4 text-gray-400" />
+              <InputForm
+                label="Repite tu contraseña"
+                name="confirmPassword"
+                type={"password"}
+                placeholder="Repite tu contraseña"
+                value={values.confirmPassword}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className="pl-10 pr-12  border-gray-200 focus:border-primary focus:ring-primary"
+              />
+            </div>
+            {errors.confirmPassword && (
+              <Errors
+                errors={errors.confirmPassword}
+                touched={touched.confirmPassword}
+              />
+            )}
+          </div>
         </div>
-        {errors.confirmPassword && (
-          <Errors
-            errors={errors.confirmPassword}
-            touched={touched.confirmPassword}
-          />
-        )}
       </div>
 
       <button
         type="submit"
-        className="w-full h-12 bg-primary-main rounded-main text-white-main hover:bg-primary-700 text-white font-medium transition-all duration-200 transform hover:scale-[1.02]"
+        className="w-full  bg-primary-main rounded-main py-2 text-white-main hover:bg-primary-700 text-white font-medium transition-all duration-200 transform hover:scale-[1.02]"
         disabled={loading}
       >
         {loading ? (

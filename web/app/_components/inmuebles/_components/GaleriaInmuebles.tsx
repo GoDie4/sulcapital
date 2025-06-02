@@ -5,15 +5,32 @@ import { ContentMain } from "../../estructura/ContentMain";
 import { MdLocationPin } from "react-icons/md";
 import "photoswipe/style.css";
 import { Gallery, Item } from "react-photoswipe-gallery";
-export const GaleriaInmuebles = () => {
-  const imagenes = [
-    "/images/inmueble/foto1.webp",
-    "/images/inmueble/foto2.webp",
-    "/images/inmueble/foto3.webp",
-    "/images/inmueble/foto4.webp",
-    "/images/inmueble/foto5.webp",
-    "/images/inmueble/foto6.webp",
-  ];
+import { config } from "@/assets/config/config";
+
+export interface ImagenPropiedad {
+  id: number;
+  url: string;
+}
+
+export const GaleriaInmuebles = ({
+  imagenes,
+  precio,
+  descripcionCorta,
+  direccion,
+}: {
+  imagenes: ImagenPropiedad[];
+  precio: string;
+  descripcionCorta: string;
+  direccion: string;
+}) => {
+  //   const imagenes = [
+  //     "/images/inmueble/foto1.webp",
+  //     "/images/inmueble/foto2.webp",
+  //     "/images/inmueble/foto3.webp",
+  //     "/images/inmueble/foto4.webp",
+  //     "/images/inmueble/foto5.webp",
+  //     "/images/inmueble/foto6.webp",
+  //   ];
   return (
     <section>
       <ContentMain className="py-12">
@@ -24,8 +41,8 @@ export const GaleriaInmuebles = () => {
                 Venta
               </span>
               <Item
-                original={imagenes[0]}
-                thumbnail={imagenes[0]}
+                original={`${config.API_IMAGE_URL}${imagenes[0].url}`}
+                thumbnail={`${config.API_IMAGE_URL}${imagenes[0].url}`}
                 width="1200"
                 height="800"
               >
@@ -34,7 +51,7 @@ export const GaleriaInmuebles = () => {
                     <img
                       ref={ref}
                       onClick={open}
-                      src={imagenes[0]}
+                      src={`${config.API_IMAGE_URL}${imagenes[0].url}`}
                       alt=""
                       className="block rounded-main w-full -z-20 cursor-pointer"
                     />
@@ -48,8 +65,8 @@ export const GaleriaInmuebles = () => {
                 {imagenes.map((img, index) => (
                   <div className="w-full" key={index}>
                     <Item
-                      original={img}
-                      thumbnail={img}
+                      original={`${config.API_IMAGE_URL}${img.url}`}
+                      thumbnail={`${config.API_IMAGE_URL}${img.url}`}
                       width="1200"
                       height="800"
                     >
@@ -57,7 +74,7 @@ export const GaleriaInmuebles = () => {
                         <img
                           ref={ref}
                           onClick={open}
-                          src={img}
+                          src={`${config.API_IMAGE_URL}${img.url}`}
                           alt=""
                           className="block rounded-main h-28 sm:h-40 w-full object-cover cursor-pointer"
                         />
@@ -69,17 +86,16 @@ export const GaleriaInmuebles = () => {
               <div className="w-full px-2 py-4">
                 <p className="text-black-900">Desde</p>
                 <h2 className=" mb-3 text-xl text-secondary-main font-TypographBold">
-                  S/ 400
+                  S/ {precio}
                 </h2>
                 <p className="flex items-center gap-1 mb-2 text-sm">
                   <span className="text-secondary-main text-lg">
                     <MdLocationPin />
                   </span>
-                  <p>Jr. Los Pinos 456, Barrio El Milagro, Satipo, Junín.</p>
+                  <p>{direccion}</p>
                 </p>
                 <p className="text-black-900 line-clamp-2">
-                  Acogedora casa de un piso con techo de tejas, rodeada de
-                  árboles y un amplio jardín en la selva central.
+                  {descripcionCorta}
                 </p>
               </div>
             </div>

@@ -14,7 +14,7 @@ export const HeaderSistema = ({
 }) => {
   return (
     <div
-      className={`w-full z-[1200] top-0 left-0 flex items-center justify-between gap-5 pl-4 lg:pl-6 pr-4 h-20 ${
+      className={`w-full z-[1200] top-0 left-0 flex items-center justify-between gap-3 pl-4 lg:pl-6 pr-4 h-20 ${
         scrolled ? "fixed " : "relative "
       }`}
     >
@@ -38,9 +38,9 @@ export const HeaderSistema = ({
       <div className="w-fit">
         <button
           type="button"
-          className="relative flex items-center gap-1 px-2 py-3 md:px-4 btn--menuProfile rounded-main sm:gap-2 hover:bg-secondary-50"
+          className="relative flex bg-white-main h-12 items-center gap-1 px-2 py-3 md:px-4 btn--menuProfile rounded-md sm:gap-2 hover:bg-secondary-50"
         >
-          <span className="flex items-center justify-center flex-1 w-8 h-8 font-bold uppercase rounded-full bg-primary-main sm:w-10 sm:h-10 text-white-main">
+          <span className="flex items-center justify-center flex-1 w-6 h-6 font-bold uppercase rounded-full bg-primary-main sm:w-8 sm:h-8 text-white-main">
             <p className="text-sm sm:text-base text-white-main ">LP</p>
           </span>
           <p className="hidden text-sm sm:block sm:text-base lg:text-black-main">

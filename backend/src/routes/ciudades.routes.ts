@@ -11,7 +11,7 @@ import {
 } from "../controllers/ciudades.controller";
 
 const router = Router();
-const UPLOAD_DIR = path.resolve(__dirname, "../public/ciudades");
+const UPLOAD_DIR = path.resolve(__dirname, "../../public/ciudades");
 
 // Listar
 router.get("/", getCiudades);
@@ -19,7 +19,7 @@ router.get("/", getCiudades);
 // Crear con imagen
 router.post(
   "/agregar",
-  upload.single("imagen"),
+  upload.fields([{ name: "imagen", maxCount: 1 }]),
   handleImageUpload("imagen", {
     uploadDir: UPLOAD_DIR,
     filePrefix: "ciudad",
@@ -31,7 +31,7 @@ router.post(
 // Actualizar con posible nueva imagen
 router.put(
   "/editar/:id",
-  upload.single("imagen"),
+  upload.fields([{ name: "imagen", maxCount: 1 }]),
   handleImageUpload("imagen", {
     uploadDir: UPLOAD_DIR,
     filePrefix: "ciudad",

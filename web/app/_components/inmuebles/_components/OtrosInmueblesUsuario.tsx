@@ -1,33 +1,56 @@
 import React from "react";
 import CardInmueble from "../CardInmueble";
+import { Propiedad } from "../../../(sistema)/sistema/propiedades/_components/table/ColumnasPropiedades";
 
 export const OtrosInmueblesUsuario = () => {
-  const inmueble1 = {
+  const inmueble1: Propiedad = {
     id: "Imueble_1",
-    images: [
-      "/images/propiedades/propiedad1.webp",
-      "/images/propiedades/propiedad2.webp",
-      "/images/propiedades/propiedad2.webp",
+    imagenes: [
+      { id: 1, url: "/images/propiedades/propiedad1.webp" },
+      { id: 1, url: "/images/propiedades/propiedad2.webp" },
+      { id: 1, url: "/images/propiedades/propiedad2.webp" },
     ],
-    price: "S/ 450,000",
-    ubicacion: "Madrid",
-    propertyType: "Apartamento",
-    address: "Calle Gran Vía, 28, 28013 Madrid, España",
-    isExclusive: true,
+    precio: 450000,
+    ciudad: { nombre: "Madrid" },
+    tipoPropiedad: { nombre: "Apartamento" },
+    direccion: "Calle Gran Vía, 28, 28013 Madrid, España",
+    exclusivo: true,
+    descripcionLarga: "",
+    disponibilidad: "",
+    estado: "",
+    fondoPortada: [
+      { id: 1, url: "/images/propiedades/propiedad1.webp" },
+      { id: 1, url: "/images/propiedades/propiedad2.webp" },
+      { id: 1, url: "/images/propiedades/propiedad2.webp" },
+    ],
+    titulo: "",
+    createdAt: "",
+    updatedAt: "",
   };
 
-  const inmueble2 = {
+  const inmueble2: Propiedad = {
     id: "Imueble_2",
-    images: [
-      "/images/propiedades/propiedad7.webp",
-      "/images/propiedades/propiedad6.webp",
-      "/images/propiedades/propiedad9.webp",
+    imagenes: [
+      { id: 1, url: "/images/propiedades/propiedad7.webp" },
+      { id: 1, url: "/images/propiedades/propiedad6.webp" },
+      { id: 1, url: "/images/propiedades/propiedad9.webp" },
     ],
-    price: "S/ 320,000",
-    ubicacion: "Barcelona",
-    propertyType: "Piso",
-    address: "Passeig de Gràcia, 15, 08007 Barcelona, España",
-    isExclusive: false,
+    precio: 320000,
+    ciudad: { nombre: "Barcelona" },
+    tipoPropiedad: { nombre: "Piso" },
+    direccion: "Passeig de Gràcia, 15, 08007 Barcelona, España",
+    exclusivo: false,
+    descripcionLarga: "",
+    disponibilidad: "",
+    estado: "",
+    fondoPortada: [
+      { id: 1, url: "/images/propiedades/propiedad1.webp" },
+      { id: 1, url: "/images/propiedades/propiedad2.webp" },
+      { id: 1, url: "/images/propiedades/propiedad2.webp" },
+    ],
+    titulo: "",
+    createdAt: "",
+    updatedAt: "",
   };
 
   return (

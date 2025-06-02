@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/assets/context/AuthContext";
 import { ModalRender } from "./_components/modal/ModalRender";
 import { Toaster } from "sonner";
+import { getServerSideProps } from "@/server/getServerSideProps";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,17 +31,25 @@ export const metadata: Metadata = {
     ],
   },
 };
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const dataCiudades = await getServerSideProps("ciudades");
+  const dataTiposPropiedades = await getServerSideProps("tipo_propiedades");
+  const dataPropiedades = await getServerSideProps("propiedades");
+
   return (
     <html lang="es">
       <body
         className={`${geistSans.variable} ${geistMontserrat.variable} antialiased`}
       >
-        <AuthProvider>
+        <AuthProvider
+          dataCiudadesInitial={dataCiudades}
+          dataPropiedadesInitial={dataPropiedades}
+          dataTiposPropiedadesInitial={dataTiposPropiedades}
+        >
           {children}
           <ModalRender />
         </AuthProvider>

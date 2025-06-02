@@ -4,11 +4,14 @@ import React, { useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "@/assets/context/AuthContext";
 
+export type ModalSizes = "small" | "medium" | "large" | "full";
+
 interface ModalProps {
   componente: React.ReactNode;
+  modalSize: ModalSizes;
 }
 
-const ModalWrapper: React.FC<ModalProps> = ({ componente }) => {
+const ModalWrapper: React.FC<ModalProps> = ({ componente, modalSize }) => {
   const { isModalOpen, closeModal } = useAuth();
 
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +49,13 @@ const ModalWrapper: React.FC<ModalProps> = ({ componente }) => {
                 duration: 0.5,
                 ease: "easeOut",
               }}
-              className="px-6 py-6 w-full max-w-[540px] bg-white-main rounded-md  max-h-[850px] absolute top-0 my-auto  h-fit overflow-y-auto modales"
+              className={`px-6 py-6 w-full  ${
+                modalSize === "small" ? "max-w-xl" : ""
+              } ${modalSize === "medium" ? "max-w-5xl" : ""} ${
+                modalSize === "large" ? "max-w-7xl" : ""
+              } ${
+                modalSize === "full" ? "max-w-full w-full h-screen" : ""
+              } bg-white-main rounded-md  max-h-[660px] absolute top-0 my-auto  h-fit overflow-y-auto modales`}
             >
               <button
                 onClick={closeModal}

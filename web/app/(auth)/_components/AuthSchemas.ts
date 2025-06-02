@@ -26,7 +26,7 @@ export const registerSchema = yup.object().shape({
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password")], "Las contraseñas deben coincidir")
-    .required("La confirmación de la contraseña es requerida"),
+    .required("La confirmación es requerida"),
 });
 
 export default registerSchema;

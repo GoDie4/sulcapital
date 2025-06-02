@@ -10,10 +10,16 @@ import {
   BsTiktok,
 } from "react-icons/bs";
 import Link from "next/link";
-import { ubicaciones } from "@/assets/data/DataGeneral";
-import { UbicacionProps } from "../inicio/lugares/CardUbicacion";
+import { TipoPropiedad } from "../../(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
+import { CiudadList } from "../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
 
-export const Footer = () => {
+export const Footer = ({
+  tipoPropiedades,
+  ciudades,
+}: {
+  tipoPropiedades: TipoPropiedad[];
+  ciudades: CiudadList[];
+}) => {
   return (
     <footer className="bg-secondary-main">
       <ContentMain className="pt-16 pb-10 flex flex-wrap justify-between gap-10 lg:gap-6">
@@ -59,36 +65,33 @@ export const Footer = () => {
           </h5>
           <ul className="space-y-4">
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={"/buscar"}>Alquilar</Link>
+              <Link href={"/buscar?disponibilidad=EN_VENTA"}>Vender</Link>
             </li>
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={"/buscar"}>Vender</Link>
+              <Link href={"/buscar?disponibilidad=EN_COMPRA"}>Comprar</Link>
             </li>
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={"/buscar"}>Comprar</Link>
+              <Link href={"/buscar?disponibilidad=EN_ALQUILER"}>Alquiler</Link>
             </li>
           </ul>
         </div>
         <div className="min-w-72">
           <h5 className="text-xl mb-8 font-TypographBold text-white-main">
-            Tipo de inmueble
+            Tipo de Propiedad
           </h5>
           <ul className="space-y-4">
-            <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={"/buscar"}>Locales</Link>
-            </li>
-            <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={"/buscar"}>Terrenos</Link>
-            </li>
-            <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={"/buscar"}>Casas</Link>
-            </li>
-            <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={"/buscar"}>Lotes</Link>
-            </li>
-            <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={"/buscar"}>Alquiler</Link>
-            </li>
+            {tipoPropiedades.map((tipo: TipoPropiedad) => (
+              <li
+                key={tipo.id}
+                className="flex items-center gap-3 text-white-200 hover:text-white-main"
+              >
+                <Link
+                  href={`/buscar?tipo_propiedad=${tipo.nombre.toLocaleLowerCase()}`}
+                >
+                  {tipo.nombre}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div className="">
@@ -96,12 +99,16 @@ export const Footer = () => {
             Ubicaciones
           </h5>
           <ul className="space-y-4 columns-2">
-            {ubicaciones.map((ubicacion: UbicacionProps) => (
+            {ciudades.map((ubicacion: CiudadList) => (
               <li
                 key={ubicacion.id}
                 className="flex items-center gap-3 text-white-200 hover:text-white-main"
               >
-                <Link href={"/buscar"}>{ubicacion.nombre}</Link>
+                <Link
+                  href={`/buscar?ciudad=${ubicacion.nombre.toLocaleLowerCase()}`}
+                >
+                  {ubicacion.nombre}
+                </Link>
               </li>
             ))}
           </ul>

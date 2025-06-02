@@ -3,15 +3,25 @@ import Link from "next/link";
 import React, { Dispatch, SetStateAction } from "react";
 import { CgLogOut } from "react-icons/cg";
 import { IoChevronBackOutline } from "react-icons/io5";
-import { BsBarChart } from "react-icons/bs";
+import { BsBuilding, BsGeoAlt } from "react-icons/bs";
 
 import DropdownMenu from "./DropdownMenu";
 
 const menuItems = [
   {
     title: "Ciudades",
-    icon: <BsBarChart />,
+    icon: <BsGeoAlt />,
     route: "ciudades",
+  },
+  {
+    title: "Tipo de prop.",
+    icon: <BsBuilding />,
+    route: "tipo-propiedades",
+  },
+  {
+    title: "Propiedades",
+    icon: <BsBuilding />,
+    route: "propiedades",
   },
 ];
 

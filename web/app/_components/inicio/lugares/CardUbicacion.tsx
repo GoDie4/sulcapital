@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import React from "react";
+import { CiudadList } from "../../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
+import { config } from "@/assets/config/config";
 
 export interface UbicacionProps {
   id: string;
@@ -9,12 +11,15 @@ export interface UbicacionProps {
   descripcion: string;
 }
 
-export const CardUbicacion = ({ ubicacion }: { ubicacion: UbicacionProps }) => {
+export const CardUbicacion = ({ ubicacion }: { ubicacion: CiudadList }) => {
   return (
-    <Link href={'/buscar'} className="w-full bg-white-main group hover:bg-secondary-main shadow-main p-2 flex rounded-[1.4rem] overflow-hidden transition-all hover:scale-[1.05] duration-300">
+    <Link
+      href={`/buscar?ciudad=${ubicacion.nombre.toLocaleLowerCase()}`}
+      className="w-full bg-white-main group hover:bg-secondary-main shadow-main p-2 flex rounded-[1.4rem] overflow-hidden transition-all hover:scale-[1.05] duration-300"
+    >
       <div className="w-fit">
         <img
-          src={ubicacion.imagen}
+          src={`${config.API_IMAGE_URL}${ubicacion.imagen}`}
           alt={`${ubicacion.nombre} - Sulcapital`}
           title={`${ubicacion.nombre} - Sulcapital`}
           loading="lazy"

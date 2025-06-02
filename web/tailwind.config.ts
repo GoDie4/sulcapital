@@ -1,121 +1,120 @@
 import type { Config } from "tailwindcss";
 import animatePlugin from "tailwindcss-animate";
+import typographyPlugin from "@tailwindcss/typography";
+
 export default {
-    darkMode: ["class"],
-    content: [
+  darkMode: ["class"],
+  content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-  	extend: {
-  		boxShadow: {
-  			main: 'rgba(60, 64, 67, 0.2) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 4px 2px'
-  		},
-  		fontFamily: {
-  			TypographBold: [
-  				'Typograph-Bold',
-  				'sans-serif'
-  			]
-  		},
-  		borderRadius: {
-  			main: '1.2rem',
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
-  		},
-  		colors: {
-  			primary: {
-  				'50': '#fff1f2',
-  				'100': '#ffdfe0',
-  				'200': '#ffc5c7',
-  				'300': '#ff9da1',
-  				'400': '#ff656c',
-  				'500': '#ff343d',
-  				main: '#ed1b24',
-  				'700': '#c70e16',
-  				'800': '#a41016',
-  				'900': '#881419',
-  				'950': '#4a0508',
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				'50': '#f0f6fe',
-  				'100': '#dcebfd',
-  				'200': '#c1ddfc',
-  				'300': '#97c8f9',
-  				'400': '#65abf5',
-  				'500': '#418af0',
-  				'600': '#2c6ce4',
-  				'700': '#2357d2',
-  				'800': '#2348aa',
-  				'900': '#224086',
-  				main: '#1e3062',
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
-  			white: {
-  				main: '#ffffff',
-  				'100': '#efefef',
-  				'200': '#dcdcdc',
-  				'300': '#bdbdbd',
-  				'400': '#989898',
-  				'500': '#7c7c7c',
-  				'600': '#656565',
-  				'700': '#525252',
-  				'800': '#464646',
-  				'900': '#3d3d3d',
-  				'950': '#292929'
-  			},
-  			black: {
-  				'50': '#f6f6f6',
-  				'100': '#e7e7e7',
-  				'200': '#d1d1d1',
-  				'300': '#b0b0b0',
-  				'400': '#888888',
-  				'500': '#6d6d6d',
-  				'600': '#5d5d5d',
-  				'700': '#4f4f4f',
-  				'800': '#454545',
-  				'900': '#3d3d3d',
-  				main: '#000000'
-  			},
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
-  			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
-  			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
-  			}
-  		}
-  	}
+    extend: {
+      boxShadow: {
+        main: "rgba(60, 64, 67, 0.2) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 4px 2px",
+      },
+      fontFamily: {
+        TypographBold: ["Typograph-Bold", "sans-serif"],
+      },
+      borderRadius: {
+        main: "1.2rem",
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      colors: {
+        primary: {
+          "50": "#fff1f2",
+          "100": "#ffdfe0",
+          "200": "#ffc5c7",
+          "300": "#ff9da1",
+          "400": "#ff656c",
+          "500": "#ff343d",
+          main: "#ed1b24",
+          "700": "#c70e16",
+          "800": "#a41016",
+          "900": "#881419",
+          "950": "#4a0508",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          "50": "#f0f6fe",
+          "100": "#dcebfd",
+          "200": "#c1ddfc",
+          "300": "#97c8f9",
+          "400": "#65abf5",
+          "500": "#418af0",
+          "600": "#2c6ce4",
+          "700": "#2357d2",
+          "800": "#2348aa",
+          "900": "#224086",
+          main: "#1e3062",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        white: {
+          main: "#ffffff",
+          "100": "#efefef",
+          "200": "#dcdcdc",
+          "300": "#bdbdbd",
+          "400": "#989898",
+          "500": "#7c7c7c",
+          "600": "#656565",
+          "700": "#525252",
+          "800": "#464646",
+          "900": "#3d3d3d",
+          "950": "#292929",
+        },
+        black: {
+          "50": "#f6f6f6",
+          "100": "#e7e7e7",
+          "200": "#d1d1d1",
+          "300": "#b0b0b0",
+          "400": "#888888",
+          "500": "#6d6d6d",
+          "600": "#5d5d5d",
+          "700": "#4f4f4f",
+          "800": "#454545",
+          "900": "#3d3d3d",
+          main: "#000000",
+        },
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        chart: {
+          "1": "hsl(var(--chart-1))",
+          "2": "hsl(var(--chart-2))",
+          "3": "hsl(var(--chart-3))",
+          "4": "hsl(var(--chart-4))",
+          "5": "hsl(var(--chart-5))",
+        },
+      },
+    },
   },
-  plugins: [animatePlugin],
+  plugins: [animatePlugin, typographyPlugin],
 } satisfies Config;

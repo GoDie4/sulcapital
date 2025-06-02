@@ -5,21 +5,23 @@ import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone, FileRejection } from "react-dropzone";
 
 interface ImageDropzoneProps {
+  filesInit?: (File | string)[];
   maxFiles?: number;
   maxSize?: number; // en bytes
   maxWidth?: number; // en px
   maxHeight?: number; // en px
-  onChange: (files: File[]) => void;
+  onChange: (files: (File | string)[]) => void;
 }
 
 const UploadImages: React.FC<ImageDropzoneProps> = ({
+  filesInit,
   maxFiles = 1,
   maxSize = 5 * 1024 * 1024, // 5MB por defecto
   maxWidth = 2000,
   maxHeight = 2000,
   onChange,
 }) => {
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<(File | string)[]>(filesInit ?? []);
   const [previews, setPreviews] = useState<string[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -51,9 +53,8 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
   const onDrop = useCallback(
     async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
       setErrors([]);
-      const validFiles: File[] = [...files];
 
-      // rechazos por tamaño o cantidad
+      // Validar rechazos
       fileRejections.forEach((rej) => {
         rej.errors.forEach((e) => {
           if (e.code === "file-too-large") {
@@ -70,21 +71,27 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
           }
         });
       });
-
-      // validar dimensiones y agregar
+      const validFiles: File[] = [];
       for (const file of acceptedFiles) {
         if (validFiles.length >= maxFiles) break;
-
         const ok = await validateImage(file);
         if (ok) validFiles.push(file);
       }
 
-      // actualizar estado
-      setFiles(validFiles);
-      onChange(validFiles);
+      let newFiles: (File | string)[] = [];
+      if (maxFiles === 1) {
+        // Reemplazar todo por el primer archivo válido, o vaciar si ninguno
+        newFiles = validFiles.length > 0 ? [validFiles[0]] : [];
+      } else {
+        // maxFiles > 1, agregar validFiles sin perder previos, respetando maxFiles
+        // Primero filtramos previos para no exceder maxFiles
+        const prevFilesFiltered = files.slice(0, maxFiles - validFiles.length);
+        newFiles = [...prevFilesFiltered, ...validFiles];
+      }
+
+      setFiles(newFiles);
+      onChange(newFiles.filter((f): f is File => typeof f !== "string"));
     },
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [files, maxFiles, maxSize, maxWidth, maxHeight, onChange]
   );
@@ -97,22 +104,27 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
     maxSize,
   });
 
-  // generar URLs de vista previa cada vez que files cambie
+  // Generar previews (crear URLs sólo para Files)
   useEffect(() => {
-    const urls = files.map((f) => URL.createObjectURL(f));
+    const urls = files.map((file) =>
+      typeof file === "string" ? file : URL.createObjectURL(file)
+    );
     setPreviews(urls);
-    return () => urls.forEach((u) => URL.revokeObjectURL(u));
+
+    return () => {
+      urls.forEach((url, i) => {
+        if (typeof files[i] !== "string") URL.revokeObjectURL(url);
+      });
+    };
   }, [files]);
 
-  // calcular columnas dinámicas (hasta 4)
-  const cols = Math.min(files.length || 1, maxFiles, 4);
+  const cols = Math.min(files.length || 1, maxFiles, 3);
 
   const removeImage = (index: number) => {
     const newFiles = files.filter((_, i) => i !== index);
     setFiles(newFiles);
-    onChange(newFiles);
+    onChange(newFiles.filter((f): f is File => typeof f !== "string"));
   };
-
   return (
     <div>
       <div
@@ -132,7 +144,9 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
       {errors.length > 0 && (
         <ul className="mt-2 text-red-600">
           {errors.map((err, i) => (
-            <li key={i}>• {err}</li>
+            <li key={i} className="text-sm">
+              • {err}
+            </li>
           ))}
         </ul>
       )}
@@ -164,6 +178,9 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
           ))}
         </div>
       )}
+      <p className="mt-2 text-sm text-black-800">
+        Seleccionaste {files.length} archivo(s).
+      </p>
     </div>
   );
 };

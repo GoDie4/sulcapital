@@ -1,4 +1,5 @@
-'use client'
+"use client";
+import { config } from "@/assets/config/config";
 /* eslint-disable @next/next/no-img-element */
 // columns.ts
 import { ColumnDef } from "@tanstack/react-table";
@@ -28,14 +29,12 @@ export const columns: ColumnDef<Ubicacion>[] = [
     header: "Imagen",
     cell: ({ row }) => (
       <img
-        src={row.getValue("imagen")}
+        src={`${config.API_IMAGE_URL}${row.getValue("imagen")}`}
         alt={row.getValue("nombre")}
         className="h-12 w-12 object-cover rounded"
       />
     ),
   },
-  
- 
 ];
 
 export const ubicaciones: Ubicacion[] = [

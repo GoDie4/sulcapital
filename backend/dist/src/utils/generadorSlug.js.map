@@ -1,0 +1,1 @@
+{"version":3,"file":"generadorSlug.js","sourceRoot":"","sources":["../../../src/utils/generadorSlug.ts"],"names":[],"mappings":";;;AAAO,MAAM,WAAW,GAAG,CAAC,KAAa,EAAE,EAAE,CAC3C,KAAK;KACF,WAAW,EAAE;KACb,SAAS,CAAC,KAAK,CAAC;KAChB,OAAO,CAAC,kBAAkB,EAAE,EAAE,CAAC;KAC/B,OAAO,CAAC,aAAa,EAAE,GAAG,CAAC;KAC3B,OAAO,CAAC,UAAU,EAAE,EAAE,CAAC,CAAC;AANhB,QAAA,WAAW,eAMK"}

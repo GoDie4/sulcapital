@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const DescripcionInmueble: React.FC = () => {
+const DescripcionInmueble = ({ descripcion }: { descripcion: string }) => {
   const [showMore, setShowMore] = useState(false);
 
   return (
@@ -11,10 +11,12 @@ const DescripcionInmueble: React.FC = () => {
       </h2>
       <div
         className={`relative overflow-hidden space-y-5 transition-all text-black-900 duration-300 ${
-          showMore ? "max-h-[1000px]" : "max-h-[200px]"
+          showMore ? "max-h-[1000px]" : "max-h-[320px]"
         }`}
       >
-        <p>
+        <div dangerouslySetInnerHTML={{ __html: descripcion }}></div>
+
+        {/* <p>
           Ubicada en un terreno de más de 8,000 pies cuadrados, con una
           impresionante vista panorámica de 360 grados a la exuberante selva
           central y las montañas que rodean Satipo, esta propiedad es una
@@ -43,10 +45,9 @@ const DescripcionInmueble: React.FC = () => {
           permite cultivar productos frescos. Además, la casa tiene un sistema
           de captación de agua de lluvia y paneles solares para un estilo de
           vida más sostenible.
-        </p>
-        {/* Gradiente difuminado */}
+        </p> */}
         {!showMore && (
-          <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-white-main to-transparent"></div>
+          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-t from-white-main to-transparent"></div>
         )}
       </div>
       <button

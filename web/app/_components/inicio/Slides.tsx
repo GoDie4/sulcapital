@@ -2,7 +2,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BsChevronLeft, BsChevronRight, BsPause, BsPlay } from "react-icons/bs";
+import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
 interface SlideData {
   id: number;
@@ -44,7 +44,7 @@ type AnimationType =
 const InnovativeSlider: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [animationType] = useState<AnimationType>("morph3d");
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying] = useState(true);
 
   useEffect(() => {
     if (isPlaying) {
@@ -227,7 +227,7 @@ const InnovativeSlider: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-screen relative overflow-hidden bg-secondary-main">
+    <div className="w-full h-[77vh] relative overflow-hidden bg-secondary-main">
       {/* Background Image takes up full screen */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -265,7 +265,7 @@ const InnovativeSlider: React.FC = () => {
             {/* Slide Content centered on screen */}
             <div className="relative max-w-4xl px-8 text-center">
               <motion.h1
-                className="text-3xl md:text-4xl lg:text-5xl font-TypographBold leading-[2.5rem] lg:leading-[4rem] font-bold mb-6 text-center text-white-main text-shadow-lg"
+                className="text-3xl md:text-4xl lg:text-[42px] font-TypographBold leading-[2.5rem] lg:leading-[4rem] font-bold mb-3 text-center text-white-main text-shadow-lg"
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
@@ -290,7 +290,7 @@ const InnovativeSlider: React.FC = () => {
               </motion.h1>
 
               <motion.p
-                className="hidden lg:block text-lg lg:text-2xl text-center text-white-100 max-w-5xl mx-auto  opacity-90 font-light text-shadow"
+                className="hidden lg:block text-lg lg:text-xl text-center text-white-100 max-w-5xl mx-auto  opacity-90 font-light text-shadow"
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
@@ -303,32 +303,32 @@ const InnovativeSlider: React.FC = () => {
       </div>
 
       {/* Navigation Controls positioned at the bottom */}
-      <div className="absolute h-fit bottom-0 top-0 my-auto right-8 gap-2 transform flex-col flex items-center z-30">
+      <div className="absolute h-fit w-full px-3 md:px-10 lg:px-20  bottom-0 left-0 right-0 mx-auto top-0 my-auto gap-2 transform justify-between flex items-center z-30">
         <motion.button
           onClick={prevSlide}
-          className="p-2 bg-black-main bg-opacity-30 rounded-full backdrop-blur-sm  text-white-main hover:bg-opacity-70 transition-all"
+          className="p-2 bg-secondary-main bg-opacity-60 rounded-full backdrop-blur-sm  text-white-main hover:bg-opacity-70 transition-all"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <BsChevronLeft size={20} />
+          <BsChevronLeft size={40} />
         </motion.button>
 
-        <motion.button
+        {/* <motion.button
           onClick={() => setIsPlaying(!isPlaying)}
-          className="p-2 bg-black-main bg-opacity-30 rounded-full backdrop-blur-sm  text-white-main hover:bg-opacity-70 transition-all"
+          className="p-2 bg-secondary-main bg-opacity-60 rounded-full backdrop-blur-sm  text-white-main hover:bg-opacity-70 transition-all"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          {isPlaying ? <BsPause size={20} /> : <BsPlay size={20} />}
-        </motion.button>
+          {isPlaying ? <BsPause size={40} /> : <BsPlay size={40} />}
+        </motion.button> */}
 
         <motion.button
           onClick={nextSlide}
-          className="p-2 bg-black-main bg-opacity-30 rounded-full backdrop-blur-sm  text-white-main hover:bg-opacity-70 transition-all"
+          className="p-2 bg-secondary-main bg-opacity-60 rounded-full backdrop-blur-sm  text-white-main hover:bg-opacity-70 transition-all"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <BsChevronRight size={20} />
+          <BsChevronRight size={40} />
         </motion.button>
       </div>
 

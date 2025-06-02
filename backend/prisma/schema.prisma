@@ -57,11 +57,78 @@ model PasswordResetToken {
 }
 
 model Ciudades {
-    id          Int    @id @default(autoincrement())
+    id          Int         @id @default(autoincrement())
     nombre      String
-    descripcion String @db.VarChar(30)
+    descripcion String      @db.VarChar(30)
     imagen      String
-    coordenadas String @db.VarChar(100)
+    coordenadas String      @db.VarChar(100)
+    Propiedad   Propiedad[]
 
     @@map("ciudades")
+}
+
+model TipoPropiedad {
+    id        String      @id @default(uuid())
+    nombre    String
+    imagen    String
+    icono     String
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+    Propiedad Propiedad[]
+
+    @@map("tipo_propiedades")
+}
+
+model Propiedad {
+    id               String         @id @default(uuid())
+    titulo           String
+    slug             String?       
+    descripcionLarga String
+    descripcionCorta String?
+    direccion        String
+    precio           Float
+    video            String?
+    coordenadas      String?
+    idUser           String
+    disponibilidad   Disponibilidad
+    exclusivo        Boolean        @default(false)
+    tipoPropiedad    TipoPropiedad  @relation(fields: [tipoPropiedadId], references: [id])
+    tipoPropiedadId  String
+    ciudadId         Int
+    ciudad           Ciudades       @relation(fields: [ciudadId], references: [id])
+    estado           Estado
+    createdAt        DateTime       @default(now())
+    updatedAt        DateTime       @updatedAt
+    // Relación “Portada” (varias imágenes pueden servir de portada, si lo deseas)
+    fondoPortada     Imagen[]       @relation("PropiedadFondoPortada")
+
+    // Relación “Galería”
+    imagenes Imagen[] @relation("PropiedadImagenes")
+
+    @@map("propiedades")
+}
+
+model Imagen {
+    id                Int        @id @default(autoincrement())
+    url               String
+    /// FK para la relación “imagenes” (galería)
+    propiedadImagenId String?
+    propiedadImagen   Propiedad? @relation("PropiedadImagenes", fields: [propiedadImagenId], references: [id], map: "FK_imagen_propiedadImagen")
+
+    /// FK para la relación “fondoPortada”
+    propiedadFondoPortadaId String?
+    propiedadFondoPortada   Propiedad? @relation("PropiedadFondoPortada", fields: [propiedadFondoPortadaId], references: [id], map: "FK_imagen_propiedadFondo")
+}
+
+enum Disponibilidad {
+    EN_COMPRA
+    EN_VENTA
+    EN_ALQUILER
+}
+
+enum Estado {
+    EN_REVISION
+    PUBLICADO
+    RECHAZADO
+    OCULTO
 }
