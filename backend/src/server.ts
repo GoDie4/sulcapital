@@ -4,8 +4,7 @@ import path from "path";
 
 const app = express();
 
-app.options(
-  "*",
+app.use(
   cors({
     origin: [
       "http://localhost:5173",
@@ -13,11 +12,12 @@ app.options(
       "http://localhost:3000",
       "http://localhost:4000",
       "https://sulcapital.exportando.online",
-      "https://www.sulcapital.exportando.online",
+      "https://www.sulcapital.exportando.online"
     ],
     credentials: true,
   })
 );
+
 app.use("/public", express.static(path.resolve("public")));
 
 app.use(express.json());
