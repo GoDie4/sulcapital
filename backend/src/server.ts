@@ -4,7 +4,8 @@ import path from "path";
 
 const app = express();
 
-app.use(
+app.options(
+  "*",
   cors({
     origin: [
       "http://localhost:5173",
@@ -17,7 +18,6 @@ app.use(
     credentials: true,
   })
 );
-
 app.use("/public", express.static(path.resolve("public")));
 
 app.use(express.json());
