@@ -64,54 +64,85 @@ export const createTipoPropiedad = async (req: Request, res: Response) => {
   }
 };
 
-export const updateTipoPropiedad = async (req: Request, res: Response) => {
+export const updateTipoPropiedad = async (req: any, res: any) => {
   const { id } = req.params;
   const { nombre, imagenThumbnail, iconoThumbnail } = req.body;
 
   try {
+    // 1) Buscamos el registro actual para saber cuáles archivos existen
     const tipoPropiedadActual = await prisma.tipoPropiedad.findUnique({
-      where: { id: id },
+      where: { id },
       select: { imagen: true, icono: true },
     });
-    if (tipoPropiedadActual?.imagen) {
-      const imagenPath = path.join(
-        __dirname,
-        "../../public",
-        tipoPropiedadActual.imagen
-      );
-
-      fs.unlink(imagenPath, (err) => {
-        if (err) {
-          console.error("Error eliminando la imagen:", err);
-        }
-      });
+    if (!tipoPropiedadActual) {
+      return res
+        .status(404)
+        .json({ message: "Tipo de propiedad no encontrado" });
     }
-    if (tipoPropiedadActual?.icono) {
-      const imagenPath = path.join(
-        __dirname,
-        "../../public",
-        tipoPropiedadActual.icono
-      );
 
-      fs.unlink(imagenPath, (err) => {
-        if (err) {
-          console.error("Error eliminando el icono:", err);
-        }
-      });
+    // 2) Preparamos el objeto "data" solo con los campos que realmente se van a actualizar
+    const dataToUpdate: {
+      nombre?: string;
+      imagen?: string;
+      icono?: string;
+    } = {};
+
+    // Siempre actualizamos el nombre (puede venir undefined si no se incluyó, en ese caso no lo agregamos)
+    if (typeof nombre === "string") {
+      dataToUpdate.nombre = nombre;
     }
-    await prisma.tipoPropiedad.update({
-      where: { id: id },
-      data: { nombre, imagen: imagenThumbnail, icono: iconoThumbnail },
+
+    // 3) Si llega una nueva imagenThumbnail, borramos la anterior y anotamos la nueva ruta
+    if (typeof imagenThumbnail === "string" && imagenThumbnail.trim() !== "") {
+      if (tipoPropiedadActual.imagen) {
+        const rutaViejaImagen = path.join(
+          __dirname,
+          "../../public",
+          tipoPropiedadActual.imagen
+        );
+        fs.unlink(rutaViejaImagen, (err) => {
+          if (err) {
+            console.error("Error eliminando la imagen anterior:", err);
+          }
+        });
+      }
+      dataToUpdate.imagen = imagenThumbnail;
+    }
+
+    // 4) Si llega un nuevo iconoThumbnail, borramos el anterior y anotamos la nueva ruta
+    if (typeof iconoThumbnail === "string" && iconoThumbnail.trim() !== "") {
+      if (tipoPropiedadActual.icono) {
+        const rutaViejaIcono = path.join(
+          __dirname,
+          "../../public",
+          tipoPropiedadActual.icono
+        );
+        fs.unlink(rutaViejaIcono, (err) => {
+          if (err) {
+            console.error("Error eliminando el ícono anterior:", err);
+          }
+        });
+      }
+      dataToUpdate.icono = iconoThumbnail;
+    }
+
+    // 5) Hacemos la actualización con solo los campos que llegaron
+    const tipoPropiedadActualizada = await prisma.tipoPropiedad.update({
+      where: { id },
+      data: dataToUpdate,
     });
-    res.json({ mensaje: "Tipo de propiedad actualizado" });
+
+    return res.json({
+      mensaje: "Tipo de propiedad actualizado",
+      tipoPropiedad: tipoPropiedadActualizada,
+    });
   } catch (error) {
     console.error(error);
-    res
+    return res
       .status(500)
       .json({ message: "Error al actualizar el tipo de propiedad" });
   }
 };
-
 export const deleteTipoPropiedad = async (req: Request, res: Response) => {
   const { id } = req.params;
 

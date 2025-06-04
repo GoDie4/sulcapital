@@ -5,6 +5,9 @@ import { AuthProvider } from "@/assets/context/AuthContext";
 import { ModalRender } from "./_components/modal/ModalRender";
 import { Toaster } from "sonner";
 import { getServerSideProps } from "@/server/getServerSideProps";
+import { cookies } from "next/headers";
+import axios from "axios";
+import { config } from "@/assets/config/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +34,34 @@ export const metadata: Metadata = {
     ],
   },
 };
+
+async function getUser() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value || "";
+
+  if (!token) {
+    console.log("No hay token");
+
+    return;
+  }
+
+  if (token && token.split(".").length === 3) {
+    try {
+      const response = await axios.get(`${config.API_URL}/user/yo`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Cookie: `token=${token}`,
+        },
+        withCredentials: true,
+      });
+
+      return response.data.usuario;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -39,6 +70,7 @@ export default async function RootLayout({
   const dataCiudades = await getServerSideProps("ciudades");
   const dataTiposPropiedades = await getServerSideProps("tipo_propiedades");
   const dataPropiedades = await getServerSideProps("propiedades");
+  const user = await getUser();
 
   return (
     <html lang="es">
@@ -49,6 +81,7 @@ export default async function RootLayout({
           dataCiudadesInitial={dataCiudades}
           dataPropiedadesInitial={dataPropiedades}
           dataTiposPropiedadesInitial={dataTiposPropiedades}
+          userAuthenticated={user}
         >
           {children}
           <ModalRender />

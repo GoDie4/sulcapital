@@ -227,8 +227,7 @@ const InnovativeSlider: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-[77vh] relative overflow-hidden bg-secondary-main">
-      {/* Background Image takes up full screen */}
+    <div className="w-full h-screen lg:h-[77vh] relative overflow-hidden bg-secondary-main">
       <AnimatePresence mode="wait">
         <motion.div
           key={`bg-${currentSlide}-${animationType}`}
@@ -244,7 +243,6 @@ const InnovativeSlider: React.FC = () => {
               backgroundImage: `url(${slides[currentSlide].imageUrl})`,
             }}
           />
-          {/* Dark Overlay */}
           <div className="absolute inset-0 bg-black-main bg-opacity-40" />
         </motion.div>
       </AnimatePresence>

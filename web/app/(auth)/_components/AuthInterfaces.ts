@@ -19,6 +19,7 @@ export type UserInterface = {
   nombres: string;
   apellidos: string;
   celular: string;
+  rol_id: string | number
   rol?: RolesInterface;
   createdAt?: Date;
   updatedAt?: Date;
@@ -29,4 +30,8 @@ export interface RolesInterface {
   nombre: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface RecuperarContrasenaInteface {
+  email: string;
 }

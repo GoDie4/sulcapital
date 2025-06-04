@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { InputForm } from "@/components/form/InputForm";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaEnvelope } from "react-icons/fa";
@@ -13,8 +12,11 @@ import { toast } from "sonner";
 import { useFormik } from "formik";
 import { SchemaLogin } from "../../_components/AuthSchemas";
 import { Errors } from "@/components/form/Errors";
+import { RecuperarContrasena } from "./RecuperarContrasena";
+import { useAuth } from "@/assets/context/AuthContext";
 
 export const FormLogin = () => {
+  const { setModalContent, openModal, setAuthUser } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [mantenerConexion, setMantenerConexion] = useState<boolean>(false);
 
@@ -36,8 +38,16 @@ export const FormLogin = () => {
       });
 
       if (response.status === 200) {
-        router.push("/sistema");
-
+        console.log(response.data.usuario)
+        setAuthUser(response.data.usuario);
+        if (
+          response.data.usuario.rol_id === 2 ||
+          response.data.usuario.rol_id === 3
+        ) {
+          router.push("/sistema/propiedades");
+        } else {
+          router.push("/sistema");
+        }
         toast.success(response.data.message);
       }
     } catch (error: any) {
@@ -137,12 +147,16 @@ export const FormLogin = () => {
           />
           <span className="ml-2 text-sm text-gray-600">Recordarme</span>
         </label>
-        <Link
-          href="/olvide-contrasena"
+        <button
+          type="button"
+          onClick={() => {
+            setModalContent(<RecuperarContrasena />);
+            openModal();
+          }}
           className="text-sm text-secondary-700 hover:text-secondary-800 transition-colors"
         >
           ¿Olvidaste tu contraseña?
-        </Link>
+        </button>
       </div>
 
       <button

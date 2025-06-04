@@ -34,7 +34,7 @@ export const AgregarPropiedad = ({
   const [portada, setPortada] = useState<(File | string)[]>([]);
   const [imagenes, setImagenes] = useState<(File | string)[]>([]);
 
-  const { closeModal } = useAuth();
+  const { closeModal, authUser } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
 
   const [ciudades, setCiudades] = useState<CiudadList[]>([]);
@@ -84,7 +84,7 @@ export const AgregarPropiedad = ({
       formData.append("tipoPropiedadId", values.tipoPropiedadId);
       formData.append("ciudadId", String(values.ciudadId));
       formData.append("estado", values.estado);
-      formData.append("idUser", "cmb8fbkki0003ukbs5u4hrzj1");
+      formData.append("idUser", String(authUser?.id));
 
       if (portada.length > 0) {
         formData.append("fondoPortada", portada[0]);
@@ -274,7 +274,11 @@ export const AgregarPropiedad = ({
           <div className="w-full flex flex-col md:flex-row gap-4">
             <div className="w-full lg:w-1/2  space-y-4">
               <div className="w-full flex flex-col md:flex-row gap-4 ">
-                <div className="w-full md:w-1/3">
+                <div
+                  className={`w-full  ${
+                    authUser?.rol_id === 1 ? "md:w-1/3" : "md:w-1/2"
+                  }`}
+                >
                   <InputForm
                     label="Precio"
                     placeholder="Escriba el precio"
@@ -291,7 +295,11 @@ export const AgregarPropiedad = ({
                   />
                   <Errors errors={errors.precio} touched={touched.precio} />
                 </div>
-                <div className="w-full md:w-1/3">
+                <div
+                  className={`w-full  ${
+                    authUser?.rol_id === 1 ? "md:w-1/3" : "md:w-1/2"
+                  }`}
+                >
                   <div className="w-full">
                     <label className="text-black-800">Disponibilidad</label>
                     <select
@@ -320,33 +328,35 @@ export const AgregarPropiedad = ({
                     )}
                   </div>
                 </div>
-                <div className="w-full md:w-1/3">
-                  <div className="w-full">
-                    <label className="text-black-800">Exclusivo</label>
-                    <select
-                      name="exclusivo"
-                      id=""
-                      value={values.exclusivo}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      className={` border w-full placeholder:text-sm focus:border-secondary-main outline-none  rounded-main p-2 ${
-                        errors.exclusivo && touched.exclusivo
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-secondary-main focus:border-secondary-main"
-                      }`}
-                    >
-                      <option value={""}>Selecionar</option>
-                      <option value="si">Sí</option>
-                      <option value="no">No</option>
-                    </select>
-                    {errors.exclusivo && (
-                      <Errors
-                        errors={errors.exclusivo}
-                        touched={touched.exclusivo}
-                      />
-                    )}
+                {authUser?.rol_id === 1 && (
+                  <div className="w-full md:w-1/3">
+                    <div className="w-full">
+                      <label className="text-black-800">Exclusivo</label>
+                      <select
+                        name="exclusivo"
+                        id=""
+                        value={values.exclusivo}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className={` border w-full placeholder:text-sm focus:border-secondary-main outline-none  rounded-main p-2 ${
+                          errors.exclusivo && touched.exclusivo
+                            ? "border-red-500 focus:border-red-500"
+                            : "border-secondary-main focus:border-secondary-main"
+                        }`}
+                      >
+                        <option value={""}>Selecionar</option>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                      </select>
+                      {errors.exclusivo && (
+                        <Errors
+                          errors={errors.exclusivo}
+                          touched={touched.exclusivo}
+                        />
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               <div className="w-full">
                 <InputForm
@@ -458,7 +468,7 @@ export const AgregarPropiedad = ({
             />
           </div>
         </div>
-        <div className="w-full flex flex-col md:flex-row gap-2 md:gap-4 items-center justify-center mt-6">
+        <div className="w-full flex flex-col-reverse md:flex-row gap-2 md:gap-4 items-center justify-center mt-6">
           <ButtonCancelar />
           <ButtonSubmit
             loading={loading}

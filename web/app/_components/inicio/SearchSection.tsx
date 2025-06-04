@@ -37,7 +37,7 @@ const SearchSection = ({
     router.push(`/buscar?${searchParams.toString()}`);
   };
   return (
-    <section className="w-full py-12">
+    <section className="w-full pb-2 md:py-8 lg:py-12">
       <ContentMain>
         <div>
           <PropertyFilter
@@ -51,7 +51,7 @@ const SearchSection = ({
               <MdSearch className="absolute left-3 h-[60px] top-0 transform bottom-0 my-auto text-gray-400 w-5" />
               <input
                 type="text"
-                placeholder="Buscar por ubicación, tipo de propiedad, características..."
+                placeholder="Buscar tu propiedad"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9 h-[60px] border-2 outline-none border-gray-200 rounded-xl focus:border-secondary-main focus:ring-2 focus:ring-blue-200 transition-all duration-300 w-full"

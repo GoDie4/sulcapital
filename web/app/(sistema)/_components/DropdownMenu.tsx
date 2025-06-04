@@ -9,7 +9,7 @@ type Option = {
   route: string;
 };
 
-type MenuCategory = {
+export type MenuCategory = {
   title: string;
   icon: ReactNode;
   options?: Option[];

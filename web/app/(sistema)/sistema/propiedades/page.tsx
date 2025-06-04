@@ -3,9 +3,12 @@ import { WrapperSecciones } from "../../_components/estructura/WrapperSecciones"
 import { columnsPropiedad } from "./_components/table/ColumnasPropiedades";
 import { AgregarPropiedad } from "./_components/form/AgregarPropiedad";
 import { EditarPropiedad } from "./_components/form/EditarPropiedad";
+import { cookies } from "next/headers";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export default async function page({ searchParams }: { searchParams: any }) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
   const limitParam = searchParams?.limit;
 
   const rawLimit = Array.isArray(limitParam)
@@ -26,13 +29,21 @@ export default async function page({ searchParams }: { searchParams: any }) {
   const res = await fetch(
     `${
       config.API_URL
-    }/propiedades?page=${safePage}&limit=${limit}&search=${encodeURIComponent(
+    }/propiedades/byUser?page=${safePage}&limit=${limit}&search=${encodeURIComponent(
       search
     )}`,
+    {
+      cache: "no-store",
+
+      headers: {
+        // 'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        Cookie: `token=${token}`,
+      },
+    }
   );
   const { data, pagination } = await res.json();
 
-  console.log("DATA PROPS: ", data);
+  console.log("DATA: ", data)
   return (
     <>
       <WrapperSecciones

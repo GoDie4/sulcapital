@@ -60,7 +60,7 @@ export const EditarTipoPropiedad = () => {
           withCredentials: true,
         }
       );
-      console.log("RESPONSE: ", response);
+
       if (response.status === 200) {
         const currentPath = `${pathname}?${searchParams.toString()}`;
         router.push(currentPath);

@@ -5,7 +5,6 @@ import { ButtonCancelar } from "@/components/form/ButtonCancelar";
 import { ButtonSubmit } from "@/components/form/ButtonSubmit";
 import { Errors } from "@/components/form/Errors";
 import { InputForm } from "@/components/form/InputForm";
-import UploadImages from "@/components/form/UploadImages";
 import axios from "axios";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
@@ -14,6 +13,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/assets/context/AuthContext";
 import { Ciudad } from "../interfaces/CiudadesInterfaces";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import UploadImages from "@/components/form/UploadImages";
 
 export const EditarUbicacion = () => {
   const { rowEdit, closeModal } = useAuth();

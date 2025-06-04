@@ -1,11 +1,13 @@
+'use client'
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CgLogOut } from "react-icons/cg";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { BsBuilding, BsGeoAlt } from "react-icons/bs";
 
-import DropdownMenu from "./DropdownMenu";
+import DropdownMenu, { MenuCategory } from "./DropdownMenu";
+import { useAuth } from "@/assets/context/AuthContext";
 
 const menuItems = [
   {
@@ -25,6 +27,42 @@ const menuItems = [
   },
 ];
 
+const menuItemsCliente = [
+  {
+    title: "Propiedades",
+    icon: <BsBuilding />,
+    route: "propiedades",
+  },
+  {
+    title: "Vistos",
+    icon: <BsBuilding />,
+    route: "Vistos recientemente",
+  },
+  {
+    title: "Mis favoritos",
+    icon: <BsBuilding />,
+    route: "favoritos",
+  },
+];
+
+const menuItemsAnunciante = [
+  {
+    title: "Mis Propiedades",
+    icon: <BsBuilding />,
+    route: "propiedades",
+  },
+  {
+    title: "Vistos",
+    icon: <BsBuilding />,
+    route: "Vistos recientemente",
+  },
+  {
+    title: "Mis favoritos",
+    icon: <BsBuilding />,
+    route: "favoritos",
+  },
+];
+
 export const SideBarSistema = ({
   showMenu,
   ocultarSideBar,
@@ -35,6 +73,19 @@ export const SideBarSistema = ({
   ocultarSideBar: boolean;
   setOcultarSideBar: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const { authUser, cerrarSesion } = useAuth();
+  const [rutas, setRutas] = useState<MenuCategory[]>([]);
+  useEffect(() => {
+    if (!authUser?.rol_id) return;
+
+    if (authUser.rol_id === 1) {
+      setRutas(menuItems);
+    } else if (authUser.rol_id === 2) {
+      setRutas(menuItemsAnunciante);
+    } else if (authUser.rol_id === 3) {
+      setRutas(menuItemsCliente);
+    }
+  }, [authUser?.rol_id]);
   return (
     <header
       className={`py-8 lg:py-12 fixed z-[1201] top-[90px] lg:top-0 ${
@@ -66,14 +117,14 @@ export const SideBarSistema = ({
             />
           </Link>
           <nav className="h-auto lg:py-10 ">
-            <DropdownMenu
-              menuItems={menuItems}
-              ocultarSideBar={ocultarSideBar}
-            />
+            <DropdownMenu menuItems={rutas} ocultarSideBar={ocultarSideBar} />
           </nav>
         </div>
         <button
           type="button"
+          onClick={() => {
+            cerrarSesion();
+          }}
           className={`px-5 outline-none text-white-main py-3 flex ${
             ocultarSideBar ? "justify-center" : "justify-start"
           } items-center gap-2 transition-all duration-500 group hover:bg-secondary-main rounded-main`}

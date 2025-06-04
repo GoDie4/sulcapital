@@ -14,6 +14,7 @@ import { Footer } from "./_components/estructura/Footer";
 import { useAuth } from "@/assets/context/AuthContext";
 import { CiudadList } from "./(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
 import { TipoPropiedad } from "./(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
+import { GridPropiedades } from "./_components/inmuebles/GridPropiedades";
 
 export default function Home() {
   const { dataPropiedades, dataCiudades, dataTiposPropiedades } = useAuth();
@@ -39,10 +40,14 @@ export default function Home() {
           <p className="mb-14 text-center text-lg md:text-xl text-black-900">
             Oportunidades únicas para cada estilo de vida
           </p>
-          <SwiperInmuebles inmuebles={dataPropiedades} />
-          <SwiperInmuebles inmuebles={dataPropiedades} reverse />
+          <div className="w-full hidden lg:block">
+            <SwiperInmuebles inmuebles={dataPropiedades} />
+            <SwiperInmuebles inmuebles={dataPropiedades} reverse />
+          </div>
+          <div className="w-full block lg:hidden">
+            <GridPropiedades propiedades={dataPropiedades} />
+          </div>
           <Paginacion />
-
         </ContentMain>
       </section>
 
@@ -69,7 +74,7 @@ export default function Home() {
           <p className="mb-14 text-center text-lg md:text-xl text-black-900">
             Conoce lo mejor de cada ciudad y encuentra tu nuevo hogar
           </p>
-          <div className="w-full grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
             {dataTiposPropiedades.map((tipoinmueble: TipoPropiedad) => (
               <CardTipoInmueble
                 tipoinmueble={tipoinmueble}

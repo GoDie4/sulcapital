@@ -11,18 +11,18 @@ interface LocationMap {
 }
 
 const ubicaciones: LocationMap[] = [
-  { lat: -11.1262, lng: -75.3365, label: "Pichanaki" },
-  { lat: -11.2535, lng: -74.6381, label: "Satipo" },
-  { lat: -11.1501, lng: -74.7389, label: "Río Negro" },
-  { lat: -11.2544, lng: -74.7923, label: "Mazamari" },
-  { lat: -11.1804, lng: -74.3152, label: "Pangoa" },
-  { lat: -11.0642, lng: -75.3209, label: "La Merced" },
-  { lat: -11.0797, lng: -75.2849, label: "Perené" },
-  { lat: -11.0985, lng: -75.2239, label: "Sangani" },
-  { lat: -11.1252, lng: -75.3548, label: "San Ramón" },
-  { lat: -10.7301, lng: -75.2667, label: "Villa Rica" },
-  { lat: -10.5755, lng: -75.4056, label: "Oxapampa" },
-  { lat: -11.1053, lng: -74.6756, label: "Puerto Ocopa" },
+  { lat: -10.926705725305794, lng: -74.87448722511888, label: "Pichanaki" },
+  { lat: -10.926705725305794, lng: -74.87448722511888, label: "Satipo" },
+  { lat: -11.208215929563803, lng: -74.66029180274616, label: "Río Negro" },
+  { lat: -11.331984984414769, lng: -74.52983584832505, label: "Mazamari" },
+  { lat: -11.432433757749802, lng: -74.48471309790122, label: "Pangoa" },
+  { lat: -11.062091032272436, lng: -75.3324377054606, label: "La Merced" },
+  { lat: -10.951125872836467, lng: -75.22847315077809, label: "Perené" },
+  { lat: -10.921704280328381, lng: -74.88018208623592, label: "Sangani" },
+  { lat: -11.126232847694009, lng: -75.36088974808607, label: "San Ramón" },
+  { lat: -10.739059810976599, lng: -75.27440684441615, label: "Villa Rica" },
+  { lat: -10.574296111675373, lng: -75.40115220569004, label: "Oxapampa" },
+  { lat: -11.141897364483542, lng: -74.30937773171728, label: "Puerto Ocopa" },
 ];
 
 const containerStyle = {
@@ -71,7 +71,6 @@ const mapOptions = {
 };
 
 export const MapaGeneral = () => {
-
   return (
     <LoadScript googleMapsApiKey={config.GOOGLE_MAPS_KEY}>
       <GoogleMap

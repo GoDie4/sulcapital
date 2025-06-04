@@ -9,6 +9,7 @@ import { LiaUserSolid } from "react-icons/lia";
 import { HiMenu } from "react-icons/hi";
 import { TipoPropiedad } from "../../(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 import { CiudadList } from "../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
+import { useAuth } from "@/assets/context/AuthContext";
 export const Header = ({
   tipoPropiedades,
   ciudades,
@@ -22,7 +23,6 @@ export const Header = ({
       propertyTypes: tipoPropiedades,
       locations: ciudades,
     },
-
     {
       title: "Comprar",
       propertyTypes: tipoPropiedades,
@@ -37,6 +37,8 @@ export const Header = ({
 
   const [scrollY, setScrollY] = useState(false);
 
+  const { authUser } = useAuth();
+
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY > 141.71 ? true : false);
@@ -44,7 +46,6 @@ export const Header = ({
 
     window.addEventListener("scroll", handleScroll);
 
-    // Limpieza del evento al desmontar el componente
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -61,7 +62,7 @@ export const Header = ({
           <Link
             href={"/"}
             className={`block ${
-              scrollY ? "w-[130px]" : "w-[180px]"
+              scrollY ? "w-[130px]" : " w-[140px] md:w-[180px]"
             }  transition-all duration-200`}
           >
             <img
@@ -94,14 +95,34 @@ export const Header = ({
             ))}
           </ul>
           <div className="w-fit flex items-center gap-4">
-            <Link
-              href={"/registro"}
-              className={`flex w-fit text-4xl ${
-                scrollY ? "text-secondary-main" : "text-white-main"
-              }`}
-            >
-              <LiaUserSolid />
-            </Link>
+            {authUser !== null && authUser !== undefined ? (
+              <>
+                <Link
+                  href={"/sistema/propiedades"}
+                  className={`flex items-center justify-center  flex-col ${
+                    scrollY ? "text-secondary-main" : "text-white-main"
+                  }`}
+                >
+                  <span className="flex items-center justify-center flex-1 w-6 h-6 font-bold uppercase rounded-full bg-primary-main sm:w-8 sm:h-8 text-white-main">
+                    <p className="text-sm sm:text-base text-white-main ">
+                      {authUser !== null && authUser !== undefined
+                        ? authUser.nombres.charAt(0)
+                        : ""}
+                    </p>
+                  </span>
+                  <p>{authUser.nombres}</p>
+                </Link>
+              </>
+            ) : (
+              <Link
+                href={"/iniciar-sesion"}
+                className={`flex w-fit text-4xl ${
+                  scrollY ? "text-secondary-main" : "text-white-main"
+                }`}
+              >
+                <LiaUserSolid />
+              </Link>
+            )}
             <a
               href=""
               className="w-fit px-6 py-2 rounded-full hidden lg:flex gap-2  items-center justify-center bg-secondary-main text-white-main transition-all duration-200 hover:bg-green-600"
@@ -110,7 +131,7 @@ export const Header = ({
             </a>
             <button
               type="button"
-              className={`block lg:hidden  ${
+              className={`hidden  ${
                 scrollY ? "text-secondary-main" : "text-white-main"
               } text-3xl`}
             >

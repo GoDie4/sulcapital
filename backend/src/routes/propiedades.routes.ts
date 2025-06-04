@@ -6,20 +6,22 @@ import {
   eliminarPropiedad,
   getPropiedadById,
   getPropiedades,
+  getPropiedadesByUser,
 } from "../controllers/propiedades.controller";
 import path from "path";
 import {
   handleMultipleImagesUpload,
   upload,
 } from "../middlewares/images/uploadMultiplesImages";
+import { addUserReq } from "../middlewares/JWTMiddleware";
 
 const router = Router();
 const UPLOAD_DIR = path.resolve(__dirname, "../../public/propiedades");
 
 router.get("/", getPropiedades);
+router.get("/byUser", addUserReq, getPropiedadesByUser);
 router.get("/buscar", buscarPropiedades);
 router.get("/find/:id", getPropiedadById);
-
 
 router.post(
   "/agregar",
@@ -39,7 +41,24 @@ router.post(
   }),
   crearPropiedad
 );
-router.put("/editar/:id", editarPropiedad);
+router.put(
+  "/editar/:id",
+  upload.fields([
+    { name: "imagenes", maxCount: 6 },
+    { name: "fondoPortada", maxCount: 1 },
+  ]),
+  handleMultipleImagesUpload("imagenes", {
+    uploadDir: UPLOAD_DIR,
+    filePrefix: "foto",
+    thumbnailSize: { width: 1000, height: 667 },
+  }),
+  handleMultipleImagesUpload("fondoPortada", {
+    uploadDir: UPLOAD_DIR,
+    filePrefix: "portada",
+    thumbnailSize: { width: 554, height: 360 },
+  }),
+  editarPropiedad
+);
 router.delete("/eliminar/:id", eliminarPropiedad);
 
 export default router;

@@ -77,7 +77,6 @@ CREATE TABLE `propiedades` (
     `precio` DOUBLE NOT NULL,
     `video` VARCHAR(191) NULL,
     `coordenadas` VARCHAR(191) NULL,
-    `idUser` VARCHAR(191) NOT NULL,
     `disponibilidad` ENUM('EN_COMPRA', 'EN_VENTA', 'EN_ALQUILER') NOT NULL,
     `exclusivo` BOOLEAN NOT NULL DEFAULT false,
     `tipoPropiedadId` VARCHAR(191) NOT NULL,
@@ -85,6 +84,7 @@ CREATE TABLE `propiedades` (
     `estado` ENUM('EN_REVISION', 'PUBLICADO', 'RECHAZADO', 'OCULTO') NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `idUser` CHAR(36) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -104,6 +104,9 @@ ALTER TABLE `usuarios` ADD CONSTRAINT `usuarios_rol_id_fkey` FOREIGN KEY (`rol_i
 
 -- AddForeignKey
 ALTER TABLE `password_reset_tokens` ADD CONSTRAINT `password_reset_tokens_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `usuarios`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `propiedades` ADD CONSTRAINT `propiedades_idUser_fkey` FOREIGN KEY (`idUser`) REFERENCES `usuarios`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `propiedades` ADD CONSTRAINT `propiedades_tipoPropiedadId_fkey` FOREIGN KEY (`tipoPropiedadId`) REFERENCES `tipo_propiedades`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

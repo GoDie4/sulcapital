@@ -39,6 +39,7 @@ model Usuario {
 
     PasswordResetToken PasswordResetToken[]
     rol                Rol                  @relation(fields: [rol_id], references: [id], onDelete: Cascade)
+    Propiedad          Propiedad[]
 
     @@index([rol_id], map: "usuarios_rol_id_fkey")
     @@map("usuarios")
@@ -82,14 +83,14 @@ model TipoPropiedad {
 model Propiedad {
     id               String         @id @default(uuid())
     titulo           String
-    slug             String?       
+    slug             String?
     descripcionLarga String
     descripcionCorta String?
     direccion        String
     precio           Float
     video            String?
     coordenadas      String?
-    idUser           String
+    usuario          Usuario        @relation(fields: [idUser], references: [id])
     disponibilidad   Disponibilidad
     exclusivo        Boolean        @default(false)
     tipoPropiedad    TipoPropiedad  @relation(fields: [tipoPropiedadId], references: [id])
@@ -103,7 +104,8 @@ model Propiedad {
     fondoPortada     Imagen[]       @relation("PropiedadFondoPortada")
 
     // Relación “Galería”
-    imagenes Imagen[] @relation("PropiedadImagenes")
+    imagenes  Imagen[] @relation("PropiedadImagenes")
+    idUser String   @db.Char(36)
 
     @@map("propiedades")
 }

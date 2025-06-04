@@ -9,9 +9,12 @@ import React, {
   useState,
 } from "react";
 import { ModalSizes } from "../../../app/_components/modal/ModalWrapper";
-import {  CiudadList } from "../../../app/(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
+import { CiudadList } from "../../../app/(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
 import { Propiedad } from "../../../app/(sistema)/sistema/propiedades/_components/table/ColumnasPropiedades";
 import { TipoPropiedad } from "../../../app/(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
+import { UserInterface } from "../../../app/(auth)/_components/AuthInterfaces";
+import axios from "axios";
+import { config } from "../config/config";
 
 interface AuthContextInterface {
   modalContent: ReactNode | null;
@@ -21,11 +24,14 @@ interface AuthContextInterface {
   isModalOpen: boolean;
   openModal: () => void;
   closeModal: () => void;
+  cerrarSesion: () => void;
   rowEdit: any | null;
   setRowEdit: Dispatch<SetStateAction<any | null>>;
   dataPropiedades: Propiedad[];
   dataTiposPropiedades: TipoPropiedad[];
   dataCiudades: CiudadList[];
+  authUser: UserInterface | null;
+  setAuthUser: Dispatch<SetStateAction<UserInterface | null>>;
 }
 
 interface AuthProviderInterface {
@@ -33,6 +39,7 @@ interface AuthProviderInterface {
   dataCiudadesInitial: any[];
   dataTiposPropiedadesInitial: any[];
   dataPropiedadesInitial: any[];
+  userAuthenticated: UserInterface | null;
 }
 
 export type AuthContextValue = AuthContextInterface;
@@ -46,6 +53,7 @@ export const AuthProvider: React.FC<AuthProviderInterface> = ({
   dataCiudadesInitial,
   dataPropiedadesInitial,
   dataTiposPropiedadesInitial,
+  userAuthenticated,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>(
@@ -56,6 +64,10 @@ export const AuthProvider: React.FC<AuthProviderInterface> = ({
   const [dataPropiedades] = useState<Propiedad[]>(dataPropiedadesInitial);
   const [dataTiposPropiedades] = useState<TipoPropiedad[]>(
     dataTiposPropiedadesInitial
+  );
+
+  const [authUser, setAuthUser] = useState<UserInterface | null>(
+    userAuthenticated
   );
 
   const [modalSize, setModalSize] = useState<ModalSizes>("small");
@@ -69,6 +81,20 @@ export const AuthProvider: React.FC<AuthProviderInterface> = ({
     setIsModalOpen(false);
   };
 
+  const cerrarSesion = async () => {
+    try {
+      const response = await axios.post(`${config.API_URL}/logout`, null, {
+        withCredentials: true,
+      });
+      if (response.status === 200) {
+        window.location.href = "/";
+        setAuthUser(null);
+        localStorage.removeItem("token");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -84,6 +110,9 @@ export const AuthProvider: React.FC<AuthProviderInterface> = ({
         dataCiudades,
         dataPropiedades,
         dataTiposPropiedades,
+        authUser,
+        setAuthUser,
+        cerrarSesion
       }}
     >
       {children}

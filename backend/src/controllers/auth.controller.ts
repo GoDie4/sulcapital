@@ -26,7 +26,14 @@ export const login = async (
     if (!isMatch)
       return res.status(400).json({ message: "Contraseña incorrecta" });
 
-    const token = await createAccessToken({ id: usuarioExiste.id });
+    const role = await prisma.rol.findFirst({
+      where: { id: usuarioExiste.rol_id },
+    });
+
+    const token = await createAccessToken({
+      id: usuarioExiste.id,
+      role: role?.nombre !== undefined ? role.nombre : "",
+    });
 
     res.cookie("token", token, {
       sameSite: "none", // "lax" funciona bien localmente
@@ -86,7 +93,6 @@ export const register = async (
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Crear el usuario
     const nuevoUsuario = await prisma.usuario.create({
       data: {
         nombres,
@@ -97,20 +103,26 @@ export const register = async (
         celular,
         password: hashedPassword,
         activo: false,
-        rol_id: rol === "ANUNCIANTE" ? 2 : 3, 
+        rol_id: rol === "ANUNCIANTE" ? 2 : 3,
       },
     });
 
-    // Generar el token
-    const token = await createAccessToken({ id: nuevoUsuario.id });
+    const role = await prisma.rol.findFirst({
+      where: { id: nuevoUsuario.rol_id },
+    });
 
-    // Setear cookie
+    // Generar el token
+    const token = await createAccessToken({
+      id: nuevoUsuario.id,
+      role: role?.nombre !== undefined ? role.nombre : "",
+    });
+
     res.cookie("token", token, {
       sameSite: "none",
       secure: true,
       httpOnly: true,
       domain: ENV.COOKIE_DOMAIN,
-      maxAge: 2 * 60 * 60 * 1000, // 2 horas
+      maxAge: 2 * 60 * 60 * 1000,
     });
 
     const primerNombre = nuevoUsuario.nombres.split(" ");

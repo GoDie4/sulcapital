@@ -11,7 +11,7 @@ app.use(
       "http://localhost:5174",
       "http://localhost:3000",
       "http://localhost:4000",
-      "http://192.168.0.100:3000",
+      "https://sulcapital.exportando.online"
     ],
     credentials: true,
   })

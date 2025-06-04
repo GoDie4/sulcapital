@@ -224,9 +224,9 @@ export function DataTable<TData, TValue>({
           >
             Agregar
           </button>
-          <DropdownMenu>
+          <DropdownMenu >
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
+              <Button variant="outline" className="ml-auto hidden md:block">
                 Columnas <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -274,7 +274,7 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}
-                className="hover:bg-secondary-main"
+                className="hover:bg-secondary-main px-3"
               >
                 {headerGroup.headers.map((header) => {
                   return (

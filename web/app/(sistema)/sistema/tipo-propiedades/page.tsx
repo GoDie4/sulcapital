@@ -48,7 +48,6 @@ export default async function page({ searchParams }: { searchParams: any }) {
         pagination={pagination}
         renderEditForm={
           <EditarTipoPropiedad
-       
           />
         }
         deleteOptions={{

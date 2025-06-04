@@ -8,8 +8,8 @@ export const addPropiedadSchema = yup.object({
     .number()
     .required("El precio es obligatorio")
     .positive("El precio debe ser positivo"),
-  video: yup.string().url("Debe ser una URL válida").optional(),
-  coordenadas: yup.string().optional(),
+  video: yup.string().url("Debe ser una URL válida").nullable().optional(),
+  coordenadas: yup.string().optional().nullable(),
   disponibilidad: yup
     .mixed<"EN_COMPRA" | "EN_VENTA" | "EN_ALQUILER">()
     .oneOf(["EN_COMPRA", "EN_VENTA", "EN_ALQUILER"], "Disponibilidad inválida")

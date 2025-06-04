@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 
 export interface JWTPayload {
   id: number | string;
+  role: number | string;
 }
 
 export default function createAccessToken(payload: JWTPayload) {

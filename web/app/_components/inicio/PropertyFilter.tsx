@@ -13,8 +13,8 @@ const PropertyFilter = ({
 }: PropertyFilterProps) => {
   const filters = [
     { id: "EN_VENTA", label: "Vender" },
-    { id: "EN_ALQUILER", label: "Alquilar" },
     { id: "EN_COMPRA", label: "Comprar" },
+    { id: "EN_ALQUILER", label: "Alquilar" },
   ];
 
   return (

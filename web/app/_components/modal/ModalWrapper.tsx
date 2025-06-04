@@ -55,7 +55,7 @@ const ModalWrapper: React.FC<ModalProps> = ({ componente, modalSize }) => {
                 modalSize === "large" ? "max-w-7xl" : ""
               } ${
                 modalSize === "full" ? "max-w-full w-full h-screen" : ""
-              } bg-white-main rounded-md  max-h-[660px] absolute top-0 my-auto  h-fit overflow-y-auto modales`}
+              } bg-white-main rounded-md max-h-[calc(100vh-50px)]  md:max-h-[660px] absolute top-0 my-auto  h-fit overflow-y-auto modales`}
             >
               <button
                 onClick={closeModal}

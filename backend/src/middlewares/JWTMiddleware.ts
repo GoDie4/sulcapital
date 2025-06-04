@@ -7,42 +7,39 @@ import prisma from "../config/database";
 
 dotenv.config();
 
-
 export const verifyAdmin = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any | undefined> => {
-
   const token = req.cookies?.token;
-  console.log(token)
-  
+
   if (!token) {
     return res.status(401).json({ message: "Token no proporcionado." });
   }
-  
+
   try {
     const decoded = jwt.verify(
       token ?? "",
       ENV.TOKEN_SECRET as string
     ) as JwtPayload;
-    
+
     const user = await prisma.usuario.findUnique({
       where: { id: decoded.id },
       include: { rol: true },
     });
-
-    console.log(user)
 
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado." });
     }
 
     if (user?.rol_id !== 1) {
-      return res.status(403).json({ message: "No tienes permisos de administrador." });
+      return res
+        .status(403)
+        .json({ message: "No tienes permisos de administrador." });
     }
 
-    (req as any).user = user; 
+    (req as any).user = user;
     next();
   } catch (error) {
     return res.status(401).json({ message: "Token inválido." });
@@ -94,226 +91,38 @@ export const verifyAlumno = async (
   }
 };
 
-export const verifyProfesor = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  console.log(req.headers.authorization);
-  if (!req.headers.authorization) {
-    res.status(401).json({ message: "Token no proporcionado." });
-    return;
-  }
+interface DecodedToken {
+  id: string;
+}
 
-  const token = req.headers.authorization?.split(" ")[1];
-
-  if (!token) {
-    res.status(401).json({ message: "Token no proporcionado." });
-  }
-
+export const addUserReq = async (req: any, res: any, next: NextFunction) => {
   try {
+    const token = req.cookies?.token;
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Token no encontrado en cookies." });
+    }
+
     const decoded = jwt.verify(
-      token ?? "",
-      ENV.TOKEN_SECRET as string
-    ) as JwtPayload;
-    console.log(decoded);
+      token,
+      process.env.TOKEN_SECRET as string
+    ) as DecodedToken;
+
     const user = await prisma.usuario.findUnique({
       where: { id: decoded.id },
-      include: { rol: true },
     });
 
     if (!user) {
-      res.status(404).json({ message: "Usuario no encontrado." });
+      return res.status(404).json({ message: "Usuario no encontrado." });
     }
 
-    if (user?.rol_id !== 3) {
-      res.status(403).json({ message: "No tienes permisos de profesor." });
-    }
-
-    (req as any).user = user; // Agrega el usuario decodificado a la solicitud
+    req.user = user;
     next();
-  } catch (error) {
-    res.status(401).json({ message: "Token inválido." });
-  }
-};
-
-export const verifyAlumnoOrProfesor = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  if (!req.headers.authorization) {
-    res.status(401).json({ message: "Token no proporcionado." });
-    return;
-  }
-
-  const token = req.headers.authorization?.split(" ")[1];
-
-  if (!token) {
-    res.status(401).json({ message: "Token no proporcionado." });
-    return;
-  }
-
-  try {
-    const decoded = jwt.verify(
-      token ?? "",
-      ENV.TOKEN_SECRET as string
-    ) as JwtPayload;
-    const user = await prisma.usuario.findUnique({
-      where: { id: decoded.id },
-      include: { rol: true },
-    });
-
-    if (!user) {
-      res.status(404).json({ message: "Usuario no encontrado." });
-      return;
-    }
-
-    if (user?.rol_id !== 2 && user?.rol_id !== 3) {
-      res
-        .status(403)
-        .json({ message: "No tienes permisos de alumno o profesor." });
-      return;
-    }
-
-    (req as any).user = user; // Agrega el usuario decodificado a la solicitud
-    next();
-  } catch (error) {
-    console.error("Error al verificar el rol de usuario:", error);
-    res.status(500).json({ message: "Error al verificar el rol de usuario" });
-    return;
-  }
-};
-
-export const verifyAdminOrProfesor = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  if (!req.headers.authorization) {
-    res.status(401).json({ message: "Token no proporcionado." });
-    return;
-  }
-
-  const token = req.headers.authorization?.split(" ")[1];
-
-  if (!token) {
-    res.status(401).json({ message: "Token no proporcionado." });
-    return;
-  }
-
-  try {
-    const decoded = jwt.verify(
-      token ?? "",
-      ENV.TOKEN_SECRET as string
-    ) as JwtPayload;
-    const user = await prisma.usuario.findUnique({
-      where: { id: decoded.id },
-      include: { rol: true },
-    });
-
-    if (!user) {
-      res.status(404).json({ message: "Usuario no encontrado." });
-      return;
-    }
-
-    if (user?.rol_id !== 1 && user?.rol_id !== 3) {
-      res
-        .status(403)
-        .json({ message: "No tienes permisos de administrador o profesor." });
-      return;
-    }
-
-    (req as any).user = user; // Agrega el usuario decodificado a la solicitud
-    next();
-  } catch (error) {
-    console.error("Error al verificar el rol de usuario:", error);
-    res.status(500).json({ message: "Error al verificar el rol de usuario" });
-    return;
-  }
-};
-
-export const verifyUser = async (
-  req: any,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  if (!req.headers.authorization) {
-    res.status(401).json({ message: "Token no proporcionado." });
-    return;
-  }
-
-  const token = req.headers.authorization?.split(" ")[1];
-
-  if (!token) {
-    res.status(401).json({ message: "Token no proporcionado." });
-    return;
-  }
-  try {
-    const decoded = jwt.verify(
-      token ?? "",
-      ENV.TOKEN_SECRET as string
-    ) as JwtPayload;
-    const user = await prisma.usuario.findUnique({
-      where: { id: decoded.id },
-      select: { id: true, email: true, rol: true },
-    });
-
-    if (!user) {
-      res.status(404).json({ message: "Usuario no encontrado" });
-      return;
-    }
-
-    (req as any).user = user; // Agrega el usuario decodificado a la solicitud
-    next();
-  } catch (error) {
-    console.error("Error al verificar el rol de usuario:", error);
-    res.status(500).json({ message: "Error al verificar el rol de usuario" });
-    return;
-  }
-};
-
-export const verifyAlumnoNoCookie = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  if (!req.headers.authorization) {
-    res.status(401).json({ message: "Token no proporcionado." });
-    return;
-  }
-
-  const token = req.headers.authorization?.split(" ")[1];
-
-  if (!token) {
-    res.status(401).json({ message: "Token no proporcionado." });
-  }
-
-  try {
-    const decoded = jwt.verify(
-      token ?? "",
-      ENV.TOKEN_SECRET as string
-    ) as JwtPayload;
-    const user = await prisma.usuario.findUnique({
-      where: { id: decoded.id },
-      include: { rol: true },
-    });
-
-    if (!user) {
-      res.status(404).json({ message: "Usuario no encontrado" });
-      return;
-    }
-
-    if (user?.rol_id !== 2) {
-      res.status(403).json({ message: "No tienes permiso de alumno" });
-      return;
-    }
-
-    (req as any).user = user; // Agrega el usuario decodificado a la solicitud
-    next();
-  } catch (error) {
-    console.error("Error al verificar el rol de usuario:", error);
-    res.status(500).json({ message: "Error al verificar el rol de usuario" });
-    return;
+  } catch (error: any) {
+    console.error("Error en attachUser middleware:", error);
+    return res
+      .status(500)
+      .json({ message: "Error al autenticar usuario.", error: error.message });
   }
 };

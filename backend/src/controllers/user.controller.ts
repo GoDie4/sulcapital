@@ -44,6 +44,7 @@ export const yo = async (req: any, res: any) => {
         id: userEncontrado.id,
         nombres: userEncontrado.nombres,
         email: userEncontrado.email,
+        rol_id: userEncontrado.rol_id
       },
     });
   } catch (error: any) {
@@ -81,7 +82,6 @@ export const getDecodedUser = async (
   try {
     const user = (req as any).user;
 
-    console.log(user);
 
     if (!user) {
       return res
