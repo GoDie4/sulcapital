@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import createAccessToken from "../utils/jwt";
 import { sendEmail } from "./mail.controller";
-import { ENV } from "../config/config";
 import prisma from "../config/database";
 import { LoginRequest } from "interfaces/auth.interfaces";
 
@@ -39,7 +38,7 @@ export const login = async (
       sameSite: "none", // "lax" funciona bien localmente
       secure: true, // false porque en localhost normalmente usas http
       httpOnly: true,
-      domain: ENV.COOKIE_DOMAIN, // o simplemente omítelo en entorno local
+      domain: ".sulcapital.exportando.online", // o simplemente omítelo en entorno local
       maxAge: mantenerConexion ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
     });
 
@@ -121,7 +120,7 @@ export const register = async (
       sameSite: "none",
       secure: true,
       httpOnly: true,
-      domain: ENV.COOKIE_DOMAIN,
+      domain: ".sulcapital.exportando.online",
       maxAge: 2 * 60 * 60 * 1000,
     });
 
