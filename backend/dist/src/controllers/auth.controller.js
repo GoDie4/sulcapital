@@ -8,6 +8,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const crypto_1 = __importDefault(require("crypto"));
 const jwt_1 = __importDefault(require("../utils/jwt"));
 const mail_controller_1 = require("./mail.controller");
+const config_1 = require("../config/config");
 const database_1 = __importDefault(require("../config/database"));
 const login = async (req, res) => {
     const { email, password, mantenerConexion } = req.body;
@@ -31,6 +32,7 @@ const login = async (req, res) => {
             sameSite: "none", // "lax" funciona bien localmente
             secure: true, // false porque en localhost normalmente usas http
             httpOnly: true,
+            domain: config_1.ENV.COOKIE_DOMAIN, // o simplemente omítelo en entorno local
             maxAge: mantenerConexion ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
         });
         const primerNombre = usuarioExiste.nombres.split(" ");
@@ -93,6 +95,7 @@ const register = async (req, res) => {
             sameSite: "none",
             secure: true,
             httpOnly: true,
+            domain: config_1.ENV.COOKIE_DOMAIN,
             maxAge: 2 * 60 * 60 * 1000,
         });
         const primerNombre = nuevoUsuario.nombres.split(" ");
