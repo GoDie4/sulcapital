@@ -7,6 +7,6 @@ const JWTMiddleware_1 = require("../middlewares/JWTMiddleware");
 const router = (0, express_1.Router)();
 router.get("", JWTMiddleware_1.verifyAdmin, user_controller_1.getDecodedUser);
 router.get("/perfil/:userId", validateToken_1.authRequired, user_controller_1.profile);
-router.get("/yo", JWTMiddleware_1.verifyAdmin, user_controller_1.getDecodedUser);
+router.get("/yo", JWTMiddleware_1.addUserReq, user_controller_1.yo);
 exports.default = router;
 //# sourceMappingURL=user.routes.js.map

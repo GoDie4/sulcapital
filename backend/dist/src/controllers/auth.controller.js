@@ -8,7 +8,6 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const crypto_1 = __importDefault(require("crypto"));
 const jwt_1 = __importDefault(require("../utils/jwt"));
 const mail_controller_1 = require("./mail.controller");
-const config_1 = require("../config/config");
 const database_1 = __importDefault(require("../config/database"));
 const login = async (req, res) => {
     const { email, password, mantenerConexion } = req.body;
@@ -21,12 +20,17 @@ const login = async (req, res) => {
         const isMatch = await bcrypt_1.default.compare(password, usuarioExiste.password);
         if (!isMatch)
             return res.status(400).json({ message: "Contraseña incorrecta" });
-        const token = await (0, jwt_1.default)({ id: usuarioExiste.id });
+        const role = await database_1.default.rol.findFirst({
+            where: { id: usuarioExiste.rol_id },
+        });
+        const token = await (0, jwt_1.default)({
+            id: usuarioExiste.id,
+            role: role?.nombre !== undefined ? role.nombre : "",
+        });
         res.cookie("token", token, {
             sameSite: "none", // "lax" funciona bien localmente
             secure: true, // false porque en localhost normalmente usas http
             httpOnly: true,
-            domain: config_1.ENV.COOKIE_DOMAIN, // o simplemente omítelo en entorno local
             maxAge: mantenerConexion ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
         });
         const primerNombre = usuarioExiste.nombres.split(" ");
@@ -37,6 +41,7 @@ const login = async (req, res) => {
                 nombres: usuarioExiste.nombres,
                 email: usuarioExiste.email,
                 rol_id: usuarioExiste.rol_id,
+                rol: usuarioExiste.rol_id
             },
             status: 200,
             token: token,
@@ -63,7 +68,6 @@ const register = async (req, res) => {
         }
         const salt = await bcrypt_1.default.genSalt(10);
         const hashedPassword = await bcrypt_1.default.hash(password, salt);
-        // Crear el usuario
         const nuevoUsuario = await database_1.default.usuario.create({
             data: {
                 nombres,
@@ -77,15 +81,19 @@ const register = async (req, res) => {
                 rol_id: rol === "ANUNCIANTE" ? 2 : 3,
             },
         });
+        const role = await database_1.default.rol.findFirst({
+            where: { id: nuevoUsuario.rol_id },
+        });
         // Generar el token
-        const token = await (0, jwt_1.default)({ id: nuevoUsuario.id });
-        // Setear cookie
+        const token = await (0, jwt_1.default)({
+            id: nuevoUsuario.id,
+            role: role?.nombre !== undefined ? role.nombre : "",
+        });
         res.cookie("token", token, {
             sameSite: "none",
             secure: true,
             httpOnly: true,
-            domain: config_1.ENV.COOKIE_DOMAIN,
-            maxAge: 2 * 60 * 60 * 1000, // 2 horas
+            maxAge: 2 * 60 * 60 * 1000,
         });
         const primerNombre = nuevoUsuario.nombres.split(" ");
         res.json({

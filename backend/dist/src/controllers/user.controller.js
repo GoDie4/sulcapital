@@ -44,6 +44,7 @@ const yo = async (req, res) => {
                 id: userEncontrado.id,
                 nombres: userEncontrado.nombres,
                 email: userEncontrado.email,
+                rol_id: userEncontrado.rol_id
             },
         });
     }
@@ -77,7 +78,6 @@ exports.cambiarContrasenaPerfil = cambiarContrasenaPerfil;
 const getDecodedUser = async (req, res) => {
     try {
         const user = req.user;
-        console.log(user);
         if (!user) {
             return res
                 .status(404)
