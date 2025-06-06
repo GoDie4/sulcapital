@@ -225,6 +225,7 @@ export const logout = (req: any, res: any) => {
     sameSite: "none",
     secure: true,
     domain: ENV.COOKIE_DOMAIN,
+    path: "/"
   });
   return res.sendStatus(200);
 };
