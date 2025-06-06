@@ -219,13 +219,12 @@ export const cambiarContrasena = async (req: any, res: any) => {
 };
 
 export const logout = (req: any, res: any) => {
-  res.cookie("token", "", {
-    expires: new Date(0),
+  res.clearCookie("token", {
     httpOnly: true,
     sameSite: "none",
     secure: true,
-    domain: ENV.COOKIE_DOMAIN,
-    path: "/"
+    domain: ".exportando.online",
+    path: "/",
   });
   return res.sendStatus(200);
 };
