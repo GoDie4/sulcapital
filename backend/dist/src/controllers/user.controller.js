@@ -3,9 +3,82 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDecodedUser = exports.cambiarContrasenaPerfil = exports.yo = exports.profile = void 0;
+exports.getDecodedUser = exports.cambiarContrasenaPerfil = exports.editarPerfil = exports.yo = exports.profile = exports.getUsuarios = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const database_1 = __importDefault(require("../config/database"));
+const getUsuarios = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50;
+    const search = req.query.search?.trim() || "";
+    console.log("QUERYS: ", req.query);
+    const skip = (page - 1) * limit;
+    const searchLower = search.toLowerCase();
+    const rol = req.query.rol?.trim() || "";
+    const estado = req.query.estado?.trim() || "";
+    const publicaciones = req.query.publicaciones?.trim() || "";
+    const whereConditions = {};
+    if (rol) {
+        whereConditions.rol = {
+            nombre: {
+                contains: rol,
+            },
+        };
+    }
+    if (estado) {
+        whereConditions.activo = estado === "1" ? true : false;
+    }
+    if (publicaciones === "1") {
+        whereConditions.Propiedad = {
+            some: {},
+        };
+    }
+    if (searchLower) {
+        whereConditions.OR = [
+            { nombre: { contains: searchLower } },
+            { correo: { contains: searchLower } },
+            { username: { contains: searchLower } },
+        ];
+    }
+    try {
+        const [usuarios, total] = await Promise.all([
+            database_1.default.usuario.findMany({
+                skip,
+                take: limit,
+                where: whereConditions,
+                include: {
+                    rol: true,
+                    Propiedad: true,
+                },
+                omit: {
+                    password: true,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            }),
+            database_1.default.usuario.count({
+                where: whereConditions,
+            }),
+        ]);
+        res.json({
+            data: usuarios,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al obtener los usuarios" });
+    }
+    finally {
+        await database_1.default.$disconnect();
+    }
+};
+exports.getUsuarios = getUsuarios;
 const profile = async (req, res) => {
     const { userId } = req.body;
     try {
@@ -43,8 +116,10 @@ const yo = async (req, res) => {
             usuario: {
                 id: userEncontrado.id,
                 nombres: userEncontrado.nombres,
+                apellidos: userEncontrado.apellidos,
+                celular: userEncontrado.celular,
                 email: userEncontrado.email,
-                rol_id: userEncontrado.rol_id
+                rol_id: userEncontrado.rol_id,
             },
         });
     }
@@ -55,6 +130,34 @@ const yo = async (req, res) => {
     }
 };
 exports.yo = yo;
+const editarPerfil = async (req, res) => {
+    const userId = req.user?.id;
+    const { nombres, apellidos, celular } = req.body;
+    try {
+        if (!nombres || !apellidos || !celular) {
+            return res
+                .status(400)
+                .json({ error: "Falta nombres, apellidos o celular son obligatorios" });
+        }
+        const usuarioActualizado = await database_1.default.usuario.update({
+            where: { id: userId },
+            data: {
+                nombres,
+                apellidos,
+                celular,
+            },
+        });
+        res.json({
+            message: "Perfil actualizado correctamente",
+            usuario: usuarioActualizado,
+        });
+    }
+    catch (error) {
+        console.error("Error al actualizar perfil:", error.message);
+        res.status(500).json({ error: error.message });
+    }
+};
+exports.editarPerfil = editarPerfil;
 const cambiarContrasenaPerfil = async (req, res) => {
     const { newPassword } = req.body;
     const userId = req.user?.id;

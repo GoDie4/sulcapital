@@ -6,6 +6,7 @@ import { sendEmail } from "./mail.controller";
 import { ENV } from "../config/config";
 import prisma from "../config/database";
 import { LoginRequest } from "interfaces/auth.interfaces";
+import { formatFechaHora } from "../logic/formatearFechas";
 
 export const login = async (
   req: Request<{}, {}, LoginRequest>,
@@ -50,9 +51,11 @@ export const login = async (
       usuario: {
         id: usuarioExiste.id,
         nombres: usuarioExiste.nombres,
+        apellidos: usuarioExiste.apellidos,
+        celular: usuarioExiste.celular,
         email: usuarioExiste.email,
         rol_id: usuarioExiste.rol_id,
-        rol: usuarioExiste.rol_id
+        rol: usuarioExiste.rol_id,
       },
       status: 200,
       token: token,
@@ -127,12 +130,23 @@ export const register = async (
     });
 
     const primerNombre = nuevoUsuario.nombres.split(" ");
-
+    await sendEmail(
+      `${ENV.ADMIN_EMAIL}`,
+      "Nuevo registro",
+      `NuevoRegistro.html`,
+      {
+        usuario: nuevoUsuario?.nombres + " " + nuevoUsuario.apellidos,
+        email: nuevoUsuario.email,
+        fecha: formatFechaHora(nuevoUsuario.createdAt),
+      }
+    );
     res.json({
       message: `Bienvenido ${primerNombre[0]}`,
       usuario: {
         id: nuevoUsuario.id,
         nombres: nuevoUsuario.nombres,
+        apellidos: nuevoUsuario.apellidos,
+        celular: nuevoUsuario.celular,
         email: nuevoUsuario.email,
         rol_id: nuevoUsuario.rol_id,
       },

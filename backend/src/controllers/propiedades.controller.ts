@@ -54,7 +54,6 @@ export const getPropiedades = async (req: Request, res: Response) => {
     ];
   }
 
-  console.log("whereConditions: ", whereConditions);
   try {
     const [propiedades, total] = await Promise.all([
       prisma.propiedad.findMany({
@@ -69,7 +68,7 @@ export const getPropiedades = async (req: Request, res: Response) => {
               id: true,
               url: true,
             },
-            orderBy: { id: "asc" }, // opcional: para que siempre vengan en orden definido
+            orderBy: { id: "asc" },
           },
           fondoPortada: {
             select: {
@@ -110,22 +109,116 @@ export const getPropiedadesByUser = async (
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 100;
   const search = (req.query.search as string)?.trim() || "";
-
+  console.log("Querys: ", req.query);
   const skip = (page - 1) * limit;
   const searchLower = search.toLowerCase();
+  const estado = (req.query.estado as string)?.trim() || "";
+
+  const disponibilidad = (req.query.disponibilidad as string)?.trim() || "";
+  const ciudad = (req.query.ciudad as string)?.trim() || "";
+  const tipo = (req.query.tipo as string)?.trim() || "";
 
   const user = req.user as { id: string; rol_id: string | number };
-  console.log("User: ", user);
   if (!user) {
     return res.status(401).json({ message: "Usuario no autenticado" });
   }
 
   const whereConditions: any = {};
+  if (estado) {
+    whereConditions.estado = estado;
+  }
+  if (disponibilidad) {
+    whereConditions.disponibilidad = disponibilidad;
+  }
+  if (ciudad) {
+    whereConditions.ciudad = {
+      id: Number(ciudad),
+    };
+  }
+
+  if (tipo) {
+    whereConditions.tipoPropiedad = {
+      id: tipo,
+    };
+  }
 
   // Si no es administrador, filtra por usuarioId
   if (user.rol_id !== 1) {
     whereConditions.idUser = user.id;
   }
+
+  // Agregar condiciones de búsqueda si hay término
+  if (searchLower) {
+    whereConditions.OR = [
+      { titulo: { contains: searchLower } },
+      { descripcionLarga: { contains: searchLower } },
+      { descripcionCorta: { contains: searchLower } },
+      { direccion: { contains: searchLower } },
+    ];
+  }
+
+  try {
+    const [propiedades, total] = await Promise.all([
+      prisma.propiedad.findMany({
+        skip,
+        take: limit,
+        where: whereConditions,
+        include: {
+          tipoPropiedad: { select: { nombre: true, id: true } },
+          ciudad: true,
+          imagenes: {
+            select: { id: true, url: true },
+            orderBy: { id: "asc" },
+          },
+          fondoPortada: {
+            select: { id: true, url: true },
+            orderBy: { id: "asc" },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.propiedad.count({
+        where: whereConditions,
+      }),
+    ]);
+
+    res.json({
+      data: propiedades,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener las propiedades" });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+export const getPropiedadesByUserFromAdmin = async (
+  req: any,
+  res: Response
+): Promise<any> => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 100;
+  const search = (req.query.search as string)?.trim() || "";
+
+  const skip = (page - 1) * limit;
+  const searchLower = search.toLowerCase();
+
+  const id = req.params.id;
+
+  if (!id) {
+    return res.status(401).json({ message: "Usuario no autenticado" });
+  }
+
+  const whereConditions: any = {};
+
+  whereConditions.idUser = id;
 
   // Agregar condiciones de búsqueda si hay término
   if (searchLower) {
@@ -439,6 +532,7 @@ export const getPropiedadById = async (req: any, res: any) => {
       });
     }
 
+    // Buscar la propiedad principal
     const propiedad = await prisma.propiedad.findUnique({
       where: { id },
       include: {
@@ -456,9 +550,33 @@ export const getPropiedadById = async (req: any, res: any) => {
       });
     }
 
+    // Buscar las 2 últimas propiedades PUBLICADAS del mismo usuario, excluyendo esta propiedad
+    const ultimasPropiedades = await prisma.propiedad.findMany({
+      where: {
+        idUser: propiedad.idUser,
+        estado: "PUBLICADO",
+        NOT: {
+          id: propiedad.id,
+        },
+      },
+      orderBy: {
+        createdAt: "desc", // o usa "id" si no tienes createdAt
+      },
+      take: 2,
+      include: {
+        fondoPortada: true,
+        imagenes: true,
+        tipoPropiedad: true,
+        ciudad: true,
+      },
+    });
+
     return res.json({
       ok: true,
-      data: propiedad,
+      data: {
+        propiedad,
+        ultimasPropiedades,
+      },
     });
   } catch (error) {
     console.error("Error al buscar la propiedad:", error);
@@ -468,7 +586,6 @@ export const getPropiedadById = async (req: any, res: any) => {
     });
   }
 };
-
 //type Disponibilidad = "EN_COMPRA" | "EN_VENTA" | "EN_ALQUILER";
 
 export type EstadoType = "EN_REVISION" | "PUBLICADO" | "RECHAZADO" | "OCULTO";

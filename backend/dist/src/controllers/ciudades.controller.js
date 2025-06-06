@@ -10,7 +10,7 @@ const fs_1 = __importDefault(require("fs"));
 const prisma = new client_1.PrismaClient();
 const getCiudades = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 100;
+    const limit = parseInt(req.query.limit) || 50;
     const search = req.query.search?.trim() || "";
     const skip = (page - 1) * limit;
     const searchLower = search.toLowerCase();

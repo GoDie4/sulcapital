@@ -10,6 +10,7 @@ const jwt_1 = __importDefault(require("../utils/jwt"));
 const mail_controller_1 = require("./mail.controller");
 const config_1 = require("../config/config");
 const database_1 = __importDefault(require("../config/database"));
+const formatearFechas_1 = require("../logic/formatearFechas");
 const login = async (req, res) => {
     const { email, password, mantenerConexion } = req.body;
     try {
@@ -41,9 +42,11 @@ const login = async (req, res) => {
             usuario: {
                 id: usuarioExiste.id,
                 nombres: usuarioExiste.nombres,
+                apellidos: usuarioExiste.apellidos,
+                celular: usuarioExiste.celular,
                 email: usuarioExiste.email,
                 rol_id: usuarioExiste.rol_id,
-                rol: usuarioExiste.rol_id
+                rol: usuarioExiste.rol_id,
             },
             status: 200,
             token: token,
@@ -99,11 +102,18 @@ const register = async (req, res) => {
             maxAge: 2 * 60 * 60 * 1000,
         });
         const primerNombre = nuevoUsuario.nombres.split(" ");
+        await (0, mail_controller_1.sendEmail)(`${config_1.ENV.ADMIN_EMAIL}`, "Nuevo registro", `NuevoRegistro.html`, {
+            usuario: nuevoUsuario?.nombres + " " + nuevoUsuario.apellidos,
+            email: nuevoUsuario.email,
+            fecha: (0, formatearFechas_1.formatFechaHora)(nuevoUsuario.createdAt),
+        });
         res.json({
             message: `Bienvenido ${primerNombre[0]}`,
             usuario: {
                 id: nuevoUsuario.id,
                 nombres: nuevoUsuario.nombres,
+                apellidos: nuevoUsuario.apellidos,
+                celular: nuevoUsuario.celular,
                 email: nuevoUsuario.email,
                 rol_id: nuevoUsuario.rol_id,
             },

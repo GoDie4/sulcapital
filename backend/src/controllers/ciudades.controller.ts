@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export const getCiudades = async (req: any, res: any) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 100;
+  const limit = parseInt(req.query.limit) || 50;
   const search = (req.query.search as string)?.trim() || "";
 
   const skip = (page - 1) * limit;

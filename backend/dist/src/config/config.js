@@ -18,5 +18,6 @@ exports.ENV = {
     EMAIL_USER: process.env.USER_MAIL || "",
     EMAIL_PASS: process.env.PASS_MAIL || "",
     COOKIE_DOMAIN: process.env.COOKIE_DOMAIN || "localhost",
+    ADMIN_EMAIL: process.env.EMAIL_ADMIN || ''
 };
 //# sourceMappingURL=config.js.map

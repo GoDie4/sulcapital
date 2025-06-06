@@ -9,6 +9,7 @@ import {
   getTiposPropiedades,
   updateTipoPropiedad,
 } from "../controllers/tipoPropiedades.controller";
+import { verifyAdmin } from "../middlewares/JWTMiddleware";
 
 const router = Router();
 const UPLOAD_DIR = path.resolve(__dirname, "../../public/tipo_propiedades");
@@ -17,6 +18,7 @@ router.get("/", getTiposPropiedades);
 
 router.post(
   "/agregar",
+  verifyAdmin,
   upload.fields([
     { name: "imagen", maxCount: 1 },
     { name: "icono", maxCount: 1 },
@@ -36,6 +38,7 @@ router.post(
 
 router.put(
   "/editar/:id",
+  verifyAdmin,
   upload.fields([
     { name: "imagen", maxCount: 1 },
     { name: "icono", maxCount: 1 },
@@ -53,6 +56,6 @@ router.put(
   updateTipoPropiedad
 );
 
-router.delete("/eliminar/:id", deleteTipoPropiedad);
+router.delete("/eliminar/:id", verifyAdmin, deleteTipoPropiedad);
 
 export default router;

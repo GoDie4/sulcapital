@@ -2,6 +2,83 @@ import bcrypt from "bcrypt";
 import prisma from "../config/database";
 import { Request, Response } from "express";
 
+export const getUsuarios = async (req: any, res: any) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 50;
+  const search = (req.query.search as string)?.trim() || "";
+
+  console.log("QUERYS: ", req.query);
+  const skip = (page - 1) * limit;
+  const searchLower = search.toLowerCase();
+
+  const rol = (req.query.rol as string)?.trim() || "";
+  const estado = (req.query.estado as string)?.trim() || "";
+  const publicaciones = (req.query.publicaciones as string)?.trim() || "";
+
+  const whereConditions: any = {};
+  if (rol) {
+    whereConditions.rol = {
+      nombre: {
+        contains: rol,
+      },
+    };
+  }
+
+  if (estado) {
+    whereConditions.activo = estado === "1" ? true : false;
+  }
+
+  if (publicaciones === "1") {
+    whereConditions.Propiedad = {
+      some: {}, 
+    };
+  }
+  if (searchLower) {
+    whereConditions.OR = [
+      { nombre: { contains: searchLower } },
+      { correo: { contains: searchLower } },
+      { username: { contains: searchLower } },
+    ];
+  }
+
+  try {
+    const [usuarios, total] = await Promise.all([
+      prisma.usuario.findMany({
+        skip,
+        take: limit,
+        where: whereConditions,
+        include: {
+          rol: true,
+          Propiedad: true,
+        },
+        omit: {
+          password: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prisma.usuario.count({
+        where: whereConditions,
+      }),
+    ]);
+
+    res.json({
+      data: usuarios,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener los usuarios" });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
 export const profile = async (req: any, res: any) => {
   const { userId } = req.body;
 
@@ -43,14 +120,46 @@ export const yo = async (req: any, res: any) => {
       usuario: {
         id: userEncontrado.id,
         nombres: userEncontrado.nombres,
+        apellidos: userEncontrado.apellidos,
+        celular: userEncontrado.celular,
         email: userEncontrado.email,
-        rol_id: userEncontrado.rol_id
+        rol_id: userEncontrado.rol_id,
       },
     });
   } catch (error: any) {
     res
       .status(500)
       .json({ message: "Error interno del servidor.", error: error.message });
+  }
+};
+
+export const editarPerfil = async (req: any, res: any) => {
+  const userId = req.user?.id;
+  const { nombres, apellidos, celular } = req.body;
+
+  try {
+    if (!nombres || !apellidos || !celular) {
+      return res
+        .status(400)
+        .json({ error: "Falta nombres, apellidos o celular son obligatorios" });
+    }
+
+    const usuarioActualizado = await prisma.usuario.update({
+      where: { id: userId },
+      data: {
+        nombres,
+        apellidos,
+        celular,
+      },
+    });
+
+    res.json({
+      message: "Perfil actualizado correctamente",
+      usuario: usuarioActualizado,
+    });
+  } catch (error: any) {
+    console.error("Error al actualizar perfil:", error.message);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -81,7 +190,6 @@ export const getDecodedUser = async (
 ): Promise<any | undefined> => {
   try {
     const user = (req as any).user;
-
 
     if (!user) {
       return res

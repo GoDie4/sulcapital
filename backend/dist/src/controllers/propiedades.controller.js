@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buscarPropiedades = exports.getPropiedadById = exports.eliminarPropiedad = exports.editarPropiedad = exports.crearPropiedad = exports.getPropiedadesByUser = exports.getPropiedades = void 0;
+exports.buscarPropiedades = exports.getPropiedadById = exports.eliminarPropiedad = exports.editarPropiedad = exports.crearPropiedad = exports.getPropiedadesByUserFromAdmin = exports.getPropiedadesByUser = exports.getPropiedades = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 /**
@@ -45,7 +45,6 @@ const getPropiedades = async (req, res) => {
             { estado: "PUBLICADO" },
         ];
     }
-    console.log("whereConditions: ", whereConditions);
     try {
         const [propiedades, total] = await Promise.all([
             prisma.propiedad.findMany({
@@ -60,7 +59,7 @@ const getPropiedades = async (req, res) => {
                             id: true,
                             url: true,
                         },
-                        orderBy: { id: "asc" }, // opcional: para que siempre vengan en orden definido
+                        orderBy: { id: "asc" },
                     },
                     fondoPortada: {
                         select: {
@@ -99,18 +98,102 @@ const getPropiedadesByUser = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 100;
     const search = req.query.search?.trim() || "";
+    console.log("Querys: ", req.query);
     const skip = (page - 1) * limit;
     const searchLower = search.toLowerCase();
+    const estado = req.query.estado?.trim() || "";
+    const disponibilidad = req.query.disponibilidad?.trim() || "";
+    const ciudad = req.query.ciudad?.trim() || "";
+    const tipo = req.query.tipo?.trim() || "";
     const user = req.user;
-    console.log("User: ", user);
     if (!user) {
         return res.status(401).json({ message: "Usuario no autenticado" });
     }
     const whereConditions = {};
+    if (estado) {
+        whereConditions.estado = estado;
+    }
+    if (disponibilidad) {
+        whereConditions.disponibilidad = disponibilidad;
+    }
+    if (ciudad) {
+        whereConditions.ciudad = {
+            id: Number(ciudad),
+        };
+    }
+    if (tipo) {
+        whereConditions.tipoPropiedad = {
+            id: tipo,
+        };
+    }
     // Si no es administrador, filtra por usuarioId
     if (user.rol_id !== 1) {
         whereConditions.idUser = user.id;
     }
+    // Agregar condiciones de búsqueda si hay término
+    if (searchLower) {
+        whereConditions.OR = [
+            { titulo: { contains: searchLower } },
+            { descripcionLarga: { contains: searchLower } },
+            { descripcionCorta: { contains: searchLower } },
+            { direccion: { contains: searchLower } },
+        ];
+    }
+    try {
+        const [propiedades, total] = await Promise.all([
+            prisma.propiedad.findMany({
+                skip,
+                take: limit,
+                where: whereConditions,
+                include: {
+                    tipoPropiedad: { select: { nombre: true, id: true } },
+                    ciudad: true,
+                    imagenes: {
+                        select: { id: true, url: true },
+                        orderBy: { id: "asc" },
+                    },
+                    fondoPortada: {
+                        select: { id: true, url: true },
+                        orderBy: { id: "asc" },
+                    },
+                },
+                orderBy: { createdAt: "desc" },
+            }),
+            prisma.propiedad.count({
+                where: whereConditions,
+            }),
+        ]);
+        res.json({
+            data: propiedades,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al obtener las propiedades" });
+    }
+    finally {
+        await prisma.$disconnect();
+    }
+};
+exports.getPropiedadesByUser = getPropiedadesByUser;
+const getPropiedadesByUserFromAdmin = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const search = req.query.search?.trim() || "";
+    const skip = (page - 1) * limit;
+    const searchLower = search.toLowerCase();
+    const id = req.params.id;
+    if (!id) {
+        return res.status(401).json({ message: "Usuario no autenticado" });
+    }
+    const whereConditions = {};
+    whereConditions.idUser = id;
     // Agregar condiciones de búsqueda si hay término
     if (searchLower) {
         whereConditions.OR = [
@@ -171,7 +254,7 @@ const getPropiedadesByUser = async (req, res) => {
         await prisma.$disconnect();
     }
 };
-exports.getPropiedadesByUser = getPropiedadesByUser;
+exports.getPropiedadesByUserFromAdmin = getPropiedadesByUserFromAdmin;
 const crearPropiedad = async (req, res) => {
     try {
         const { titulo, descripcionLarga, descripcionCorta, direccion, precio, video, coordenadas, idUser, fondoPortada, disponibilidad, exclusivo, tipoPropiedadId, ciudadId, estado, imagenes, } = req.body;
@@ -368,6 +451,7 @@ const getPropiedadById = async (req, res) => {
                 message: "Falta el parámetro 'id'",
             });
         }
+        // Buscar la propiedad principal
         const propiedad = await prisma.propiedad.findUnique({
             where: { id },
             include: {
@@ -383,9 +467,32 @@ const getPropiedadById = async (req, res) => {
                 message: "Propiedad no encontrada",
             });
         }
+        // Buscar las 2 últimas propiedades PUBLICADAS del mismo usuario, excluyendo esta propiedad
+        const ultimasPropiedades = await prisma.propiedad.findMany({
+            where: {
+                idUser: propiedad.idUser,
+                estado: "PUBLICADO",
+                NOT: {
+                    id: propiedad.id,
+                },
+            },
+            orderBy: {
+                createdAt: "desc", // o usa "id" si no tienes createdAt
+            },
+            take: 2,
+            include: {
+                fondoPortada: true,
+                imagenes: true,
+                tipoPropiedad: true,
+                ciudad: true,
+            },
+        });
         return res.json({
             ok: true,
-            data: propiedad,
+            data: {
+                propiedad,
+                ultimasPropiedades,
+            },
         });
     }
     catch (error) {
