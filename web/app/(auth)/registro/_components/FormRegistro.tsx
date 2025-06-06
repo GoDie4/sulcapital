@@ -11,8 +11,11 @@ import { toast } from "sonner";
 import { registerSchema } from "../../_components/AuthSchemas";
 import { RegisterInterface } from "../../_components/AuthInterfaces";
 import { Errors } from "@/components/form/Errors";
+import { useAuth } from "@/assets/context/AuthContext";
 
 export const FormRegistro = () => {
+  const { setAuthUser } = useAuth();
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const router = useRouter();
@@ -36,8 +39,13 @@ export const FormRegistro = () => {
       });
 
       if (response.status === 200) {
-        router.push("/sistema");
-
+        setAuthUser(response.data.usuario)
+        if (response.data.usuario.rol_id === 2) {
+          router.push("/sistema/propiedades");
+        }
+        if (response.data.usuario.rol_id === 3) {
+          router.push("/sistema/favoritos");
+        }
         toast.success(response.data.message);
       }
     } catch (error: any) {

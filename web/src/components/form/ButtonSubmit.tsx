@@ -6,11 +6,13 @@ export const ButtonSubmit = ({
   text,
   textLoading,
   disabled,
+  className,
 }: {
   loading: boolean;
   text: string;
   textLoading: string;
   disabled?: boolean;
+  className?: string;
 }) => {
   return (
     <button
@@ -20,7 +22,7 @@ export const ButtonSubmit = ({
         disabled || loading
           ? "opacity-80 hover:!bg-secondary-main cursor-default"
           : "opacity-100"
-      }`}
+      } ${className ?? ""}`}
     >
       {loading ? (
         <>

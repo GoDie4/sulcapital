@@ -224,6 +224,7 @@ export const logout = (req: any, res: any) => {
     httpOnly: true,
     sameSite: "none",
     secure: true,
+    domain: ENV.COOKIE_DOMAIN,
   });
   return res.sendStatus(200);
 };

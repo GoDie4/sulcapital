@@ -25,25 +25,85 @@ export default async function page({ searchParams }: { searchParams: any }) {
   const safePage = isNaN(page) || page < 1 ? 1 : page;
   const search =
     typeof searchParams.search === "string" ? searchParams.search : "";
+  const estado =
+    typeof searchParams.estado === "string" ? searchParams.estado : "";
+  const disponibilidad =
+    typeof searchParams.disponibilidad === "string"
+      ? searchParams.disponibilidad
+      : "";
+
+  const tipo =
+    typeof searchParams.tipo === "string"
+      ? searchParams.tipo
+      : "";
+
+  const ciudad =
+    typeof searchParams.ciudad === "string" ? searchParams.ciudad : "";
 
   const res = await fetch(
     `${
       config.API_URL
     }/propiedades/byUser?page=${safePage}&limit=${limit}&search=${encodeURIComponent(
       search
-    )}`,
+    )}&estado=${estado}&disponibilidad=${disponibilidad}&ciudad=${ciudad}&tipo=${tipo}`,
     {
       cache: "no-store",
 
       headers: {
-        // 'Authorization': `Bearer ${localStorage.getItem('token')}`,
         Cookie: `token=${token}`,
       },
     }
   );
   const { data, pagination } = await res.json();
 
-  console.log("DATA: ", data)
+  //FILTROS
+  const resTipos = await fetch(
+    `${config.API_URL}/tipo_propiedades?page=${safePage}&limit=${limit}`
+  );
+  const { data: tipos } = await resTipos.json();
+
+  const resCiudades = await fetch(
+    `${config.API_URL}/ciudades?page=${safePage}&limit=${50}`
+  );
+  const { data: ciudades } = await resCiudades.json();
+
+  const filtros = [
+    {
+      name: "disponibilidad",
+      label: "Disponibilidad",
+      options: [
+        { value: "EN_VENTA", label: "Venta" },
+        { value: "EN_COMPRA", label: "Compra" },
+        { value: "EN_ALQUILER", label: "Alquiler" },
+      ],
+    },
+    {
+      name: "ciudad",
+      label: "Ciudad",
+      options: ciudades.map((ciudad: any) => ({
+        value: ciudad.id,
+        label: ciudad.nombre,
+      })),
+    },
+    {
+      name: "estado",
+      label: "Estado",
+      options: [
+        { value: "EN_REVISION", label: "En revisión" },
+        { value: "PUBLICADO", label: "Publicado" },
+        { value: "RECHAZADO", label: "Rechazado" },
+        { value: "OCULTO", label: "Oculto" },
+      ],
+    },
+    {
+      name: "tipo",
+      label: "Tipo de prop.",
+      options: tipos.map((tipo: any) => ({
+        value: tipo.id,
+        label: tipo.nombre,
+      })),
+    },
+  ];
   return (
     <>
       <WrapperSecciones
@@ -59,6 +119,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
         pagination={pagination}
         renderEditForm={<EditarPropiedad />}
         modalSize="medium"
+        filters={filtros}
         deleteOptions={{
           apiEndpoint: "/propiedades/eliminar",
           pagination: {

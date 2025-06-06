@@ -7,11 +7,8 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/autoplay";
 import "swiper/css/navigation";
-import { PiEye } from "react-icons/pi";
 import Link from "next/link";
-import { BsEnvelope, BsWhatsapp } from "react-icons/bs";
-import { useAuth } from "@/assets/context/AuthContext";
-import { VistaRapidaInmueble } from "./VistaRapidaInmueble";
+import { BsEnvelope, BsHeart, BsHeartFill, BsWhatsapp } from "react-icons/bs";
 import { Propiedad } from "../../(sistema)/sistema/propiedades/_components/table/ColumnasPropiedades";
 import { config } from "@/assets/config/config";
 export type CardInmuebleDesign = "grid" | "list";
@@ -135,7 +132,6 @@ const CardInmuebleGrid = ({
   data: Propiedad;
   variasImagenes: boolean;
 }) => {
-  const { setModalContent, openModal } = useAuth();
   return (
     <Link
       href={`/propiedad/${data.id}/try`}
@@ -162,16 +158,7 @@ const CardInmuebleGrid = ({
           </Swiper>
 
           <div className=" absolute z-10 w-full h-full inset-0 bg-black-main/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-          <button
-            type="button"
-            onClick={() => {
-              setModalContent(<VistaRapidaInmueble />);
-              openModal();
-            }}
-            className=" rounded-full p-1 hover:text-primary-main  absolute cursor-pointer z-40 -bottom-5 group-hover:bottom-2 left-3 opacity-0 group-hover:opacity-100 text-white-main text-lg transition-all duration-200"
-          >
-            <PiEye />
-          </button>
+        
         </div>
 
         {data.exclusivo && (
@@ -183,10 +170,30 @@ const CardInmuebleGrid = ({
       </div>
 
       <div className="block p-4 space-y-3 bg-white-main">
-        <div className="flex flex-col gap-1">
-          <span className="text-sm text-black-700">Desde</span>
-          <div className="text-lg font-bold text-secondary-main font-TypographBold ">
-            S/ {data.precio}
+        <div className="w-full flex gap-2 items-center justify-between">
+          <div className="flex flex-col gap-1">
+            <span className="text-sm text-black-700">Desde</span>
+            <div className="text-lg font-bold text-secondary-main font-TypographBold ">
+              S/ {data.precio}
+            </div>
+          </div>
+          <div className="w-fit">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation(); // evita que el clic se propague al Link
+                e.preventDefault(); // previene la redirección
+                alert("hola");
+              }}
+              className="text-gray-400 group active:scale-75 text-xl transition-all duration-150"
+            >
+              <span className="block group-hover:hidden">
+                <BsHeart />
+              </span>
+              <span className="hidden group-hover:block">
+                <BsHeartFill className="text-secondary-main" />
+              </span>
+            </button>
           </div>
         </div>
 

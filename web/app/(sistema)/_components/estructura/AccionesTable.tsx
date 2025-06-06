@@ -12,8 +12,10 @@ export const AccionesTable = (
   renderEditForm: ReactNode,
   openModal: () => void,
   setRowEdit: Dispatch<SetStateAction<any | null>>,
-  deleteOptions: DeleteOptionTypes
+  deleteOptions: DeleteOptionTypes,
+  actionsTable: ActionDefinition<any>
 ): ActionDefinition<any>[] => [
+  { ...actionsTable },
   {
     type: "item",
     label: "Editar",
@@ -37,6 +39,5 @@ export const AccionesTable = (
       );
       openModal();
     },
-  
   },
 ];

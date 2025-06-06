@@ -19,7 +19,7 @@ export type UserInterface = {
   nombres: string;
   apellidos: string;
   celular: string;
-  rol_id: string | number
+  rol_id: string | number;
   rol?: RolesInterface;
   createdAt?: Date;
   updatedAt?: Date;
@@ -35,3 +35,14 @@ export interface RolesInterface {
 export interface RecuperarContrasenaInteface {
   email: string;
 }
+
+export interface CambiarContrasenaInterface {
+  password: string;
+  confirmPassword: string;
+}
+
+export type UserInterfaceEdit = {
+  nombres: string;
+  apellidos: string;
+  celular: string;
+};

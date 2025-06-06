@@ -12,16 +12,39 @@ export interface ImagenPropiedad {
   url: string;
 }
 
+const ChipDisponibilidad = ({ disponibilidad }: { disponibilidad: string }) => {
+  const getTexto = () => {
+    switch (disponibilidad) {
+      case "EN_VENTA":
+        return "Venta";
+      case "EN_COMPRA":
+        return "Compra";
+      case "EN_ALQUILER":
+        return "Alquiler";
+      default:
+        return "";
+    }
+  };
+
+  return (
+    <span className="block absolute z-20 top-4 font-TypographBold text-xs right-4 w-fit bg-primary-main text-white-main px-3 py-1 rounded-full">
+      {getTexto()}
+    </span>
+  );
+};
+
 export const GaleriaInmuebles = ({
   imagenes,
   precio,
   descripcionCorta,
   direccion,
+  disponibilidad,
 }: {
   imagenes: ImagenPropiedad[];
   precio: string;
   descripcionCorta: string;
   direccion: string;
+  disponibilidad: string;
 }) => {
   //   const imagenes = [
   //     "/images/inmueble/foto1.webp",
@@ -37,9 +60,7 @@ export const GaleriaInmuebles = ({
         <Gallery>
           <div className="w-full flex flex-col xl:flex-row gap-4">
             <div className="w-full xl:w-3/5 relative">
-              <span className="block absolute z-20 top-4 font-TypographBold text-xs right-4 w-fit bg-primary-main text-white-main px-3 py-1 rounded-full">
-                Venta
-              </span>
+              <ChipDisponibilidad disponibilidad={disponibilidad} />
               <Item
                 original={`${config.API_IMAGE_URL}${imagenes[0].url}`}
                 thumbnail={`${config.API_IMAGE_URL}${imagenes[0].url}`}

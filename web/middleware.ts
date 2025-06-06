@@ -5,15 +5,24 @@ import { jwtVerify, JWTPayload } from "jose";
 
 // Rutas que cada rol puede visitar
 const ROLE_ROUTES: Record<string, string[]> = {
-  administrador: ["/ciudades", "/usuarios", "/propiedades"],
-  anunciante: ["/sistema/ciudades", "/sistema/propiedades"],
-  cliente: ["/sistema/propiedades"],
+  administrador: ["/ciudades", "/usuarios", "/propiedades", "/sistema/perfil"],
+  anunciante: [
+    "/sistema/ciudades",
+    "/sistema/propiedades",
+    "/sistema/perfil",
+    "/sistema/favoritos",
+    "/sistema/vistos",
+  ],
+  cliente: [
+    "/sistema/propiedades",
+    "/sistema/perfil",
+    "/sistema/favoritos",
+    "/sistema/vistos",
+  ],
 };
 
-// Verifica con jose y extrae el rol
 async function getUserRoleFromToken(token: string): Promise<string | null> {
   try {
-    // ‘TOKEN_SECRET’ debe ser tu cadena secreta en base64 o hexadecimal
     const secret = new TextEncoder().encode(process.env.TOKEN_SECRET!);
     const { payload }: { payload: JWTPayload } = await jwtVerify(token, secret);
 
@@ -32,23 +41,19 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   console.log("🚀 Middleware para:", pathname);
 
-  // Solo aplicamos middleware en /sistema/*
   if (!pathname.startsWith("/sistema")) {
     return NextResponse.next();
   }
 
-  // Leemos la cookie “token”
   const token = request.cookies.get("token")?.value;
   console.log("📦 Token desde cookie:", token);
 
-  // Si no hay token, redirigimos a /iniciar-sesion
   if (!token) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/iniciar-sesion";
     return NextResponse.redirect(loginUrl);
   }
 
-  // Obtenemos el rol via jose
   const role = await getUserRoleFromToken(token);
   console.log("🧑‍💼 Rol obtenido:", role);
 
@@ -69,7 +74,14 @@ export async function middleware(request: NextRequest) {
   const isAllowed = allowed.some(
     (route) => pathname === route || pathname.startsWith(route + "/")
   );
-  console.log("🔍 Permitido para", role, ":", allowed, "| isAllowed:", isAllowed);
+  console.log(
+    "🔍 Permitido para",
+    role,
+    ":",
+    allowed,
+    "| isAllowed:",
+    isAllowed
+  );
 
   if (isAllowed) {
     return NextResponse.next();

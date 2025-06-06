@@ -25,6 +25,9 @@ export type ActionDefinition<TData> =
     }
   | {
       type: "separator";
+    }
+  | {
+      type: "";
     };
 
 interface DataTableRowActionsProps<TData> {
@@ -59,6 +62,9 @@ export function DataTableRowActions<TData>({
         {actions.map((action, index) => {
           if (action.type === "separator") {
             return <DropdownMenuSeparator key={`separator-${index}`} />;
+          }
+          if (action.type === "") {
+            return <></>;
           }
           // Clave única para cada ítem del menú
           const key = `${action.label}-${index}`;

@@ -32,7 +32,6 @@ export default async function page({ searchParams }: { searchParams: any }) {
   );
   const { data, pagination } = await res.json();
 
-  console.log("data: ", data)
   return (
     <>
       <WrapperSecciones

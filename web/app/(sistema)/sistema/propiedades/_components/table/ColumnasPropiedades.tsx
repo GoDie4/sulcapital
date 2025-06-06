@@ -126,7 +126,6 @@ export const columnsPropiedad: ColumnDef<Propiedad>[] = [
     header: "Portada",
     cell: ({ row }) => {
       const fondoPortadas = row.getValue("fondoPortada") as { url: string }[];
-        console.log("portadas: ", fondoPortadas)
       return (
         <img
           src={`${config.API_IMAGE_URL}${fondoPortadas[0].url}`}

@@ -16,15 +16,9 @@ import {
   useReactTable,
   Table as TanstackTable, // Renombrar para evitar conflicto con el componente Table UI
 } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react"; // MoreHorizontal no se usa directamente aquí
 
 import { Button } from "@/components/ui/button"; // Ajusta la ruta
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"; // Ajusta la ruta
+
 import {
   Table,
   TableBody,
@@ -38,8 +32,6 @@ import { useAuth } from "@/assets/context/AuthContext";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Pagination } from "../interfaces/Pagination";
 import { ModalSizes } from "../../../_components/modal/ModalWrapper";
-
-// Importa DataTableRowActions y su tipo ActionDefinition
 
 interface ReusableShadcnDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -58,15 +50,24 @@ interface ReusableShadcnDataTableProps<TData, TValue> {
 
   renderAddForm?: React.ReactNode;
   pagination: Pagination;
-  // Opción 2: Render prop para máxima flexibilidad (anula la Opción 1 si se provee)
   renderRowActions?: (row: Row<TData>) => React.ReactNode;
 
   modalSize?: ModalSizes;
-  // Opcional: para controlar el estado de la paginación desde fuera si es necesario
-  // pageCount?: number;
-  // pagination?: { pageIndex: number; pageSize: number };
-  // onPaginationChange?: (updater: Updater<PaginationState>) => void;
+  disableActionsColumn?: boolean;
+
+  filters?: FilterBuscador[];
+
+  noRenderAddButton?: boolean;
 }
+type FilterOption = {
+  value: string;
+  label: string;
+};
+export type FilterBuscador = {
+  name: string;
+  label: string;
+  options: FilterOption[];
+};
 
 export function DataTable<TData, TValue>({
   columns: initialColumns,
@@ -80,6 +81,9 @@ export function DataTable<TData, TValue>({
   renderAddForm,
   pagination,
   modalSize,
+  disableActionsColumn = false,
+  filters = [],
+  noRenderAddButton = false,
 }: ReusableShadcnDataTableProps<TData, TValue>) {
   const { setModalContent, openModal, setModalSize } = useAuth();
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -89,13 +93,22 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  // Si controlas la paginación externamente, usarías las props, sino el estado interno de la tabla
-  // const [paginationState, setPaginationState] = React.useState({ pageIndex: 0, pageSize: 10 });
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
   const [searchTerm, setSearchTerm] = React.useState<string>("");
+  const [filterValues, setFilterValues] = React.useState<
+    Record<string, string>
+  >({});
 
+  React.useEffect(() => {
+    const newFilters: Record<string, string> = {};
+    filters.forEach((filter) => {
+      const value = searchParams.get(filter.name) ?? "";
+      newFilters[filter.name] = value;
+    });
+    setFilterValues(newFilters);
+  }, [searchParams, filters]);
   const [paginationState, setPaginationState] = React.useState({
     pageIndex: pagination.page - 1, // porque TanStack usa 0-based index
     pageSize: pagination.limit,
@@ -106,31 +119,35 @@ export function DataTable<TData, TValue>({
       | ((props: { row: Row<TData> }) => React.ReactNode)
       | undefined = undefined;
 
-    if (renderRowActions) {
-      effectiveActionsCellRenderer = ({ row }) => renderRowActions(row);
-    } else if (rowActions && rowActions.length > 0) {
-      effectiveActionsCellRenderer = ({ row }) => (
-        <DataTableRowActions
-          row={row}
-          actions={rowActions}
-          menuLabel={rowActionsMenuLabel}
-          triggerIcon={rowActionsTriggerIcon}
-        />
-      );
+    if (!disableActionsColumn) {
+      if (renderRowActions) {
+        effectiveActionsCellRenderer = ({ row }) => renderRowActions(row);
+      } else if (rowActions && rowActions.length > 0) {
+        effectiveActionsCellRenderer = ({ row }) => (
+          <DataTableRowActions
+            row={row}
+            actions={rowActions}
+            menuLabel={rowActionsMenuLabel}
+            triggerIcon={rowActionsTriggerIcon}
+          />
+        );
+      }
+
+      if (effectiveActionsCellRenderer) {
+        memoizedColumns.push({
+          id: actionColumnId,
+          header: actionColumnHeaderText,
+          cell: effectiveActionsCellRenderer,
+          enableSorting: false,
+          enableHiding: true,
+        } as ColumnDef<TData, any>);
+      }
     }
 
-    if (effectiveActionsCellRenderer) {
-      memoizedColumns.push({
-        id: actionColumnId,
-        header: actionColumnHeaderText,
-        cell: effectiveActionsCellRenderer,
-        enableSorting: false,
-        enableHiding: true, // Permitir ocultar la columna de acciones
-      } as ColumnDef<TData, any>);
-    }
     return memoizedColumns;
   }, [
     initialColumns,
+    disableActionsColumn,
     renderRowActions,
     rowActions,
     actionColumnId,
@@ -150,7 +167,7 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    // enableRowSelection: true, // Asegúrate que esto esté habilitado si la columna 'select' lo necesita
+    enableRowSelection: true, // Asegúrate que esto esté habilitado si la columna 'select' lo necesita
     state: {
       sorting,
       columnFilters,
@@ -195,6 +212,49 @@ export function DataTable<TData, TValue>({
       router.push(newUrl);
     }
   }, [searchTerm, pathname, searchParams, router]);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    Object.entries(filterValues).forEach(([key, value]) => {
+      if (value) {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
+    });
+
+    if (searchTerm.length >= 3) {
+      params.set("search", searchTerm);
+    } else {
+      params.delete("search");
+    }
+
+    const newUrl = `${pathname}?${params.toString()}`;
+    const currentUrl = `${pathname}?${searchParams.toString()}`;
+
+    if (newUrl !== currentUrl) {
+      router.push(newUrl);
+    }
+  }, [filterValues, pathname, router, searchParams, searchTerm]);
+
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    const resetFilters: Record<string, string> = {};
+    filters.forEach((filter) => {
+      resetFilters[filter.name] = "";
+    });
+    setFilterValues(resetFilters);
+
+    const params = new URLSearchParams();
+    params.set("page", "1");
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const hasActiveFilters = Object.values(filterValues).some(
+    (value) => value !== ""
+  );
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
@@ -212,60 +272,59 @@ export function DataTable<TData, TValue>({
             Buscar
           </button> */}
         </form>
-        <div className="w-fit gap-4 flex ml-auto">
-          <button
-            type="button"
-            onClick={() => {
-              setModalSize(modalSize ?? "small");
-              setModalContent(renderAddForm);
-              openModal();
-            }}
-            className="flex w-fit rounded-main bg-primary-main px-6 py-2 text-center text-white-main transition-all duration-300 hover:bg-primary-700"
-          >
-            Agregar
-          </button>
-          <DropdownMenu >
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto hidden md:block">
-                Columnas <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  let columnText = column.id;
-                  const headerDef = column.columnDef.header;
-
-                  if (
-                    column.id === actionColumnId &&
-                    typeof actionColumnHeaderText === "string"
-                  ) {
-                    columnText = actionColumnHeaderText;
-                  } else if (column.id === "select") {
-                    columnText = "Seleccionar"; // O podrías tomarlo del header si es un string
-                  } else if (typeof headerDef === "string") {
-                    columnText = headerDef;
+        <div className="w-fit gap-4 flex ml-auto items-center">
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={handleClearFilters}
+              className="px-3 py-2 text-sm text-red-600 underline"
+            >
+              Limpiar filtros
+            </button>
+          )}
+          {filters.map((filter) => (
+            <div className="flex flex-col gap-1" key={filter.name}>
+              <label
+                htmlFor=""
+                className="text-sm font-semibold text-secondary-main"
+              >
+                {filter.label}
+              </label>
+              <select
+                value={filterValues[filter.name] ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (filterValues[filter.name] !== value) {
+                    setFilterValues((prev) => ({
+                      ...prev,
+                      [filter.name]: value,
+                    }));
                   }
-                  // Si headerDef es una función, column.id es un fallback razonable.
-                  // Podrías querer una prop 'displayName' en columnDef.meta para más control.
-
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {columnText}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                }}
+                className="p-2 text-sm border rounded-md outline-none focus:border-secondary-main"
+              >
+                <option value="">Seleccionar</option>
+                {filter.options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+          {!noRenderAddButton && (
+            <button
+              type="button"
+              onClick={() => {
+                setModalSize(modalSize ?? "small");
+                setModalContent(renderAddForm);
+                openModal();
+              }}
+              className="flex w-fit rounded-main h-fit bg-primary-main px-6 py-2 text-center text-white-main transition-all duration-300 hover:bg-primary-700"
+            >
+              Agregar
+            </button>
+          )}
         </div>
       </div>
       <div className="rounded-lg overflow-hidden border">

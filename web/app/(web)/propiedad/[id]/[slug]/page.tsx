@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { config } from "@/assets/config/config";
 import axios from "axios";
-import { Propiedad } from "../../../../(sistema)/sistema/propiedades/_components/table/ColumnasPropiedades";
 import { BannerInternas } from "../../../../_components/estructura/BannerInternas";
 import DescripcionInmueble from "../../../../_components/inmuebles/_components/DescripcionInmueble";
 import { GaleriaInmuebles } from "../../../../_components/inmuebles/_components/GaleriaInmuebles";
@@ -11,7 +11,7 @@ import { FormContactoInmueble } from "../../../../_components/inmuebles/_compone
 import { OtrosInmueblesUsuario } from "../../../../_components/inmuebles/_components/OtrosInmueblesUsuario";
 import { ContenteInmuebles } from "../../_components/ContenteInmuebles";
 
-async function getPropiedad(id: string): Promise<Propiedad> {
+async function getPropiedad(id: string): Promise<any> {
   const response = await axios.get(`${config.API_URL}/propiedades/find/${id}`);
   return response.data.data;
 }
@@ -23,9 +23,11 @@ export default async function page({
 }) {
   const id = (await params).id;
 
-  const propiedad: Propiedad = await getPropiedad(id);
+  const data = await getPropiedad(id);
 
-  console.log("PROPIEDAD: ", propiedad)
+  const propiedad = data.propiedad;
+
+  console.log("Propiedad: ", data);
   return (
     <>
       <BannerInternas
@@ -37,6 +39,7 @@ export default async function page({
         descripcionCorta={propiedad.descripcionCorta ?? ""}
         direccion={propiedad.direccion}
         precio={String(propiedad.precio)}
+        disponibilidad={propiedad.disponibilidad}
       />
       <section>
         <ContentMain className="w-full flex flex-col lg:flex-row gap-8 pb-10">
@@ -50,7 +53,9 @@ export default async function page({
           </div>
           <div className="w-full lg:w-1/3 space-y-12 ">
             <FormContactoInmueble />
-            <OtrosInmueblesUsuario />
+            <OtrosInmueblesUsuario
+              ultimasPropiedades={data.ultimasPropiedades}
+            />
           </div>
         </ContentMain>
         <ContentMain className="pb-20">

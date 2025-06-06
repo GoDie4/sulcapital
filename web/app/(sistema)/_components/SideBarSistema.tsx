@@ -1,15 +1,27 @@
-'use client'
+"use client";
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CgLogOut } from "react-icons/cg";
 import { IoChevronBackOutline } from "react-icons/io5";
-import { BsBuilding, BsGeoAlt } from "react-icons/bs";
+import {
+  BsPeople, // Usuarios
+  BsGeoAlt, // Ciudades
+  BsHouseDoor, // Tipo de propiedad / Propiedades
+  BsPerson, // Mi perfil
+  BsEye, // Vistos
+  BsHeart, // Mis favoritos
+} from "react-icons/bs";
 
 import DropdownMenu, { MenuCategory } from "./DropdownMenu";
 import { useAuth } from "@/assets/context/AuthContext";
 
 const menuItems = [
+  {
+    title: "Usuarios",
+    icon: <BsPeople />,
+    route: "usuarios",
+  },
   {
     title: "Ciudades",
     icon: <BsGeoAlt />,
@@ -17,48 +29,58 @@ const menuItems = [
   },
   {
     title: "Tipo de prop.",
-    icon: <BsBuilding />,
+    icon: <BsHouseDoor />,
     route: "tipo-propiedades",
   },
   {
     title: "Propiedades",
-    icon: <BsBuilding />,
+    icon: <BsHouseDoor />,
     route: "propiedades",
   },
 ];
 
 const menuItemsCliente = [
   {
+    title: "Mi perfil",
+    icon: <BsPerson />,
+    route: "perfil",
+  },
+  {
     title: "Propiedades",
-    icon: <BsBuilding />,
+    icon: <BsHouseDoor />,
     route: "propiedades",
   },
   {
     title: "Vistos",
-    icon: <BsBuilding />,
-    route: "Vistos recientemente",
+    icon: <BsEye />,
+    route: "vistos",
   },
   {
     title: "Mis favoritos",
-    icon: <BsBuilding />,
+    icon: <BsHeart />,
     route: "favoritos",
   },
 ];
 
 const menuItemsAnunciante = [
   {
+    title: "Mi perfil",
+    icon: <BsPerson />,
+    route: "perfil",
+  },
+  {
     title: "Mis Propiedades",
-    icon: <BsBuilding />,
+    icon: <BsHouseDoor />,
     route: "propiedades",
   },
   {
     title: "Vistos",
-    icon: <BsBuilding />,
-    route: "Vistos recientemente",
+    icon: <BsEye />,
+    route: "vistos",
   },
   {
     title: "Mis favoritos",
-    icon: <BsBuilding />,
+    icon: <BsHeart />,
     route: "favoritos",
   },
 ];

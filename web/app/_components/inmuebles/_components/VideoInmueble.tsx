@@ -12,8 +12,12 @@ function getYouTubeVideoId(url: string) {
 export const VideoInmueble = ({ url }: { url: string }) => {
   const IdVideo = getYouTubeVideoId(url);
   return (
-    <div className="w-full rounded-main overflow-hidden">
-      <LiteYouTubeEmbed id={IdVideo ?? ''}  title=""/>
-    </div>
+    <>
+      {IdVideo && (
+        <div className="w-full rounded-main overflow-hidden">
+          <LiteYouTubeEmbed id={IdVideo ?? ""} title="" />
+        </div>
+      )}
+    </>
   );
 };

@@ -45,7 +45,9 @@ export default function Home() {
             <SwiperInmuebles inmuebles={dataPropiedades} reverse />
           </div>
           <div className="w-full block lg:hidden">
-            <GridPropiedades propiedades={dataPropiedades} />
+            <GridPropiedades
+              propiedades={[...dataPropiedades, ...dataPropiedades, ...dataPropiedades]}
+            />
           </div>
           <Paginacion />
         </ContentMain>

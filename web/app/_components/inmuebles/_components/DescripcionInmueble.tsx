@@ -47,7 +47,7 @@ const DescripcionInmueble = ({ descripcion }: { descripcion: string }) => {
           vida más sostenible.
         </p> */}
         {!showMore && (
-          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-t from-white-main to-transparent"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-white-main to-transparent"></div>
         )}
       </div>
       <button

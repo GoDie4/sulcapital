@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { SchemaRecuperarContrasena } from "../../_components/schemas/SchemasAuth";
 import { RecuperarContrasenaInteface } from "../../_components/AuthInterfaces";
 import { ButtonCancelar } from "@/components/form/ButtonCancelar";
+import Link from "next/link";
 
 export const FormRecuperarContrasena = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -77,7 +78,15 @@ export const FormRecuperarContrasena = () => {
   return (
     <>
       {envioExitoso.estado ? (
-        <p className="text-center">{envioExitoso.mensaje}</p>
+        <div className="flex justify-center items-center flex-col gap-3">
+          <p className="text-center">{envioExitoso.mensaje}</p>
+          <Link
+            href={"/"}
+            className="bg-primary-main rounded-main px-6 py-2 text-white-main text-center"
+          >
+            Regresar a la web
+          </Link>
+        </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex flex-col w-full gap-1">
