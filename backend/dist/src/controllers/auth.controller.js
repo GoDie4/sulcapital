@@ -171,11 +171,12 @@ const cambiarContrasena = async (req, res) => {
 };
 exports.cambiarContrasena = cambiarContrasena;
 const logout = (req, res) => {
-    res.cookie("token", "", {
-        expires: new Date(0),
+    res.clearCookie("token", {
         httpOnly: true,
         sameSite: "none",
         secure: true,
+        domain: ".exportando.online",
+        path: "/",
     });
     return res.sendStatus(200);
 };
