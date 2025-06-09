@@ -138,6 +138,7 @@ model Favorito {
     propiedad Propiedad @relation(fields: [propiedadId], references: [id])
 
     @@unique([userId, propiedadId])
+    @@map("favorito")
 }
 
 enum Disponibilidad {
