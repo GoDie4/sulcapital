@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { sendEmail } from "./mail.controller";
 
 const prisma = new PrismaClient();
 
@@ -102,6 +103,143 @@ export const getPropiedades = async (req: Request, res: Response) => {
   }
 };
 
+export const getUltimasPropiedades = async (req: Request, res: Response) => {
+  try {
+    const propiedades = await prisma.propiedad.findMany({
+      where: {
+        estado: "PUBLICADO",
+      },
+      take: 3,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        tipoPropiedad: { select: { nombre: true } },
+        ciudad: true,
+        imagenes: {
+          select: {
+            id: true,
+            url: true,
+          },
+          orderBy: { id: "asc" },
+        },
+        fondoPortada: {
+          select: {
+            id: true,
+            url: true,
+          },
+          orderBy: { id: "asc" },
+        },
+      },
+    });
+
+    res.json({ data: propiedades });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener las propiedades" });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+export const getPropiedadesConFavoritos = async (
+  req: Request,
+  res: Response
+) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 100;
+  const search = (req.query.search as string)?.trim() || "";
+
+  const skip = (page - 1) * limit;
+  const searchLower = search.toLowerCase();
+  const userId = (req as any).user?.id;
+  const whereConditions: any = {
+    estado: "PUBLICADO",
+  };
+
+  if (searchLower) {
+    whereConditions.OR = [
+      { titulo: { contains: searchLower } },
+      { descripcionLarga: { contains: searchLower } },
+      { descripcionCorta: { contains: searchLower } },
+      { direccion: { contains: searchLower } },
+      { estado: "PUBLICADO" },
+    ];
+  }
+
+  try {
+    const [propiedades, total] = await Promise.all([
+      prisma.propiedad.findMany({
+        skip,
+        take: limit,
+        where: whereConditions,
+        include: {
+          tipoPropiedad: { select: { nombre: true } },
+          ciudad: true,
+          imagenes: {
+            select: {
+              id: true,
+              url: true,
+            },
+            orderBy: { id: "asc" },
+          },
+          fondoPortada: {
+            select: {
+              id: true,
+              url: true,
+            },
+            orderBy: { id: "asc" },
+          },
+          Favorito: userId
+            ? {
+                where: {
+                  userId,
+                },
+                select: {
+                  id: true,
+                },
+              }
+            : false,
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+
+      prisma.propiedad.count({
+        where: whereConditions,
+      }),
+    ]);
+
+    const propiedadesConFavorito = propiedades.map((prop) => {
+      const favorito = userId
+        ? Array.isArray(prop.Favorito) && prop.Favorito.length > 0
+        : false;
+
+      // Elimina el array de favoritos si no necesitas enviarlo
+      const { Favorito, ...rest } = prop;
+
+      return {
+        ...rest,
+        favorito: favorito,
+      };
+    });
+
+    res.json({
+      data: propiedadesConFavorito,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener las propiedades" });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
 export const getPropiedadesByUser = async (
   req: any,
   res: Response
@@ -109,7 +247,6 @@ export const getPropiedadesByUser = async (
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 100;
   const search = (req.query.search as string)?.trim() || "";
-  console.log("Querys: ", req.query);
   const skip = (page - 1) * limit;
   const searchLower = search.toLowerCase();
   const estado = (req.query.estado as string)?.trim() || "";
@@ -313,7 +450,12 @@ export const crearPropiedad = async (
     const fondoPortadaUrls: string[] = Array.isArray(fondoPortada)
       ? fondoPortada
       : [];
-    const slugBase = titulo.toLowerCase().replace(/\s+/g, "-");
+    const slugBase = titulo
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-+|-+$/g, "");
     const slugUnico = await generarSlugUnico(slugBase);
     const nuevaPropiedad = await prisma.propiedad.create({
       data: {
@@ -378,7 +520,6 @@ export const editarPropiedad = async (
   res: Response
 ): Promise<any> => {
   try {
-    console.log(req.body);
     const { id } = req.params;
     const {
       titulo,
@@ -410,7 +551,13 @@ export const editarPropiedad = async (
         .status(400)
         .json({ message: "Máximo 6 imágenes de portada permitidas" });
     }
-
+    const slugBase = titulo
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    const slugUnico = await generarSlugUnico(slugBase);
     // ------------------------------------------------------------
     // 2) Actualizar campos básicos de la propiedad (siempre)
     // ------------------------------------------------------------
@@ -418,6 +565,7 @@ export const editarPropiedad = async (
       where: { id },
       data: {
         titulo,
+        slug: slugUnico,
         descripcionLarga,
         descripcionCorta,
         direccion,
@@ -497,6 +645,64 @@ export const editarPropiedad = async (
       .json({ message: "Error al actualizar la propiedad", error });
   }
 };
+
+export const cambiarEstadoPropiedad = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const { id } = req.params;
+    const { estado, mensaje } = req.body;
+
+    const propiedad = await prisma.propiedad.findUnique({
+      where: { id },
+      include: {
+        usuario: true,
+      },
+    });
+
+    if (!propiedad) {
+      return res.status(404).json({ message: "Propiedad no encontrada" });
+    }
+    const estadoLegible: Record<string, string> = {
+      APROBADO: "aprobada",
+      RECHAZADO: "rechazada",
+      OCULTO: "ocultada",
+    };
+    await prisma.propiedad.update({
+      where: { id },
+      data: {
+        estado,
+      },
+    });
+
+    console.log("body: ", req.body);
+    console.log("estado: ", estadoLegible[estado]);
+    console.log("mensaje: ", mensaje);
+
+    await sendEmail(
+      propiedad.usuario.email,
+      `Tu propiedad fue ${estadoLegible[estado]}`,
+      `EstadoCambiado.html`,
+      {
+        nombre: propiedad.usuario.nombres,
+        propiedad: propiedad.titulo,
+        estado: estadoLegible[estado],
+        mensaje: mensaje,
+      }
+    );
+
+    return res.status(200).json({
+      mensaje: "Propiedad actualizada",
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Error al actualizar la propiedad", error });
+  }
+};
+
 export const eliminarPropiedad = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -571,11 +777,32 @@ export const getPropiedadById = async (req: any, res: any) => {
       },
     });
 
+    const propiedadesRelacionadas = await prisma.propiedad.findMany({
+      where: {
+        ciudadId: propiedad.ciudadId,
+        estado: "PUBLICADO",
+        NOT: {
+          id: propiedad.id,
+        },
+      },
+      orderBy: {
+        createdAt: "desc", 
+      },
+      take: 10,
+      include: {
+        fondoPortada: true,
+        imagenes: true,
+        tipoPropiedad: true,
+        ciudad: true,
+      },
+    });
+
     return res.json({
       ok: true,
       data: {
         propiedad,
         ultimasPropiedades,
+        propiedadesRelacionadas
       },
     });
   } catch (error) {
@@ -752,6 +979,51 @@ export const buscarPropiedades = async (req: any, res: any) => {
     return res.status(500).json({
       message: "Error interno al buscar propiedades.",
       error: (error as Error).message,
+    });
+  }
+};
+
+export const enviarConsultaPropiedad = async (
+  req: any,
+  res: any
+): Promise<any | undefined> => {
+  const { nombres, dni, email, celular, mensaje, idPropiedad } = req.body;
+
+  try {
+    const propiedad = await prisma.propiedad.findUnique({
+      where: { id: idPropiedad },
+      include: {
+        usuario: true, // Asegúrate que tu modelo tiene la relación definida
+      },
+    });
+
+    if (!propiedad || !propiedad.usuario) {
+      return res.status(404).json({
+        message: "Propiedad o usuario no encontrados",
+      });
+    }
+
+    const emailDestinatario = propiedad.usuario.email;
+    await sendEmail(
+      `${emailDestinatario}`,
+      "Nueva consulta",
+      `NuevaConsulta.html`,
+      {
+        nombres: nombres,
+        email: email,
+        dni: dni,
+        celular: celular,
+        mensaje: mensaje,
+      }
+    );
+    res.json({
+      mensaje: `Se envió tu consulta correctamente`,
+      status: 200,
+    });
+  } catch (error: any) {
+    console.error("Error al registrar usuario", error);
+    return res.status(500).json({
+      message: "Error interno del servidor",
     });
   }
 };

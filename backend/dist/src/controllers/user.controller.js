@@ -3,14 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDecodedUser = exports.cambiarContrasenaPerfil = exports.editarPerfil = exports.yo = exports.profile = exports.getUsuarios = void 0;
+exports.getDecodedUser = exports.cambiarContrasenaPerfil = exports.editarPerfil = exports.yo = exports.profile = exports.getUltimosUsuarios = exports.getUsuarios = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const database_1 = __importDefault(require("../config/database"));
 const getUsuarios = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
     const search = req.query.search?.trim() || "";
-    console.log("QUERYS: ", req.query);
     const skip = (page - 1) * limit;
     const searchLower = search.toLowerCase();
     const rol = req.query.rol?.trim() || "";
@@ -79,6 +78,32 @@ const getUsuarios = async (req, res) => {
     }
 };
 exports.getUsuarios = getUsuarios;
+const getUltimosUsuarios = async (req, res) => {
+    try {
+        const usuarios = await database_1.default.usuario.findMany({
+            take: 5,
+            orderBy: {
+                createdAt: "desc",
+            },
+            include: {
+                rol: true,
+                Propiedad: true,
+            },
+            omit: {
+                password: true,
+            },
+        });
+        res.json({ data: usuarios });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al obtener los usuarios" });
+    }
+    finally {
+        await database_1.default.$disconnect();
+    }
+};
+exports.getUltimosUsuarios = getUltimosUsuarios;
 const profile = async (req, res) => {
     const { userId } = req.body;
     try {

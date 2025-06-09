@@ -99,6 +99,29 @@ CREATE TABLE `imagenes_propiedades` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `Favorito` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `userId` VARCHAR(191) NOT NULL,
+    `propiedadId` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `Favorito_userId_propiedadId_key`(`userId`, `propiedadId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `recientemente_visto` (
+    `id` VARCHAR(191) NOT NULL,
+    `propiedadId` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `vistaEn` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    INDEX `recientemente_visto_userId_idx`(`userId`),
+    UNIQUE INDEX `recientemente_visto_propiedadId_userId_key`(`propiedadId`, `userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `usuarios` ADD CONSTRAINT `usuarios_rol_id_fkey` FOREIGN KEY (`rol_id`) REFERENCES `roles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -119,3 +142,15 @@ ALTER TABLE `imagenes_propiedades` ADD CONSTRAINT `FK_imagen_propiedadImagen` FO
 
 -- AddForeignKey
 ALTER TABLE `imagenes_propiedades` ADD CONSTRAINT `FK_imagen_propiedadFondo` FOREIGN KEY (`propiedadFondoPortadaId`) REFERENCES `propiedades`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Favorito` ADD CONSTRAINT `Favorito_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `usuarios`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Favorito` ADD CONSTRAINT `Favorito_propiedadId_fkey` FOREIGN KEY (`propiedadId`) REFERENCES `propiedades`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `recientemente_visto` ADD CONSTRAINT `recientemente_visto_propiedadId_fkey` FOREIGN KEY (`propiedadId`) REFERENCES `propiedades`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `recientemente_visto` ADD CONSTRAINT `recientemente_visto_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

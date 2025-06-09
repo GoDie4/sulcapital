@@ -7,7 +7,6 @@ export const getUsuarios = async (req: any, res: any) => {
   const limit = parseInt(req.query.limit) || 50;
   const search = (req.query.search as string)?.trim() || "";
 
-  console.log("QUERYS: ", req.query);
   const skip = (page - 1) * limit;
   const searchLower = search.toLowerCase();
 
@@ -30,7 +29,7 @@ export const getUsuarios = async (req: any, res: any) => {
 
   if (publicaciones === "1") {
     whereConditions.Propiedad = {
-      some: {}, 
+      some: {},
     };
   }
   if (searchLower) {
@@ -79,6 +78,32 @@ export const getUsuarios = async (req: any, res: any) => {
     await prisma.$disconnect();
   }
 };
+
+export const getUltimosUsuarios = async (req: any, res: any) => {
+  try {
+    const usuarios = await prisma.usuario.findMany({
+      take: 5,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        rol: true,
+        Propiedad: true,
+      },
+      omit: {
+        password: true,
+      },
+    });
+
+    res.json({ data: usuarios });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener los usuarios" });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
 export const profile = async (req: any, res: any) => {
   const { userId } = req.body;
 

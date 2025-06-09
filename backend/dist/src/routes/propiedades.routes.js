@@ -11,10 +11,14 @@ const JWTMiddleware_1 = require("../middlewares/JWTMiddleware");
 const router = (0, express_1.Router)();
 const UPLOAD_DIR = path_1.default.resolve(__dirname, "../../public/propiedades");
 router.get("/", propiedades_controller_1.getPropiedades);
+router.get("/ultimos", JWTMiddleware_1.verifyAdmin, propiedades_controller_1.getUltimasPropiedades);
+router.post("/enviarConsulta", JWTMiddleware_1.addUserReq, propiedades_controller_1.enviarConsultaPropiedad);
+router.get("/propiedadesConFavoritos", JWTMiddleware_1.addUserReq, propiedades_controller_1.getPropiedadesConFavoritos);
 router.get("/byUser", JWTMiddleware_1.addUserReq, propiedades_controller_1.getPropiedadesByUser);
 router.get("/byUserAdmin/:id", JWTMiddleware_1.verifyAdmin, propiedades_controller_1.getPropiedadesByUserFromAdmin);
 router.get("/buscar", propiedades_controller_1.buscarPropiedades);
 router.get("/find/:id", propiedades_controller_1.getPropiedadById);
+router.put("/cambiarEstado/:id", JWTMiddleware_1.verifyAdmin, propiedades_controller_1.cambiarEstadoPropiedad);
 router.post("/agregar", JWTMiddleware_1.verifyAdminAndAnunciante, uploadMultiplesImages_1.upload.fields([
     { name: "imagenes", maxCount: 6 },
     { name: "fondoPortada", maxCount: 1 },

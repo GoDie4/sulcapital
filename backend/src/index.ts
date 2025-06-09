@@ -9,6 +9,8 @@ import authRoutes from "../src/routes/auth.routes";
 import ciudadesRoutes from "../src/routes/ciudades.routes";
 import tipoPropiedadesRoutes from "../src/routes/tipoPropiedad.routes";
 import propiedadesRoutes from "../src/routes/propiedades.routes";
+import favoritosRoutes from "../src/routes/favoritos.routes";
+import vistosRoutes from "../src/routes/vistos.routes";
 
 app.use(express.static("public"));
 
@@ -31,3 +33,5 @@ app.use("/api/user", userRoutes);
 app.use("/api/ciudades", ciudadesRoutes);
 app.use("/api/tipo_propiedades", tipoPropiedadesRoutes);
 app.use("/api/propiedades", propiedadesRoutes);
+app.use("/api/favoritos", favoritosRoutes);
+app.use("/api/vistos", vistosRoutes);

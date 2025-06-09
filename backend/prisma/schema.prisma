@@ -40,6 +40,8 @@ model Usuario {
     PasswordResetToken PasswordResetToken[]
     rol                Rol                  @relation(fields: [rol_id], references: [id], onDelete: Cascade)
     Propiedad          Propiedad[]
+    Favorito           Favorito[]
+    RecientementeVisto RecientementeVisto[]
 
     @@index([rol_id], map: "usuarios_rol_id_fkey")
     @@map("usuarios")
@@ -104,8 +106,10 @@ model Propiedad {
     fondoPortada     Imagen[]       @relation("PropiedadFondoPortada")
 
     // Relación “Galería”
-    imagenes Imagen[] @relation("PropiedadImagenes")
-    idUser   String   @db.Char(36)
+    imagenes           Imagen[]             @relation("PropiedadImagenes")
+    idUser             String               @db.Char(36)
+    Favorito           Favorito[]
+    RecientementeVisto RecientementeVisto[]
 
     @@map("propiedades")
 }
@@ -124,6 +128,18 @@ model Imagen {
     @@map("imagenes_propiedades")
 }
 
+model Favorito {
+    id          Int      @id @default(autoincrement())
+    userId      String
+    propiedadId String
+    createdAt   DateTime @default(now())
+
+    user      Usuario   @relation(fields: [userId], references: [id])
+    propiedad Propiedad @relation(fields: [propiedadId], references: [id])
+
+    @@unique([userId, propiedadId])
+}
+
 enum Disponibilidad {
     EN_COMPRA
     EN_VENTA
@@ -135,4 +151,19 @@ enum Estado {
     PUBLICADO
     RECHAZADO
     OCULTO
+}
+
+model RecientementeVisto {
+    id          String   @id @default(cuid())
+    propiedadId String
+    userId      String
+    vistaEn     DateTime @default(now())
+
+    propiedad Propiedad @relation(fields: [propiedadId], references: [id], onDelete: Cascade)
+    user      Usuario   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([propiedadId, userId])
+    @@index([userId])
+
+    @@map("recientemente_visto")
 }

@@ -11,11 +11,16 @@ import {
   recuperarContrasena,
   register,
 } from "../controllers/auth.controller";
-import { getUsuarios } from "../controllers/user.controller";
+import {
+  getUltimosUsuarios,
+  getUsuarios,
+} from "../controllers/user.controller";
+import { verifyAdmin } from "../middlewares/JWTMiddleware";
 
 const router = Router();
 
-router.get("/listar-usuarios",  getUsuarios);
+router.get("/listar-usuarios", getUsuarios);
+router.get("/ultimosUsuarios", verifyAdmin, getUltimosUsuarios);
 
 router.post("/login", validateSchema(loginSchema), login);
 router.post("/registro", validateSchema(registerSchema), register);

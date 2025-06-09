@@ -13,6 +13,8 @@ const auth_routes_1 = __importDefault(require("../src/routes/auth.routes"));
 const ciudades_routes_1 = __importDefault(require("../src/routes/ciudades.routes"));
 const tipoPropiedad_routes_1 = __importDefault(require("../src/routes/tipoPropiedad.routes"));
 const propiedades_routes_1 = __importDefault(require("../src/routes/propiedades.routes"));
+const favoritos_routes_1 = __importDefault(require("../src/routes/favoritos.routes"));
+const vistos_routes_1 = __importDefault(require("../src/routes/vistos.routes"));
 server_1.default.use(express_1.default.static("public"));
 server_1.default.use((0, cookie_parser_1.default)());
 database_1.default
@@ -32,4 +34,6 @@ server_1.default.use("/api/user", user_routes_1.default);
 server_1.default.use("/api/ciudades", ciudades_routes_1.default);
 server_1.default.use("/api/tipo_propiedades", tipoPropiedad_routes_1.default);
 server_1.default.use("/api/propiedades", propiedades_routes_1.default);
+server_1.default.use("/api/favoritos", favoritos_routes_1.default);
+server_1.default.use("/api/vistos", vistos_routes_1.default);
 //# sourceMappingURL=index.js.map
