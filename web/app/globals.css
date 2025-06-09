@@ -154,3 +154,11 @@ body {
 .maxContentEditor > div {
   max-width: 100% !important;
 }
+
+.menuProfile {
+  clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+}
+
+.btn--menuProfile:hover .menuProfile {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}

@@ -8,9 +8,10 @@ import "swiper/css";
 import "swiper/css/autoplay";
 import "swiper/css/navigation";
 import Link from "next/link";
-import { BsEnvelope, BsHeart, BsHeartFill, BsWhatsapp } from "react-icons/bs";
+import { BsEnvelope, BsWhatsapp } from "react-icons/bs";
 import { Propiedad } from "../../(sistema)/sistema/propiedades/_components/table/ColumnasPropiedades";
 import { config } from "@/assets/config/config";
+import BotonFavorito from "./BotonFavorito";
 export type CardInmuebleDesign = "grid" | "list";
 export interface CardInmuebleProps {
   id: string;
@@ -25,15 +26,21 @@ export interface CardInmuebleProps {
 const CardInmueble = ({
   data,
   type = "grid",
+  renderFavorito,
 }: {
   data: Propiedad;
   type?: CardInmuebleDesign;
+  renderFavorito?: boolean;
 }) => {
   const variasImagenes = data.imagenes.length > 1;
   return (
     <>
       {type === "grid" ? (
-        <CardInmuebleGrid data={data} variasImagenes={variasImagenes} />
+        <CardInmuebleGrid
+          data={data}
+          variasImagenes={variasImagenes}
+          renderFavorito={renderFavorito}
+        />
       ) : (
         <CardInmuebleList data={data} variasImagenes={variasImagenes} />
       )}
@@ -50,7 +57,7 @@ const CardInmuebleList = ({
 }) => {
   return (
     <Link
-      href={`/propiedad/${data.id}/try`}
+      href={`/propiedad/${data.id}/${data.slug}`}
       className="rounded-main shadow-main p-2 bg-white-main flex items-center justify-between"
     >
       <div className="w-fit flex">
@@ -128,13 +135,15 @@ const CardInmuebleList = ({
 const CardInmuebleGrid = ({
   data,
   variasImagenes,
+  renderFavorito = true,
 }: {
   data: Propiedad;
   variasImagenes: boolean;
+  renderFavorito?: boolean;
 }) => {
   return (
     <Link
-      href={`/propiedad/${data.id}/try`}
+      href={`/propiedad/${data.id}/${data.slug}`}
       className="w-full block rounded-main shadow-main overflow-hidden hover:-translate-y-2 transition-all duration-200"
     >
       <div className="relative">
@@ -158,7 +167,6 @@ const CardInmuebleGrid = ({
           </Swiper>
 
           <div className=" absolute z-10 w-full h-full inset-0 bg-black-main/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-        
         </div>
 
         {data.exclusivo && (
@@ -177,24 +185,9 @@ const CardInmuebleGrid = ({
               S/ {data.precio}
             </div>
           </div>
-          <div className="w-fit">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation(); // evita que el clic se propague al Link
-                e.preventDefault(); // previene la redirección
-                alert("hola");
-              }}
-              className="text-gray-400 group active:scale-75 text-xl transition-all duration-150"
-            >
-              <span className="block group-hover:hidden">
-                <BsHeart />
-              </span>
-              <span className="hidden group-hover:block">
-                <BsHeartFill className="text-secondary-main" />
-              </span>
-            </button>
-          </div>
+          {renderFavorito && (
+            <BotonFavorito itemId={data.id} initialIsFavorite={data.favorito} />
+          )}
         </div>
 
         <div className="text-black-800 text-sm leading-relaxed line-clamp-1">

@@ -46,10 +46,14 @@ export default function Home() {
           </div>
           <div className="w-full block lg:hidden">
             <GridPropiedades
-              propiedades={[...dataPropiedades, ...dataPropiedades, ...dataPropiedades]}
+              propiedades={[
+                ...dataPropiedades,
+                ...dataPropiedades,
+                ...dataPropiedades,
+              ]}
             />
           </div>
-          <Paginacion />
+          <Paginacion url="/buscar"/>
         </ContentMain>
       </section>
 
@@ -118,7 +122,7 @@ export default function Home() {
         </ContentMain>
       </section> */}
       <section>
-        <MapaGeneral />
+        <MapaGeneral dataCiudades={dataCiudades} />
       </section>
       <section>
         <ContentMain className="py-20 flex flex-col lg:flex-row">

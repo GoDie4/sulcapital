@@ -1,11 +1,13 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+import React, { useEffect } from "react";
 import { ContentMain } from "../../estructura/ContentMain";
 import { MdLocationPin } from "react-icons/md";
 import "photoswipe/style.css";
 import { Gallery, Item } from "react-photoswipe-gallery";
 import { config } from "@/assets/config/config";
+import { registrarReciente } from "@/lib/registrarReciente";
+import { useAuth } from "@/assets/context/AuthContext";
 
 export interface ImagenPropiedad {
   id: number;
@@ -39,12 +41,14 @@ export const GaleriaInmuebles = ({
   descripcionCorta,
   direccion,
   disponibilidad,
+  propiedadId,
 }: {
   imagenes: ImagenPropiedad[];
   precio: string;
   descripcionCorta: string;
   direccion: string;
   disponibilidad: string;
+  propiedadId: string;
 }) => {
   //   const imagenes = [
   //     "/images/inmueble/foto1.webp",
@@ -54,6 +58,14 @@ export const GaleriaInmuebles = ({
   //     "/images/inmueble/foto5.webp",
   //     "/images/inmueble/foto6.webp",
   //   ];
+
+  const { authUser } = useAuth();
+
+  useEffect(() => {
+    if (authUser) {
+      registrarReciente(propiedadId);
+    }
+  }, [authUser, propiedadId]);
   return (
     <section>
       <ContentMain className="py-12">

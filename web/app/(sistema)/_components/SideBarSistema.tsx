@@ -10,13 +10,19 @@ import {
   BsHouseDoor, // Tipo de propiedad / Propiedades
   BsPerson, // Mi perfil
   BsEye, // Vistos
-  BsHeart, // Mis favoritos
+  BsHeart,
+  BsDiagram2, // Mis favoritos
 } from "react-icons/bs";
 
 import DropdownMenu, { MenuCategory } from "./DropdownMenu";
 import { useAuth } from "@/assets/context/AuthContext";
 
 const menuItems = [
+  {
+    title: "Dashboard",
+    icon: <BsDiagram2 />,
+    route: "",
+  },
   {
     title: "Usuarios",
     icon: <BsPeople />,

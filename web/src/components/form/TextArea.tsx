@@ -12,6 +12,7 @@ export const TextareaForm = ({
   className,
   disabled,
   rows = 5,
+  labelClassName,
 }: {
   label: string;
   placeholder?: string;
@@ -22,10 +23,14 @@ export const TextareaForm = ({
   className?: string;
   disabled?: boolean;
   rows?: number;
+  labelClassName?: string;
 }) => {
   return (
     <>
-      <label htmlFor={name} className="flex gap-1 text-sm text-black-900">
+      <label
+        htmlFor={name}
+        className={`flex gap-1 text-sm text-black-900 ${labelClassName ?? ""}`}
+      >
         {label}
       </label>
       <div className="relative w-full mt-1">

@@ -11,8 +11,12 @@ import { Pagination } from "../../../(sistema)/_components/interfaces/Pagination
 import { initialFiltros } from "./FiltrosBusqueda";
 import { useAuth } from "@/assets/context/AuthContext";
 import { FormContactoInmueble } from "../../../_components/inmuebles/_components/FormContactoInmueble";
+import { ResultadosText } from "./ResultadosText";
+import { Paginacion } from "../../../_components/estructura/Paginacion";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 export const ContenedorBusqueda = ({
   data,
+  pagination,
   dataFiltrosActivos,
 }: {
   data: any;
@@ -21,80 +25,14 @@ export const ContenedorBusqueda = ({
 }) => {
   const { setModalContent, openModal } = useAuth();
   const [gridOrList, setGridOrList] = useState<CardInmuebleDesign>("grid");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   return (
     <>
       <div className="w-full flex justify-between items-center mb-4">
-        <p>
-          {dataFiltrosActivos.tipo_propiedad ||
-          dataFiltrosActivos.ciudad ||
-          dataFiltrosActivos.disponibilidad ? (
-            <>
-              1 de {data.length} resultados para{" "}
-              {/*
-        1) Si existe tipo_propiedad, muéstralo primero en negrita:
-      */}
-              {dataFiltrosActivos.tipo_propiedad && (
-                <strong>{dataFiltrosActivos.tipo_propiedad}</strong>
-              )}
-              {/*
-        2) Si no hay tipo_propiedad pero sí ciudad, muéstrala sola en negrita:
-      */}
-              {!dataFiltrosActivos.tipo_propiedad &&
-                dataFiltrosActivos.ciudad && (
-                  <strong>{dataFiltrosActivos.ciudad}</strong>
-                )}
-              {/*
-        3) Si no hay ni tipo_propiedad ni ciudad, pero hay disponibilidad:
-           muéstrala sola en negrita:
-      */}
-              {!dataFiltrosActivos.tipo_propiedad &&
-                !dataFiltrosActivos.ciudad &&
-                dataFiltrosActivos.disponibilidad && (
-                  <strong>
-                    {dataFiltrosActivos.disponibilidad === "EN_ALQUILER"
-                      ? "Alquiler"
-                      : dataFiltrosActivos.disponibilidad === "EN_COMPRA"
-                      ? "Compra"
-                      : dataFiltrosActivos.disponibilidad === "EN_VENTA"
-                      ? "Venta"
-                      : dataFiltrosActivos.disponibilidad}
-                  </strong>
-                )}
-              {/*
-        4) Si existen tipo_propiedad y ciudad juntos, antepón " en " antes de ciudad:
-      */}
-              {dataFiltrosActivos.tipo_propiedad &&
-                dataFiltrosActivos.ciudad && (
-                  <>
-                    {" en "}
-                    <strong>{dataFiltrosActivos.ciudad}</strong>
-                  </>
-                )}
-              {/*
-        5) Si al menos uno de tipo_propiedad o ciudad existe, y además hay disponibilidad,
-           antepón ", disponibilidad: " antes del valor traducido:
-      */}
-              {(dataFiltrosActivos.tipo_propiedad ||
-                dataFiltrosActivos.ciudad) &&
-                dataFiltrosActivos.disponibilidad && (
-                  <>
-                    {", disponibilidad: "}
-                    <strong>
-                      {dataFiltrosActivos.disponibilidad === "EN_ALQUILER"
-                        ? "Alquiler"
-                        : dataFiltrosActivos.disponibilidad === "EN_COMPRA"
-                        ? "Compra"
-                        : dataFiltrosActivos.disponibilidad === "EN_VENTA"
-                        ? "Venta"
-                        : dataFiltrosActivos.disponibilidad}
-                    </strong>
-                  </>
-                )}
-            </>
-          ) : (
-            <>1 de {data.length} resultados</>
-          )}
-        </p>
+        <ResultadosText data={data} dataFiltrosActivos={dataFiltrosActivos} />
         <div className="flex gap-2 text-2xl ">
           <button
             type="button"
@@ -137,7 +75,7 @@ export const ContenedorBusqueda = ({
             <button
               type="button"
               onClick={() => {
-                setModalContent(<FormContactoInmueble />);
+                setModalContent(<FormContactoInmueble idPropiedad=""/>);
                 openModal();
               }}
               className="text-red-500"
@@ -150,6 +88,29 @@ export const ContenedorBusqueda = ({
         {data.map((inmueble: Propiedad) => (
           <CardInmueble data={inmueble} key={inmueble.id} type={gridOrList} />
         ))}
+      </div>
+      <div className="w-full flex items-center justify-between">
+        <div className="w-fit flex items-center gap-2">
+          <select
+            id="limit"
+            className="py-2 px-3 outline-none text-sm border text-black-main bg-white-main rounded-main"
+            value={searchParams.get("limit") || pagination.limit}
+            onChange={(e) => {
+              const params = new URLSearchParams(searchParams.toString());
+              params.set("limit", e.target.value);
+              params.set("page", "1");
+              router.push(`${pathname}?${params.toString()}`);
+            }}
+          >
+            {[10, 20, 50, 100].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          <p className="text-sm text-black-800">registros por página</p>
+        </div>
+        <Paginacion />
       </div>
     </>
   );

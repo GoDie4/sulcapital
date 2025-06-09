@@ -13,9 +13,9 @@ export const AccionesTable = (
   openModal: () => void,
   setRowEdit: Dispatch<SetStateAction<any | null>>,
   deleteOptions: DeleteOptionTypes,
-  actionsTable: ActionDefinition<any>
+  actionsTable: ActionDefinition<any>[]
 ): ActionDefinition<any>[] => [
-  { ...actionsTable },
+  ...actionsTable,
   {
     type: "item",
     label: "Editar",

@@ -13,6 +13,7 @@ export const InputForm = ({
   value,
   className,
   disabled,
+  labelClassName,
 }: {
   label: string;
   placeholder?: string;
@@ -23,12 +24,16 @@ export const InputForm = ({
   value: string | number;
   className?: string;
   disabled?: boolean;
+  labelClassName?: string;
 }) => {
   const [verContrasena, setVerContrasena] = useState<boolean>(false);
 
   return (
     <>
-      <label htmlFor={name} className="flex gap-1 text-sm text-black-900">
+      <label
+        htmlFor={name}
+        className={`flex gap-1 text-sm text-black-900 ${labelClassName ?? ""}`}
+      >
         {label}
       </label>
       <div className="relative w-full mt-1">

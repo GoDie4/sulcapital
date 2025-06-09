@@ -27,7 +27,6 @@ export default async function page({
 
   const propiedad = data.propiedad;
 
-  console.log("Propiedad: ", data);
   return (
     <>
       <BannerInternas
@@ -40,6 +39,7 @@ export default async function page({
         direccion={propiedad.direccion}
         precio={String(propiedad.precio)}
         disponibilidad={propiedad.disponibilidad}
+        propiedadId={id}
       />
       <section>
         <ContentMain className="w-full flex flex-col lg:flex-row gap-8 pb-10">
@@ -52,7 +52,7 @@ export default async function page({
             />
           </div>
           <div className="w-full lg:w-1/3 space-y-12 ">
-            <FormContactoInmueble />
+            <FormContactoInmueble idPropiedad={propiedad.id} />
             <OtrosInmueblesUsuario
               ultimasPropiedades={data.ultimasPropiedades}
             />
@@ -62,7 +62,9 @@ export default async function page({
           <p className="text-xl font-TypographBold text-secondary-main mb-6">
             Inmuebles relacionados
           </p>
-          <ContenteInmuebles />
+          <ContenteInmuebles
+            propiedadesRelacionadas={data.propiedadesRelacionadas}
+          />
         </ContentMain>
       </section>
     </>

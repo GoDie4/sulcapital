@@ -130,6 +130,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
           },
           totalItems: Number(data.length),
         }}
+        actionsSeccion="propiedades"
       />
     </>
   );

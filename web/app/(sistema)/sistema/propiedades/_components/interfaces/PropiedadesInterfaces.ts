@@ -22,6 +22,11 @@ interface listaDisponibilidadPropiedades {
   nombre: string;
 }
 
+export interface CambiarEstado {
+  estado: estadoPropiedad;
+  mensaje: string
+}
+
 export const disponibilidadPropiedades: listaDisponibilidadPropiedades[] = [
   {
     value: "",
@@ -39,5 +44,4 @@ export const disponibilidadPropiedades: listaDisponibilidadPropiedades[] = [
     value: "EN_VENTA",
     nombre: "Venta",
   },
-
 ];

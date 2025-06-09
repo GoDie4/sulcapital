@@ -316,7 +316,7 @@ export function DataTable<TData, TValue>({
             <button
               type="button"
               onClick={() => {
-                setModalSize(modalSize ?? "small");
+                setModalSize(modalSize ?? "large");
                 setModalContent(renderAddForm);
                 openModal();
               }}

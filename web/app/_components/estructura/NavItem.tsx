@@ -31,8 +31,8 @@ export const NavItem = ({ title, propertyTypes, locations }: NavItemProps) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 bg-white-main rounded-main shadow-lg border border-gray-200 p-4 min-w-[400px] z-50">
-          <div className="grid grid-cols-2 gap-6">
+        <div className="absolute top-full w-[600px] left-0 mt-1 bg-white-main rounded-main shadow-lg border border-gray-200 p-4 min-w-[400px] z-50">
+          <div className="grid grid-cols-2 gap-2">
             <div>
               <h3 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wide">
                 Tipos de Inmuebles
@@ -63,7 +63,7 @@ export const NavItem = ({ title, propertyTypes, locations }: NavItemProps) => {
               <h3 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wide">
                 Ubicaciones
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-2 columns-2">
                 {locations.map((location, index) => (
                   <li key={index}>
                     <Link

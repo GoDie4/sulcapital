@@ -9,6 +9,8 @@ import { DeleteOptionTypes } from "../modal/DeleteModal";
 import { ModalSizes } from "../../../_components/modal/ModalWrapper";
 import { ActionDefinition } from "./DataTableRowActions";
 import { useRouter } from "next/navigation";
+import { VerPropiedad } from "../../sistema/propiedades/_components/form/VerPropiedad";
+import { CambiarEstadoPropiedad } from "../../sistema/propiedades/_components/form/CambiarEstadoPropiedad";
 
 type seccionsType =
   | "usuarios"
@@ -43,20 +45,46 @@ export const WrapperSecciones = ({
   filters?: FilterBuscador[];
   noRenderAddButton?: boolean;
 }) => {
-  const { setModalContent, openModal, setRowEdit } = useAuth();
+  const { setModalContent, openModal, setRowEdit, setModalSize } = useAuth();
   const router = useRouter();
-  let accionesTable: ActionDefinition<any> = { type: "" };
+  let accionesTable: ActionDefinition<any>[] = [{ type: "" }];
 
-  const actionsTableUsuarios: ActionDefinition<any> = {
-    label: "Ver propiedades",
-    onAction: (row) => {
-      router.push(`/sistema/usuarios/propiedades/${row.id}`);
+  const actionsTableUsuarios: ActionDefinition<any>[] = [
+    {
+      label: "Ver propiedades",
+      onAction: (row) => {
+        router.push(`/sistema/usuarios/propiedades/${row.id}`);
+      },
+      type: "item",
     },
-    type: "item",
-  };
+  ];
+
+  const actionsTablePropiedades: ActionDefinition<any>[] = [
+    {
+      label: "Ver propiedad",
+      onAction: (row) => {
+        setModalSize("large");
+        setModalContent(<VerPropiedad row={row} />);
+        openModal();
+      },
+      type: "item",
+    },
+    {
+      label: "Cambiar estado",
+      onAction: (row) => {
+        setModalSize("small");
+        setModalContent(<CambiarEstadoPropiedad rowEdit={row} />);
+        openModal();
+      },
+      type: "item",
+    },
+  ];
 
   if (actionsSeccion === "usuarios") {
     accionesTable = actionsTableUsuarios;
+  }
+  if (actionsSeccion === "propiedades") {
+    accionesTable = actionsTablePropiedades;
   }
 
   const rowActions = AccionesTable(

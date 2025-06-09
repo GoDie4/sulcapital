@@ -10,6 +10,7 @@ import { HiMenu } from "react-icons/hi";
 import { TipoPropiedad } from "../../(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 import { CiudadList } from "../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
 import { useAuth } from "@/assets/context/AuthContext";
+import { MenuLogeado } from "./MenuLoggeado";
 export const Header = ({
   tipoPropiedades,
   ciudades,
@@ -99,7 +100,7 @@ export const Header = ({
               <>
                 <Link
                   href={"/sistema/propiedades"}
-                  className={`flex items-center justify-center  flex-col ${
+                  className={`flex items-center justify-center  btn--menuProfile relative flex-col ${
                     scrollY ? "text-secondary-main" : "text-white-main"
                   }`}
                 >
@@ -111,6 +112,8 @@ export const Header = ({
                     </p>
                   </span>
                   <p>{authUser.nombres}</p>
+
+                  <MenuLogeado />
                 </Link>
               </>
             ) : (

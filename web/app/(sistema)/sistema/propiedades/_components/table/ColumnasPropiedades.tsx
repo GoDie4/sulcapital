@@ -6,6 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 export type Propiedad = {
   id: string;
   slug?: string;
+  favorito?: boolean;
   titulo: string;
   descripcionLarga: string;
   descripcionCorta?: string;
@@ -128,7 +129,9 @@ export const columnsPropiedad: ColumnDef<Propiedad>[] = [
       const fondoPortadas = row.getValue("fondoPortada") as { url: string }[];
       return (
         <img
-          src={`${config.API_IMAGE_URL}${fondoPortadas[0].url}`}
+          src={`${config.API_IMAGE_URL}${
+            fondoPortadas[0] ? fondoPortadas[0].url : ""
+          }`}
           alt={row.getValue("titulo")}
           className="h-12 w-12 object-cover rounded"
         />

@@ -21,8 +21,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
   const disponibilidad = searchParams?.disponibilidad ?? "";
   const search = searchParams?.search ?? "";
 
-  // Aquí harías la petición a tu API de búsqueda con los filtros y paginación
-  // Ejemplo de cómo podrías estructurar la URL:
+
   const query = new URLSearchParams({
     page: safePage.toString(),
     limit: limit.toString(),

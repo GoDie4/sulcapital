@@ -3,7 +3,7 @@
 "use client";
 import { useAuth } from "@/assets/context/AuthContext";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MdSearch } from "react-icons/md";
 import { TipoPropiedad } from "../../../(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 import { CiudadList } from "../../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
@@ -22,7 +22,7 @@ export const FiltrosBusqueda = ({
   dataFiltrosInitial: initialFiltros;
 }) => {
   const { dataCiudades, dataTiposPropiedades } = useAuth();
-
+  const isFirstRender = useRef(true);
   const [filtrosActivos, setFiltrosActivos] = useState({
     ciudad: "",
     disponibilidad: "",
@@ -40,29 +40,23 @@ export const FiltrosBusqueda = ({
   const router = useRouter();
 
   const handleBuscar = () => {
-    const query = new URLSearchParams();
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const params = new URLSearchParams();
+    params.set("page", "1");
 
-    if (search) query.append("search", search);
-    if (tipoPropiedad) query.append("tipo_propiedad", tipoPropiedad);
-    if (ciudad) query.append("ciudad", ciudad);
-    if (disponibilidad) query.append("disponibilidad", disponibilidad);
+    if (search) params.set("search", search);
+    if (tipoPropiedad) params.set("tipo_propiedad", tipoPropiedad);
+    if (ciudad) params.set("ciudad", ciudad);
+    if (disponibilidad) params.set("disponibilidad", disponibilidad);
 
-    router.push(`/buscar?${query.toString()}`);
+    router.push(`/buscar?${params.toString()}`);
   };
 
   useEffect(() => {
-    handleBuscar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (
-      search.length > 2 ||
-      search === "" ||
-      tipoPropiedad ||
-      ciudad ||
-      disponibilidad
-    ) {
+    if (search.length > 2 || tipoPropiedad || ciudad || disponibilidad) {
       handleBuscar();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

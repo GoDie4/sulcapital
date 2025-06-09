@@ -1,10 +1,13 @@
-'use client'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 import React from "react";
 import { SwiperInmuebles } from "../../../_components/inmuebles/SwiperInmuebles";
-import { useAuth } from "@/assets/context/AuthContext";
 
-export const ContenteInmuebles = () => {
-  const { dataPropiedades } = useAuth();
+export const ContenteInmuebles = ({
+  propiedadesRelacionadas,
+}: {
+  propiedadesRelacionadas: any;
+}) => {
 
-  return <SwiperInmuebles inmuebles={dataPropiedades} />;
+  return <SwiperInmuebles inmuebles={propiedadesRelacionadas} />;
 };

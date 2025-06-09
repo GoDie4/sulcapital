@@ -25,3 +25,14 @@ export const addPropiedadSchema = yup.object({
     )
     .required("El estado es obligatorio"),
 });
+
+export const CambiarEstadoSchema = yup.object({
+  mensaje: yup.string().nullable(),
+  estado: yup
+    .mixed<"EN_REVISION" | "PUBLICADO" | "RECHAZADO" | "OCULTO">()
+    .oneOf(
+      ["EN_REVISION", "PUBLICADO", "RECHAZADO", "OCULTO"],
+      "Estado inválido"
+    )
+    .required("El estado es obligatorio"),
+});

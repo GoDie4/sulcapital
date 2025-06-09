@@ -48,7 +48,14 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
       {menuItems.map((menuItem, idx) => {
         const isOpen = openMenu === menuItem.title;
         const hasSubmenu = Array.isArray(menuItem.options);
+        // 1) Construimos la ruta completa y normalizada:
+        const normalizedRoute =
+          menuItem.route && menuItem.route.trim().length > 0
+            ? `/sistema/${menuItem.route.toLowerCase().replace(/^\/+/, "")}`
+            : "/sistema";
 
+        // 2) Comparamos exactamente con pathname:
+        const isActive = pathname.toLowerCase() === normalizedRoute;
         return (
           <div key={idx} className="relative">
             {hasSubmenu ? (
@@ -101,14 +108,14 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   menuItem.route
                 } ${pathname} px-7 py-3 border-l-4 group border-transparent space-x-2    transition-all duration-200 
                      ${
-                       pathname.includes(`${menuItem.route}`)
+                       isActive
                          ? "bg-secondary-800 text-white-main border-primary-main"
                          : "bg-transparent text-white-main hover:bg-secondary-800 hover:border-primary-main"
                      }`}
               >
                 <span
                   className={` group-hover:text-primary-main  ${
-                    pathname.includes(`${menuItem.route}`)
+                    isActive
                       ? "text-primary-main"
                       : "group-hover:text-primary-main text-white-main"
                   } transition-all duration-200`}

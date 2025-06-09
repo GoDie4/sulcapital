@@ -195,14 +195,12 @@ export const EditarPropiedad = () => {
 
   useEffect(() => {
     if (rowEdit !== null) {
-      setFieldValue("exclusivo", rowEdit.exclusivo === true ? "si" : "no");
+      setFieldValue("exclusivo", rowEdit.exclusivo === 1 ? "si" : "no");
       setValues({ ...rowEdit });
     }
   }, [rowEdit, setValues, setFieldValue]);
 
-  useEffect(() => {
-    console.log("VALUES: ", values)    
-  }, [values]);
+
   return (
     <>
       <form onSubmit={handleSubmit}>

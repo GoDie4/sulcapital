@@ -67,10 +67,19 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let dataPropiedades;
   const dataCiudades = await getServerSideProps("ciudades");
   const dataTiposPropiedades = await getServerSideProps("tipo_propiedades");
-  const dataPropiedades = await getServerSideProps("propiedades");
+
   const user = await getUser();
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value || "";
+
+  if (!token) {
+    dataPropiedades = await getServerSideProps("propiedades");
+  } else {
+    dataPropiedades = await getServerSideProps("propiedades/propiedadesConFavoritos");
+  }
 
   return (
     <html lang="es">
