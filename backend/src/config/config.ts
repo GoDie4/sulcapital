@@ -4,7 +4,8 @@ import path from "path";
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 export const ENV = {
-  TOKEN_SECRET: process.env.TOKEN_SECRET || '',
+  NODE_ENV: process.env.NODE_ENV || "desarrollo",
+  TOKEN_SECRET: process.env.TOKEN_SECRET || "",
   WEB_URL: process.env.WEB_URL,
   PORT: process.env.SERVER_PORT || "5000",
   DATABASE_URL: process.env.DATABASE_URL || "",
@@ -14,5 +15,6 @@ export const ENV = {
   EMAIL_USER: process.env.USER_MAIL || "",
   EMAIL_PASS: process.env.PASS_MAIL || "",
   COOKIE_DOMAIN: process.env.COOKIE_DOMAIN || "localhost",
-  ADMIN_EMAIL: process.env.EMAIL_ADMIN || ''
+  ADMIN_EMAIL: process.env.EMAIL_ADMIN || "",
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
 };

@@ -3,4 +3,5 @@ export const config = {
   API_URL: process.env.NEXT_PUBLIC_API_URL || "",
   API_IMAGE_URL: process.env.NEXT_PUBLIC_API_IMAGES_URL || "",
   DOMAIN: process.env.NEXT_PUBLIC_DOMAIN || "",
+  GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''
 };

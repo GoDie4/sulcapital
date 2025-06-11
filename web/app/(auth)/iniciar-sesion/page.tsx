@@ -25,7 +25,7 @@ export default function page() {
                 Iniciar Sesión
               </div>
               <div className="text-gray-600">
-                Accede a tu cuenta de InmoPortal
+                Accede a tu cuenta de Sulcapital
               </div>
             </div>
 

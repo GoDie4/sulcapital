@@ -12,6 +12,7 @@ router.get("/ultimosUsuarios", JWTMiddleware_1.verifyAdmin, user_controller_1.ge
 router.post("/login", (0, validatorSchemas_middleware_1.validateSchema)(auth_schema_1.loginSchema), auth_controller_1.login);
 router.post("/registro", (0, validatorSchemas_middleware_1.validateSchema)(auth_schema_1.registerSchema), auth_controller_1.register);
 router.post("/recuperar", (0, validatorSchemas_middleware_1.validateSchema)(auth_schema_1.recuperarSchema), auth_controller_1.recuperarContrasena);
+router.post('/auth/google', auth_controller_1.googleAuth);
 router.post("/logout", auth_controller_1.logout);
 exports.default = router;
 //# sourceMappingURL=auth.routes.js.map

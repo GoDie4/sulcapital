@@ -14,6 +14,7 @@ import { SchemaLogin } from "../../_components/AuthSchemas";
 import { Errors } from "@/components/form/Errors";
 import { RecuperarContrasena } from "./RecuperarContrasena";
 import { useAuth } from "@/assets/context/AuthContext";
+import { GoogleLogin } from "@react-oauth/google";
 
 export const FormLogin = () => {
   const { setModalContent, openModal, setAuthUser } = useAuth();
@@ -38,13 +39,11 @@ export const FormLogin = () => {
       });
 
       if (response.status === 200) {
-        console.log(response.data.usuario)
         setAuthUser(response.data.usuario);
-        if (
-          response.data.usuario.rol_id === 2 ||
-          response.data.usuario.rol_id === 3
-        ) {
+        if (response.data.usuario.rol_id === 2) {
           router.push("/sistema/propiedades");
+        } else if (response.data.usuario.rol_id === 3) {
+          router.push("/sistema/favoritos");
         } else {
           router.push("/sistema");
         }
@@ -173,6 +172,52 @@ export const FormLogin = () => {
           "Iniciar Sesión"
         )}
       </button>
+
+      <GoogleLogin
+        onSuccess={async (credentialResponse) => {
+          if (!credentialResponse.credential) {
+            toast.error("Error al iniciar sesión con Google");
+            return;
+          }
+
+
+          try {
+            const res = await axios.post(
+              `${config.API_URL}/auth/google`,
+              {
+                id_token: credentialResponse.credential,
+                rol: ''
+              },
+              {
+                withCredentials: true,
+              }
+            );
+
+            if (res.status === 200) {
+              setAuthUser(res.data.usuario);
+              toast.success("Sesión iniciada con Google");
+
+              console.log("DATA: ", res.data.usuario.rol_id);
+
+              if (res.data.usuario.rol_id === 2) {
+                router.push("/sistema/propiedades");
+              } else if (res.data.usuario.rol_id === 3) {
+                router.push("/sistema/favoritos");
+              } else {
+                router.push("/sistema");
+              }
+            }
+          } catch (err: any) {
+            console.log(err);
+            toast.error(
+              err.response?.data?.message || "Error al iniciar sesión"
+            );
+          }
+        }}
+        onError={() => {
+          toast.error("Error en autenticación con Google");
+        }}
+      />
     </form>
   );
 };

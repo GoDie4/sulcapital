@@ -7,6 +7,9 @@ import { ENV } from "../config/config";
 import prisma from "../config/database";
 import { LoginRequest } from "interfaces/auth.interfaces";
 import { formatFechaHora } from "../logic/formatearFechas";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(ENV.GOOGLE_CLIENT_ID);
 
 export const login = async (
   req: Request<{}, {}, LoginRequest>,
@@ -22,7 +25,10 @@ export const login = async (
     if (!usuarioExiste)
       return res.status(400).json({ message: "El usuario no existe" });
 
-    const isMatch = await bcrypt.compare(password, usuarioExiste.password);
+    const isMatch = await bcrypt.compare(
+      password,
+      usuarioExiste.password ?? ""
+    );
 
     if (!isMatch)
       return res.status(400).json({ message: "Contraseña incorrecta" });
@@ -223,8 +229,95 @@ export const logout = (req: any, res: any) => {
     httpOnly: true,
     sameSite: "none",
     secure: true,
-    domain: ".exportando.online",
+    domain: ENV.COOKIE_DOMAIN,
     path: "/",
   });
   return res.sendStatus(200);
+};
+
+export const googleAuth = async (req: any, res: any) => {
+  const { id_token, rol } = req.body;
+
+  if (!id_token) {
+    return res.status(400).json({ message: "Falta el token de Google" });
+  }
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: id_token,
+      audience: ENV.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      return res.status(400).json({ message: "Token inválido" });
+    }
+
+    const { email, name, picture } = payload;
+
+    // Buscar usuario por email
+    let usuario = await prisma.usuario.findUnique({ where: { email } });
+
+    // Si el usuario NO existe → registro → se requiere `rol`
+    if (!usuario) {
+      if (!rol) {
+        return res
+          .status(400)
+          .json({ message: "El campo rol es obligatorio para registrarse" });
+      }
+
+      const rolNombre = rol.toUpperCase();
+      const rolDB = await prisma.rol.findUnique({
+        where: { nombre: rolNombre },
+      });
+
+      if (!rolDB) {
+        return res.status(400).json({ message: "Rol no válido" });
+      }
+
+      const [nombres, ...resto] = (name || "").split(" ");
+      const apellidos = resto.join(" ") || "";
+
+      usuario = await prisma.usuario.create({
+        data: {
+          email,
+          nombres: nombres || "Nombre",
+          apellidos: apellidos,
+          celular: "",
+          provider: "google",
+          avatarUrl: picture || null,
+          activo: true,
+          rol_id: rolDB.id,
+        },
+      });
+    }
+
+    // Obtener rol para el token JWT
+    const usuarioRol = await prisma.rol.findUnique({
+      where: { id: usuario.rol_id },
+    });
+
+    const token = await createAccessToken({
+      id: usuario.id,
+      role: usuarioRol?.nombre ?? "",
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: ENV.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({
+      message:
+        usuario.createdAt === usuario.updatedAt
+          ? "Registro exitoso con Google"
+          : "Autenticado correctamente con Google",
+      usuario,
+    });
+  } catch (error) {
+    console.error("Error en autenticación con Google:", error);
+    return res.status(500).json({ message: "Error interno al autenticar" });
+  }
 };

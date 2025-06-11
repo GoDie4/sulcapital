@@ -12,6 +12,7 @@ import { registerSchema } from "../../_components/AuthSchemas";
 import { RegisterInterface } from "../../_components/AuthInterfaces";
 import { Errors } from "@/components/form/Errors";
 import { useAuth } from "@/assets/context/AuthContext";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 export const FormRegistro = () => {
   const { setAuthUser } = useAuth();
@@ -39,7 +40,7 @@ export const FormRegistro = () => {
       });
 
       if (response.status === 200) {
-        setAuthUser(response.data.usuario)
+        setAuthUser(response.data.usuario);
         if (response.data.usuario.rol_id === 2) {
           router.push("/sistema/propiedades");
         }
@@ -89,6 +90,39 @@ export const FormRegistro = () => {
       }
     }
   }, [touched, errors, isSubmitting]);
+
+  const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
+    if (!credentialResponse.credential) {
+      toast.error("Error al iniciar sesión con Google");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `${config.API_URL}/auth/google`,
+        { id_token: credentialResponse.credential, rol: values.rol },
+        { withCredentials: true }
+      );
+
+      if (res.status === 200) {
+        setAuthUser(res.data.usuario);
+        toast.success("Sesión iniciada con Google");
+
+        if (res.data.usuario.rol_id === 2) {
+          router.push("/sistema/propiedades");
+        } else if (res.data.usuario.rol_id === 3) {
+          router.push("/sistema/favoritos");
+        } else {
+          router.push("/sistema");
+        }
+      }
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message || "Error al iniciar sesión con Google"
+      );
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
@@ -271,6 +305,32 @@ export const FormRegistro = () => {
           "Crear Cuenta"
         )}
       </button>
+
+      <div className="w-full">
+        <div
+          className="w-full relative"
+          onClick={() => {
+            if (values.rol === "") {
+              toast.error("Debes que seleccionar que quieres realizar");
+            }
+          }}
+        >
+          <div
+            className={`w-full absolute cursor-pointer h-full top-0 left-0 ${
+              values.rol === "" ? "z-20" : "-z-20"
+            }`}
+          ></div>
+          <div className="w-full z-10">
+            <GoogleLogin
+              onSuccess={handleGoogleLogin}
+              onError={() => {
+                toast.error("Error en autenticación con Google");
+              }}
+              useOneTap
+            />
+          </div>
+        </div>
+      </div>
     </form>
   );
 };

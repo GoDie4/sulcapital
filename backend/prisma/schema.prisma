@@ -32,8 +32,10 @@ model Usuario {
     email          String   @unique @db.VarChar(255)
     celular        String   @db.VarChar(20)
     activo         Boolean  @default(false)
-    password       String
+    password       String? // <--- opcional
     rol_id         Int      @default(3)
+    provider       String?  @default("credentials")
+    avatarUrl      String?
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
 
@@ -165,6 +167,5 @@ model RecientementeVisto {
 
     @@unique([propiedadId, userId])
     @@index([userId])
-
     @@map("recientemente_visto")
 }

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logout = exports.cambiarContrasena = exports.recuperarContrasena = exports.register = exports.login = void 0;
+exports.googleAuth = exports.logout = exports.cambiarContrasena = exports.recuperarContrasena = exports.register = exports.login = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const crypto_1 = __importDefault(require("crypto"));
 const jwt_1 = __importDefault(require("../utils/jwt"));
@@ -11,6 +11,8 @@ const mail_controller_1 = require("./mail.controller");
 const config_1 = require("../config/config");
 const database_1 = __importDefault(require("../config/database"));
 const formatearFechas_1 = require("../logic/formatearFechas");
+const google_auth_library_1 = require("google-auth-library");
+const client = new google_auth_library_1.OAuth2Client(config_1.ENV.GOOGLE_CLIENT_ID);
 const login = async (req, res) => {
     const { email, password, mantenerConexion } = req.body;
     try {
@@ -19,7 +21,7 @@ const login = async (req, res) => {
         });
         if (!usuarioExiste)
             return res.status(400).json({ message: "El usuario no existe" });
-        const isMatch = await bcrypt_1.default.compare(password, usuarioExiste.password);
+        const isMatch = await bcrypt_1.default.compare(password, usuarioExiste.password ?? "");
         if (!isMatch)
             return res.status(400).json({ message: "Contraseña incorrecta" });
         const role = await database_1.default.rol.findFirst({
@@ -175,10 +177,83 @@ const logout = (req, res) => {
         httpOnly: true,
         sameSite: "none",
         secure: true,
-        domain: ".exportando.online",
+        domain: config_1.ENV.COOKIE_DOMAIN,
         path: "/",
     });
     return res.sendStatus(200);
 };
 exports.logout = logout;
+const googleAuth = async (req, res) => {
+    const { id_token, rol } = req.body;
+    if (!id_token) {
+        return res.status(400).json({ message: "Falta el token de Google" });
+    }
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: id_token,
+            audience: config_1.ENV.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        if (!payload || !payload.email) {
+            return res.status(400).json({ message: "Token inválido" });
+        }
+        const { email, name, picture } = payload;
+        // Buscar usuario por email
+        let usuario = await database_1.default.usuario.findUnique({ where: { email } });
+        // Si el usuario NO existe → registro → se requiere `rol`
+        if (!usuario) {
+            if (!rol) {
+                return res
+                    .status(400)
+                    .json({ message: "El campo rol es obligatorio para registrarse" });
+            }
+            const rolNombre = rol.toUpperCase();
+            const rolDB = await database_1.default.rol.findUnique({
+                where: { nombre: rolNombre },
+            });
+            if (!rolDB) {
+                return res.status(400).json({ message: "Rol no válido" });
+            }
+            const [nombres, ...resto] = (name || "").split(" ");
+            const apellidos = resto.join(" ") || "";
+            usuario = await database_1.default.usuario.create({
+                data: {
+                    email,
+                    nombres: nombres || "Nombre",
+                    apellidos: apellidos,
+                    celular: "",
+                    provider: "google",
+                    avatarUrl: picture || null,
+                    activo: true,
+                    rol_id: rolDB.id,
+                },
+            });
+        }
+        // Obtener rol para el token JWT
+        const usuarioRol = await database_1.default.rol.findUnique({
+            where: { id: usuario.rol_id },
+        });
+        const token = await (0, jwt_1.default)({
+            id: usuario.id,
+            role: usuarioRol?.nombre ?? "",
+        });
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: config_1.ENV.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        return res.json({
+            message: usuario.createdAt === usuario.updatedAt
+                ? "Registro exitoso con Google"
+                : "Autenticado correctamente con Google",
+            usuario,
+        });
+    }
+    catch (error) {
+        console.error("Error en autenticación con Google:", error);
+        return res.status(500).json({ message: "Error interno al autenticar" });
+    }
+};
+exports.googleAuth = googleAuth;
 //# sourceMappingURL=auth.controller.js.map

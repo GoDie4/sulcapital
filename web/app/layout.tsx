@@ -8,7 +8,7 @@ import { getServerSideProps } from "@/server/getServerSideProps";
 import { cookies } from "next/headers";
 import axios from "axios";
 import { config } from "@/assets/config/config";
-
+import { GoogleOAuthProvider } from "@react-oauth/google";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -86,6 +86,8 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMontserrat.variable} antialiased`}
       >
+         <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID!}>
+
         <AuthProvider
           dataCiudadesInitial={dataCiudades}
           dataPropiedadesInitial={dataPropiedades}
@@ -106,6 +108,7 @@ export default async function RootLayout({
             },
           }}
         />
+         </GoogleOAuthProvider>
       </body>
     </html>
   );

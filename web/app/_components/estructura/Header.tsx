@@ -59,11 +59,11 @@ export const Header = ({
       } transition-all duration-300`}
     >
       <ContentMain className="py-3">
-        <nav className="flex justify-between items-center">
+        <nav className="flex justify-between items-end">
           <Link
             href={"/"}
             className={`block ${
-              scrollY ? "w-[130px]" : " w-[140px] md:w-[180px]"
+              scrollY ? "w-[120px]" : " w-[120px] md:w-[140px]"
             }  transition-all duration-200`}
           >
             <img

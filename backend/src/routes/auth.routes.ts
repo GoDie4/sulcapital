@@ -6,6 +6,7 @@ import {
   registerSchema,
 } from "../schemas/auth.schema";
 import {
+    googleAuth,
   login,
   logout,
   recuperarContrasena,
@@ -25,6 +26,6 @@ router.get("/ultimosUsuarios", verifyAdmin, getUltimosUsuarios);
 router.post("/login", validateSchema(loginSchema), login);
 router.post("/registro", validateSchema(registerSchema), register);
 router.post("/recuperar", validateSchema(recuperarSchema), recuperarContrasena);
-
+router.post('/auth/google', googleAuth);
 router.post("/logout", logout);
 export default router;

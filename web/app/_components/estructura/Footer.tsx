@@ -1,3 +1,4 @@
+'use client'
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
 import { ContentMain } from "./ContentMain";
@@ -12,7 +13,7 @@ import {
 import Link from "next/link";
 import { TipoPropiedad } from "../../(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 import { CiudadList } from "../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
-
+import { FloatingWhatsApp } from "react-floating-whatsapp";
 export const Footer = ({
   tipoPropiedades,
   ciudades,
@@ -130,6 +131,18 @@ export const Footer = ({
           </li>
         </ul>
       </ContentMain>
+
+      <FloatingWhatsApp
+        phoneNumber="51953528808" // tu número con código de país
+        accountName="Sulcapital"
+        avatar="/images/logo/ico_color.png" // opcional: imagen del logo o avatar
+        statusMessage="En línea"
+        chatMessage="¡Hola! ¿En qué podemos ayudarte?"
+        placeholder="Escribe un mensaje"
+        allowClickAway
+        notification
+        notificationSound
+      />
     </footer>
   );
 };
