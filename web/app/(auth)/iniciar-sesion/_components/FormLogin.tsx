@@ -15,6 +15,7 @@ import { Errors } from "@/components/form/Errors";
 import { RecuperarContrasena } from "./RecuperarContrasena";
 import { useAuth } from "@/assets/context/AuthContext";
 import { GoogleLogin } from "@react-oauth/google";
+import { FacebookLoginButton } from "../../_components/buttons/LoginFacebook";
 
 export const FormLogin = () => {
   const { setModalContent, openModal, setAuthUser } = useAuth();
@@ -173,51 +174,57 @@ export const FormLogin = () => {
         )}
       </button>
 
-      <GoogleLogin
-        onSuccess={async (credentialResponse) => {
-          if (!credentialResponse.credential) {
-            toast.error("Error al iniciar sesión con Google");
-            return;
-          }
-
-
-          try {
-            const res = await axios.post(
-              `${config.API_URL}/auth/google`,
-              {
-                id_token: credentialResponse.credential,
-                rol: ''
-              },
-              {
-                withCredentials: true,
+      <div className="w-full flex flex-col md:flex-row gap-5">
+        <div className="w-full md:w-1/2">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              if (!credentialResponse.credential) {
+                toast.error("Error al iniciar sesión con Google");
+                return;
               }
-            );
 
-            if (res.status === 200) {
-              setAuthUser(res.data.usuario);
-              toast.success("Sesión iniciada con Google");
+              try {
+                const res = await axios.post(
+                  `${config.API_URL}/auth/google`,
+                  {
+                    id_token: credentialResponse.credential,
+                    rol: "",
+                  },
+                  {
+                    withCredentials: true,
+                  }
+                );
 
-              console.log("DATA: ", res.data.usuario.rol_id);
+                if (res.status === 200) {
+                  setAuthUser(res.data.usuario);
+                  toast.success("Sesión iniciada con Google");
 
-              if (res.data.usuario.rol_id === 2) {
-                router.push("/sistema/propiedades");
-              } else if (res.data.usuario.rol_id === 3) {
-                router.push("/sistema/favoritos");
-              } else {
-                router.push("/sistema");
+                  console.log("DATA: ", res.data.usuario.rol_id);
+
+                  if (res.data.usuario.rol_id === 2) {
+                    router.push("/sistema/propiedades");
+                  } else if (res.data.usuario.rol_id === 3) {
+                    router.push("/sistema/favoritos");
+                  } else {
+                    router.push("/sistema");
+                  }
+                }
+              } catch (err: any) {
+                console.log(err);
+                toast.error(
+                  err.response?.data?.message || "Error al iniciar sesión"
+                );
               }
-            }
-          } catch (err: any) {
-            console.log(err);
-            toast.error(
-              err.response?.data?.message || "Error al iniciar sesión"
-            );
-          }
-        }}
-        onError={() => {
-          toast.error("Error en autenticación con Google");
-        }}
-      />
+            }}
+            onError={() => {
+              toast.error("Error en autenticación con Google");
+            }}
+          />
+        </div>
+        <div className="w-full md:w-1/2">
+          <FacebookLoginButton rol="CLIENTE"/>
+        </div>
+      </div>
     </form>
   );
 };

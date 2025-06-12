@@ -143,6 +143,8 @@ const yo = async (req, res) => {
                 nombres: userEncontrado.nombres,
                 apellidos: userEncontrado.apellidos,
                 celular: userEncontrado.celular,
+                avatarUrl: userEncontrado.avatarUrl,
+                provider: userEncontrado.provider,
                 email: userEncontrado.email,
                 rol_id: userEncontrado.rol_id,
             },

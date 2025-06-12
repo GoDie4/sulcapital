@@ -65,6 +65,14 @@ export default async function page({ searchParams }: { searchParams: any }) {
         { value: "0", label: "Sin publicaciones" },
       ],
     },
+    {
+      name: "cant_publicaciones",
+      label: "Más publicaciones",
+      options: [
+        { value: "1", label: "Mayor a menor" },
+        { value: "0", label: "Menor a mayor" },
+      ],
+    },
   ];
 
   return (

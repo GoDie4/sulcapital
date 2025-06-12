@@ -9,15 +9,17 @@ function getYouTubeVideoId(url: string) {
   return match ? match[1] : null;
 }
 
-export const VideoInmueble = ({ url }: { url: string }) => {
+const VideoInmueble = ({ url }: { url: string }) => {
   const IdVideo = getYouTubeVideoId(url);
   return (
     <>
       {IdVideo && (
         <div className="w-full rounded-main overflow-hidden">
-          <LiteYouTubeEmbed id={IdVideo ?? ""} title="" />
+          <LiteYouTubeEmbed id={IdVideo} title="Video inmueble" />
         </div>
       )}
     </>
   );
 };
+
+export default VideoInmueble;

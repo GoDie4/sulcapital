@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.googleAuth = exports.logout = exports.cambiarContrasena = exports.recuperarContrasena = exports.register = exports.login = void 0;
+exports.facebookAuth = exports.googleAuth = exports.logout = exports.cambiarContrasena = exports.recuperarContrasena = exports.register = exports.login = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const crypto_1 = __importDefault(require("crypto"));
 const jwt_1 = __importDefault(require("../utils/jwt"));
@@ -12,6 +12,7 @@ const config_1 = require("../config/config");
 const database_1 = __importDefault(require("../config/database"));
 const formatearFechas_1 = require("../logic/formatearFechas");
 const google_auth_library_1 = require("google-auth-library");
+const axios_1 = __importDefault(require("axios"));
 const client = new google_auth_library_1.OAuth2Client(config_1.ENV.GOOGLE_CLIENT_ID);
 const login = async (req, res) => {
     const { email, password, mantenerConexion } = req.body;
@@ -49,6 +50,8 @@ const login = async (req, res) => {
                 email: usuarioExiste.email,
                 rol_id: usuarioExiste.rol_id,
                 rol: usuarioExiste.rol_id,
+                avatarUrl: usuarioExiste.avatarUrl,
+                provider: usuarioExiste.provider,
             },
             status: 200,
             token: token,
@@ -118,6 +121,8 @@ const register = async (req, res) => {
                 celular: nuevoUsuario.celular,
                 email: nuevoUsuario.email,
                 rol_id: nuevoUsuario.rol_id,
+                avatarUrl: nuevoUsuario.avatarUrl,
+                provider: nuevoUsuario.provider,
             },
             status: 200,
             token: token,
@@ -239,9 +244,10 @@ const googleAuth = async (req, res) => {
         });
         res.cookie("token", token, {
             httpOnly: true,
-            secure: config_1.ENV.NODE_ENV === "production",
-            sameSite: "strict",
+            secure: true,
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000,
+            domain: config_1.ENV.COOKIE_DOMAIN,
         });
         return res.json({
             message: usuario.createdAt === usuario.updatedAt
@@ -256,4 +262,87 @@ const googleAuth = async (req, res) => {
     }
 };
 exports.googleAuth = googleAuth;
+const facebookAuth = async (req, res) => {
+    const { access_token, rol } = req.body;
+    if (!access_token) {
+        return res
+            .status(400)
+            .json({ message: "Falta el token de acceso de Facebook" });
+    }
+    try {
+        // Obtener perfil desde Facebook
+        const fbRes = await axios_1.default.get(`https://graph.facebook.com/me`, {
+            params: {
+                fields: "id,name,email,picture",
+                access_token,
+            },
+        });
+        const { email, name, picture } = fbRes.data;
+        if (!email) {
+            return res
+                .status(400)
+                .json({ message: "No se pudo obtener el email desde Facebook" });
+        }
+        // Buscar usuario en la base de datos
+        let usuario = await database_1.default.usuario.findUnique({ where: { email } });
+        if (!usuario) {
+            // Si el usuario no existe, se necesita el rol
+            if (!rol) {
+                return res
+                    .status(400)
+                    .json({ message: "El campo rol es obligatorio para el registro" });
+            }
+            const rolNombre = rol.toUpperCase();
+            const rolDB = await database_1.default.rol.findUnique({
+                where: { nombre: rolNombre },
+            });
+            if (!rolDB) {
+                return res.status(400).json({ message: "Rol no válido" });
+            }
+            const [nombres, ...resto] = name.split(" ");
+            const apellidos = resto.join(" ") || "";
+            usuario = await database_1.default.usuario.create({
+                data: {
+                    email,
+                    nombres,
+                    apellidos,
+                    celular: "",
+                    provider: "facebook",
+                    avatarUrl: picture?.data?.url || null,
+                    activo: true,
+                    rol_id: rolDB.id,
+                },
+            });
+        }
+        // Emitir JWT con el rol real del usuario
+        const rolDB = await database_1.default.rol.findUnique({
+            where: { id: usuario.rol_id },
+        });
+        console.log("usuario: ", usuario);
+        console.log("rol: ", rolDB);
+        const token = await (0, jwt_1.default)({
+            id: usuario.id,
+            role: rolDB?.nombre ?? "cliente",
+        });
+        console.log("TOKEN: ", token);
+        res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: "none",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            secure: true,
+            domain: config_1.ENV.COOKIE_DOMAIN,
+        });
+        return res.json({
+            message: "Autenticado correctamente con Facebook",
+            usuario,
+        });
+    }
+    catch (error) {
+        console.error("Error en Facebook auth:", error);
+        return res
+            .status(500)
+            .json({ message: "Error al autenticar con Facebook" });
+    }
+};
+exports.facebookAuth = facebookAuth;
 //# sourceMappingURL=auth.controller.js.map

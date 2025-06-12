@@ -6,6 +6,7 @@ import {
   registerSchema,
 } from "../schemas/auth.schema";
 import {
+    facebookAuth,
     googleAuth,
   login,
   logout,
@@ -27,5 +28,6 @@ router.post("/login", validateSchema(loginSchema), login);
 router.post("/registro", validateSchema(registerSchema), register);
 router.post("/recuperar", validateSchema(recuperarSchema), recuperarContrasena);
 router.post('/auth/google', googleAuth);
+router.post("/auth/facebook", facebookAuth);
 router.post("/logout", logout);
 export default router;

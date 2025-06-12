@@ -9,24 +9,16 @@ const containerStyle = {
   height: "400px",
 };
 
-const mapOptions = {
-  styles: [
-    // Puedes pegar aquí el estilo de Snazzy Maps o dejarlo vacío para el default
-  ],
-  disableDefaultUI: false,
-};
-
 function separarCoordenadas(coordenadas: string) {
   const partes = coordenadas.split(",");
-  if (partes.length !== 2) {
-    return null; // Retorna null si el formato no es válido
-  }
-  const latitud = parseFloat(partes[0].trim());
-  const longitud = parseFloat(partes[1].trim());
-  return { latitud, longitud };
+  if (partes.length !== 2) return null;
+  return {
+    latitud: parseFloat(partes[0].trim()),
+    longitud: parseFloat(partes[1].trim()),
+  };
 }
 
-export const UbicacionInmueble = ({
+const UbicacionInmueble = ({
   coordenadas,
   direccion,
 }: {
@@ -38,9 +30,10 @@ export const UbicacionInmueble = ({
     lat: Number(coords?.latitud ?? 0),
     lng: Number(coords?.longitud ?? 0),
   };
+
   return (
     <>
-      {coordenadas && coordenadas !== "" && (
+      {coordenadas && (
         <div className="pt-4">
           <div className="w-full flex items-center justify-between">
             <p className="text-xl text-secondary-main font-TypographBold mb-4">
@@ -54,9 +47,8 @@ export const UbicacionInmueble = ({
                 mapContainerStyle={containerStyle}
                 center={location}
                 zoom={13}
-                options={mapOptions}
               >
-                <Marker position={location} label="Satipo" />
+                <Marker position={location} label="Ubicación" />
               </GoogleMap>
             </LoadScript>
           </div>
@@ -65,3 +57,5 @@ export const UbicacionInmueble = ({
     </>
   );
 };
+
+export default UbicacionInmueble;

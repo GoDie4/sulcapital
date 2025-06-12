@@ -52,6 +52,8 @@ export const Header = ({
     };
   }, []);
 
+  console.log("AUTH: ", authUser)
+
   return (
     <header
       className={`fixed top-0 left-0 w-full  z-[1300] ${
@@ -104,13 +106,21 @@ export const Header = ({
                     scrollY ? "text-secondary-main" : "text-white-main"
                   }`}
                 >
-                  <span className="flex items-center justify-center flex-1 w-6 h-6 font-bold uppercase rounded-full bg-primary-main sm:w-8 sm:h-8 text-white-main">
-                    <p className="text-sm sm:text-base text-white-main ">
-                      {authUser !== null && authUser !== undefined
-                        ? authUser.nombres.charAt(0)
-                        : ""}
-                    </p>
-                  </span>
+                  {authUser.provider === "credentials" ? (
+                    <span className="flex items-center justify-center flex-1 w-6 h-6 font-bold uppercase rounded-full bg-primary-main sm:w-8 sm:h-8 text-white-main">
+                      <p className="text-sm sm:text-base text-white-main ">
+                        {authUser !== null && authUser !== undefined
+                          ? authUser.nombres.charAt(0)
+                          : ""}
+                      </p>
+                    </span>
+                  ) : (
+                    <img
+                      src={authUser.avatarUrl}
+                      alt=""
+                      className="block w-9 h-9 rounded-full"
+                    />
+                  )}
                   <p>{authUser.nombres}</p>
 
                   <MenuLogeado />

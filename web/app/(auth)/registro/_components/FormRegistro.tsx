@@ -13,6 +13,7 @@ import { RegisterInterface } from "../../_components/AuthInterfaces";
 import { Errors } from "@/components/form/Errors";
 import { useAuth } from "@/assets/context/AuthContext";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { FacebookLoginButton } from "../../_components/buttons/LoginFacebook";
 
 export const FormRegistro = () => {
   const { setAuthUser } = useAuth();
@@ -306,28 +307,49 @@ export const FormRegistro = () => {
         )}
       </button>
 
-      <div className="w-full">
-        <div
-          className="w-full relative"
-          onClick={() => {
-            if (values.rol === "") {
-              toast.error("Debes que seleccionar que quieres realizar");
-            }
-          }}
-        >
+      <div className="w-full flex flex-col md:flex-row gap-5">
+        <div className="w-full lg:w-1/2">
           <div
-            className={`w-full absolute cursor-pointer h-full top-0 left-0 ${
-              values.rol === "" ? "z-20" : "-z-20"
-            }`}
-          ></div>
-          <div className="w-full z-10">
-            <GoogleLogin
-              onSuccess={handleGoogleLogin}
-              onError={() => {
-                toast.error("Error en autenticación con Google");
-              }}
-              useOneTap
-            />
+            className="w-full relative"
+            onClick={() => {
+              if (values.rol === "") {
+                toast.error("Debes que seleccionar que quieres realizar");
+              }
+            }}
+          >
+            <div
+              className={`w-full absolute cursor-pointer h-full top-0 left-0 ${
+                values.rol === "" ? "z-20" : "-z-20"
+              }`}
+            ></div>
+            <div className="w-full z-10">
+              <GoogleLogin
+                onSuccess={handleGoogleLogin}
+                onError={() => {
+                  toast.error("Error en autenticación con Google");
+                }}
+                useOneTap
+              />
+            </div>
+          </div>
+        </div>
+        <div className="w-full lg:w-1/2">
+          <div
+            className="w-full relative"
+            onClick={() => {
+              if (values.rol === "") {
+                toast.error("Debes que seleccionar que quieres realizar");
+              }
+            }}
+          >
+            <div
+              className={`w-full absolute cursor-pointer h-full top-0 left-0 ${
+                values.rol === "" ? "z-20" : "-z-20"
+              }`}
+            ></div>
+            <div className="w-full z-10">
+              <FacebookLoginButton rol={values.rol} />
+            </div>
           </div>
         </div>
       </div>

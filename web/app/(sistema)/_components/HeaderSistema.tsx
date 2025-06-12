@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { Dispatch, SetStateAction } from "react";
 import { GoTriangleDown } from "react-icons/go";
@@ -14,7 +15,7 @@ export const HeaderSistema = ({
   showMenu: boolean;
 }) => {
   const { authUser } = useAuth();
-  console.log("iser: ", authUser)
+  console.log("iser: ", authUser);
   return (
     <div
       className={`w-full z-[1200] top-0 left-0 flex items-center justify-between gap-3 pl-4 lg:pl-6 pr-4 h-20 ${
@@ -43,11 +44,17 @@ export const HeaderSistema = ({
           type="button"
           className="relative flex bg-white-main h-12 items-center gap-1 px-2 py-3 md:px-4 btn--menuProfile rounded-md sm:gap-2 hover:bg-secondary-50"
         >
-          <span className="flex items-center justify-center flex-1 w-6 h-6 font-bold uppercase rounded-full bg-primary-main sm:w-8 sm:h-8 text-white-main">
-            <p className="text-sm sm:text-base text-white-main ">
-              {authUser !== null && authUser !== undefined ? authUser.nombres.charAt(0) : ""}
-            </p>
-          </span>
+          {authUser?.provider === "credentials" ? (
+            <span className="flex items-center justify-center flex-1 w-6 h-6 font-bold uppercase rounded-full bg-primary-main sm:w-8 sm:h-8 text-white-main">
+              <p className="text-sm sm:text-base text-white-main ">
+                {authUser !== null && authUser !== undefined
+                  ? authUser.nombres.charAt(0)
+                  : ""}
+              </p>
+            </span>
+          ) : (
+            <img src={authUser?.avatarUrl} alt="" className="block w-9 h-9 rounded-full" />
+          )}
           <p className="hidden text-sm sm:block sm:text-base lg:text-black-main">
             {authUser?.nombres}
           </p>

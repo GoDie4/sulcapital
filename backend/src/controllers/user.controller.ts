@@ -147,6 +147,8 @@ export const yo = async (req: any, res: any) => {
         nombres: userEncontrado.nombres,
         apellidos: userEncontrado.apellidos,
         celular: userEncontrado.celular,
+        avatarUrl: userEncontrado.avatarUrl,
+        provider: userEncontrado.provider,
         email: userEncontrado.email,
         rol_id: userEncontrado.rol_id,
       },

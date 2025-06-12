@@ -21,6 +21,8 @@ export type UserInterface = {
   celular: string;
   rol_id: string | number;
   rol?: RolesInterface;
+  provider?: string
+  avatarUrl?: string
   createdAt?: Date;
   updatedAt?: Date;
 };

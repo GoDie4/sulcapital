@@ -51,11 +51,7 @@ const menuItemsCliente = [
     icon: <BsPerson />,
     route: "perfil",
   },
-  {
-    title: "Propiedades",
-    icon: <BsHouseDoor />,
-    route: "propiedades",
-  },
+
   {
     title: "Vistos",
     icon: <BsEye />,

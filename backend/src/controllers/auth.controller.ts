@@ -8,6 +8,7 @@ import prisma from "../config/database";
 import { LoginRequest } from "interfaces/auth.interfaces";
 import { formatFechaHora } from "../logic/formatearFechas";
 import { OAuth2Client } from "google-auth-library";
+import axios from "axios";
 
 const client = new OAuth2Client(ENV.GOOGLE_CLIENT_ID);
 
@@ -62,6 +63,8 @@ export const login = async (
         email: usuarioExiste.email,
         rol_id: usuarioExiste.rol_id,
         rol: usuarioExiste.rol_id,
+        avatarUrl: usuarioExiste.avatarUrl,
+        provider: usuarioExiste.provider,
       },
       status: 200,
       token: token,
@@ -155,6 +158,8 @@ export const register = async (
         celular: nuevoUsuario.celular,
         email: nuevoUsuario.email,
         rol_id: nuevoUsuario.rol_id,
+        avatarUrl: nuevoUsuario.avatarUrl,
+        provider: nuevoUsuario.provider,
       },
       status: 200,
       token: token,
@@ -304,9 +309,10 @@ export const googleAuth = async (req: any, res: any) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: ENV.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      domain: ENV.COOKIE_DOMAIN,
     });
 
     return res.json({
@@ -319,5 +325,103 @@ export const googleAuth = async (req: any, res: any) => {
   } catch (error) {
     console.error("Error en autenticación con Google:", error);
     return res.status(500).json({ message: "Error interno al autenticar" });
+  }
+};
+
+export const facebookAuth = async (req: any, res: any) => {
+  const { access_token, rol } = req.body;
+
+  if (!access_token) {
+    return res
+      .status(400)
+      .json({ message: "Falta el token de acceso de Facebook" });
+  }
+
+  try {
+    // Obtener perfil desde Facebook
+    const fbRes = await axios.get(`https://graph.facebook.com/me`, {
+      params: {
+        fields: "id,name,email,picture",
+        access_token,
+      },
+    });
+
+    const { email, name, picture } = fbRes.data;
+
+    if (!email) {
+      return res
+        .status(400)
+        .json({ message: "No se pudo obtener el email desde Facebook" });
+    }
+
+    // Buscar usuario en la base de datos
+    let usuario = await prisma.usuario.findUnique({ where: { email } });
+
+    if (!usuario) {
+      // Si el usuario no existe, se necesita el rol
+      if (!rol) {
+        return res
+          .status(400)
+          .json({ message: "El campo rol es obligatorio para el registro" });
+      }
+
+      const rolNombre = rol.toUpperCase();
+      const rolDB = await prisma.rol.findUnique({
+        where: { nombre: rolNombre },
+      });
+
+      if (!rolDB) {
+        return res.status(400).json({ message: "Rol no válido" });
+      }
+
+      const [nombres, ...resto] = name.split(" ");
+      const apellidos = resto.join(" ") || "";
+
+      usuario = await prisma.usuario.create({
+        data: {
+          email,
+          nombres,
+          apellidos,
+          celular: "",
+          provider: "facebook",
+          avatarUrl: picture?.data?.url || null,
+          activo: true,
+          rol_id: rolDB.id,
+        },
+      });
+    }
+
+    // Emitir JWT con el rol real del usuario
+    const rolDB = await prisma.rol.findUnique({
+      where: { id: usuario.rol_id },
+    });
+
+    console.log("usuario: ", usuario);
+    console.log("rol: ", rolDB);
+
+    const token = await createAccessToken({
+      id: usuario.id,
+      role: rolDB?.nombre ?? "cliente",
+    });
+
+    console.log("TOKEN: ", token);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: true,
+      domain: ENV.COOKIE_DOMAIN,
+    });
+
+    return res.json({
+      message: "Autenticado correctamente con Facebook",
+      usuario,
+    });
+  } catch (error) {
+    console.error("Error en Facebook auth:", error);
+    return res
+      .status(500)
+      .json({ message: "Error al autenticar con Facebook" });
   }
 };

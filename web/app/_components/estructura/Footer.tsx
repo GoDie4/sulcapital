@@ -1,4 +1,4 @@
-'use client'
+"use client";
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
 import { ContentMain } from "./ContentMain";
@@ -124,10 +124,10 @@ export const Footer = ({
         </p>
         <ul className="flex items-center gap-3 text-white-main">
           <li>
-            <a href="">Inicio</a>
+            <Link href="/">Inicio</Link>
           </li>
           <li>
-            <a href="">Políticas de privacidad</a>
+            <Link href="/politicas-de-privacidad">Políticas de privacidad</Link>
           </li>
         </ul>
       </ContentMain>

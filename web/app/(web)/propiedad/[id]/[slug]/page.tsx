@@ -5,11 +5,10 @@ import { BannerInternas } from "../../../../_components/estructura/BannerInterna
 import DescripcionInmueble from "../../../../_components/inmuebles/_components/DescripcionInmueble";
 import { GaleriaInmuebles } from "../../../../_components/inmuebles/_components/GaleriaInmuebles";
 import { ContentMain } from "../../../../_components/estructura/ContentMain";
-import { VideoInmueble } from "../../../../_components/inmuebles/_components/VideoInmueble";
-import { UbicacionInmueble } from "../../../../_components/inmuebles/_components/UbicacionInmueble";
 import { FormContactoInmueble } from "../../../../_components/inmuebles/_components/FormContactoInmueble";
 import { OtrosInmueblesUsuario } from "../../../../_components/inmuebles/_components/OtrosInmueblesUsuario";
 import { ContenteInmuebles } from "../../_components/ContenteInmuebles";
+import ClientMediaInmueble from "../../../../_components/inmuebles/_components/ImportDynamicUbicacionVideoInmueble";
 
 async function getPropiedad(id: string): Promise<any> {
   const response = await axios.get(`${config.API_URL}/propiedades/find/${id}`);
@@ -45,10 +44,10 @@ export default async function page({
         <ContentMain className="w-full flex flex-col lg:flex-row gap-8 pb-10">
           <div className="w-full lg:w-2/3 space-y-6">
             <DescripcionInmueble descripcion={propiedad.descripcionLarga} />
-            <VideoInmueble url={propiedad.video ?? ""} />
-            <UbicacionInmueble
-              coordenadas={propiedad.coordenadas ?? ""}
+            <ClientMediaInmueble
+              coordenadas={propiedad.coordenadas}
               direccion={propiedad.direccion}
+              video={propiedad.video}
             />
           </div>
           <div className="w-full lg:w-1/3 space-y-12 ">

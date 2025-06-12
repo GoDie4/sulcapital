@@ -13,6 +13,7 @@ router.post("/login", (0, validatorSchemas_middleware_1.validateSchema)(auth_sch
 router.post("/registro", (0, validatorSchemas_middleware_1.validateSchema)(auth_schema_1.registerSchema), auth_controller_1.register);
 router.post("/recuperar", (0, validatorSchemas_middleware_1.validateSchema)(auth_schema_1.recuperarSchema), auth_controller_1.recuperarContrasena);
 router.post('/auth/google', auth_controller_1.googleAuth);
+router.post("/auth/facebook", auth_controller_1.facebookAuth);
 router.post("/logout", auth_controller_1.logout);
 exports.default = router;
 //# sourceMappingURL=auth.routes.js.map

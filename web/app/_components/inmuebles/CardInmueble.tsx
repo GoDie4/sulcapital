@@ -58,6 +58,7 @@ const CardInmuebleList = ({
   return (
     <Link
       href={`/propiedad/${data.id}/${data.slug}`}
+      prefetch={true}
       className="rounded-main shadow-main p-2 bg-white-main flex items-center justify-between"
     >
       <div className="w-fit flex">
@@ -144,6 +145,7 @@ const CardInmuebleGrid = ({
   return (
     <Link
       href={`/propiedad/${data.id}/${data.slug}`}
+      prefetch={true}
       className="w-full block rounded-main shadow-main overflow-hidden hover:-translate-y-2 transition-all duration-200"
     >
       <div className="relative">

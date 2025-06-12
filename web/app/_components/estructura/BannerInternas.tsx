@@ -15,7 +15,7 @@ export const BannerInternas = ({
       <img
         src={image}
         alt=""
-        className="block w-full h-full absolute inset-0 -z-20"
+        className="block w-full h-full absolute object-cover inset-0 -z-20"
       />
       <ContentMain className="pt-4 pb-20">
         <h1 className="text-center  text-3xl text-white-main">{title}</h1>
