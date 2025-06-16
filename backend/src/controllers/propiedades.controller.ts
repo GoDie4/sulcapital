@@ -445,7 +445,6 @@ export const crearPropiedad = async (
     if (imagenes.length > 6) {
       return res.status(400).json({ message: "Máximo 6 imágenes permitidas" });
     }
-    // Asegurarnos de que sean arreglos de strings
     const imagenesUrls: string[] = Array.isArray(imagenes) ? imagenes : [];
     const fondoPortadaUrls: string[] = Array.isArray(fondoPortada)
       ? fondoPortada
@@ -457,6 +456,14 @@ export const crearPropiedad = async (
       .replace(/-+/g, "-")
       .replace(/^-+|-+$/g, "");
     const slugUnico = await generarSlugUnico(slugBase);
+
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: idUser },
+      select: { publicaciones_automaticas: true },
+    });
+
+    const estadoFinal = usuario?.publicaciones_automaticas ? "PUBLICADO" : estado;
+
     const nuevaPropiedad = await prisma.propiedad.create({
       data: {
         titulo,
@@ -472,7 +479,7 @@ export const crearPropiedad = async (
         exclusivo: exclusivo === "si",
         tipoPropiedad: { connect: { id: tipoPropiedadId } },
         ciudad: { connect: { id: Number(ciudadId) } },
-        estado,
+        estado: estadoFinal,
       },
     });
 
@@ -786,7 +793,7 @@ export const getPropiedadById = async (req: any, res: any) => {
         },
       },
       orderBy: {
-        createdAt: "desc", 
+        createdAt: "desc",
       },
       take: 10,
       include: {
@@ -802,7 +809,7 @@ export const getPropiedadById = async (req: any, res: any) => {
       data: {
         propiedad,
         ultimasPropiedades,
-        propiedadesRelacionadas
+        propiedadesRelacionadas,
       },
     });
   } catch (error) {

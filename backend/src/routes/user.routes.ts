@@ -1,5 +1,6 @@
 import { authRequired } from "../middlewares/validateToken";
 import {
+  actualizarPublicacionesAutomaticas,
   editarPerfil,
   getDecodedUser,
   profile,
@@ -26,4 +27,10 @@ router.put(
   validateSchema(cambiarContrasenaSchema),
   cambiarContrasena
 );
+router.post(
+  "/publicaciones-automaticas",
+  verifyAdmin,
+  actualizarPublicacionesAutomaticas
+);
+
 export default router;

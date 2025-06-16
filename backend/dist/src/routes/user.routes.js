@@ -13,5 +13,6 @@ router.get("/perfil/:userId", validateToken_1.authRequired, user_controller_1.pr
 router.put("/editarPerfil", JWTMiddleware_1.verifyAnuncianteOrCliente, user_controller_1.editarPerfil);
 router.get("/yo", JWTMiddleware_1.addUserReq, user_controller_1.yo);
 router.put("/cambiarContrasena", (0, validatorSchemas_middleware_1.validateSchema)(auth_schema_1.cambiarContrasenaSchema), auth_controller_1.cambiarContrasena);
+router.post("/publicaciones-automaticas", JWTMiddleware_1.verifyAdmin, user_controller_1.actualizarPublicacionesAutomaticas);
 exports.default = router;
 //# sourceMappingURL=user.routes.js.map

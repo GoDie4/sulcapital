@@ -24,20 +24,21 @@ model Rol {
 }
 
 model Usuario {
-    id             String   @id @default(cuid()) @db.Char(36)
-    nombres        String   @db.VarChar(255)
-    apellidos      String   @db.VarChar(255)
-    tipo_documento String?  @db.VarChar(50)
-    documento      String?  @unique @db.VarChar(50)
-    email          String   @unique @db.VarChar(255)
-    celular        String   @db.VarChar(20)
-    activo         Boolean  @default(false)
-    password       String? // <--- opcional
-    rol_id         Int      @default(3)
-    provider       String?  @default("credentials")
-    avatarUrl      String?
-    createdAt      DateTime @default(now())
-    updatedAt      DateTime @updatedAt
+    id                        String   @id @default(cuid()) @db.Char(36)
+    nombres                   String   @db.VarChar(255)
+    apellidos                 String   @db.VarChar(255)
+    tipo_documento            String?  @db.VarChar(50)
+    documento                 String?  @unique @db.VarChar(50)
+    email                     String   @unique @db.VarChar(255)
+    celular                   String   @db.VarChar(20)
+    activo                    Boolean  @default(false)
+    password                  String? 
+    rol_id                    Int      @default(3)
+    provider                  String?  @default("credentials")
+    avatarUrl                 String?
+    publicaciones_automaticas Boolean  @default(false)
+    createdAt                 DateTime @default(now())
+    updatedAt                 DateTime @updatedAt
 
     PasswordResetToken PasswordResetToken[]
     rol                Rol                  @relation(fields: [rol_id], references: [id], onDelete: Cascade)
@@ -168,4 +169,39 @@ model RecientementeVisto {
     @@unique([propiedadId, userId])
     @@index([userId])
     @@map("recientemente_visto")
+}
+
+model EmpresaContacto {
+    id              String            @id @default(uuid())
+    facebook        String?
+    instagram       String?
+    twitter         String?
+    tiktok          String?
+    youtube         String?
+    linkedin        String?
+    whatsapp        String?
+    direccion       String
+    horarios        String? // Horarios de atención
+    createdAt       DateTime          @default(now())
+    updatedAt       DateTime          @updatedAt
+    CorreoEmpresa   CorreoEmpresa[]
+    TelefonoEmpresa TelefonoEmpresa[]
+
+    @@map("empresa_contacto")
+}
+
+model CorreoEmpresa {
+    id                String          @id @default(uuid())
+    email             String
+    posicion          String
+    empresaContacto   EmpresaContacto @relation(fields: [empresaContactoId], references: [id])
+    empresaContactoId String
+}
+
+model TelefonoEmpresa {
+    id                String          @id @default(uuid())
+    numero            String
+    posicion          String
+    empresaContacto   EmpresaContacto @relation(fields: [empresaContactoId], references: [id])
+    empresaContactoId String
 }

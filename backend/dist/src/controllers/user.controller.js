@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDecodedUser = exports.cambiarContrasenaPerfil = exports.editarPerfil = exports.yo = exports.profile = exports.getUltimosUsuarios = exports.getUsuarios = void 0;
+exports.actualizarPublicacionesAutomaticas = exports.getDecodedUser = exports.cambiarContrasenaPerfil = exports.editarPerfil = exports.yo = exports.profile = exports.getUltimosUsuarios = exports.getUsuarios = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const database_1 = __importDefault(require("../config/database"));
 const getUsuarios = async (req, res) => {
@@ -14,7 +14,7 @@ const getUsuarios = async (req, res) => {
     const searchLower = search.toLowerCase();
     const rol = req.query.rol?.trim() || "";
     const estado = req.query.estado?.trim() || "";
-    const publicaciones = req.query.publicaciones?.trim() || "";
+    const publicaciones = req.query.cant_publicaciones?.trim() || "";
     const whereConditions = {};
     if (rol) {
         whereConditions.rol = {
@@ -26,41 +26,41 @@ const getUsuarios = async (req, res) => {
     if (estado) {
         whereConditions.activo = estado === "1" ? true : false;
     }
-    if (publicaciones === "1") {
-        whereConditions.Propiedad = {
-            some: {},
-        };
-    }
     if (searchLower) {
         whereConditions.OR = [
-            { nombre: { contains: searchLower } },
-            { correo: { contains: searchLower } },
-            { username: { contains: searchLower } },
+            { nombres: { contains: searchLower } },
+            { apellidos: { contains: searchLower } },
+            { email: { contains: searchLower } },
+            { celular: { contains: searchLower } },
         ];
     }
     try {
-        const [usuarios, total] = await Promise.all([
-            database_1.default.usuario.findMany({
-                skip,
-                take: limit,
-                where: whereConditions,
-                include: {
-                    rol: true,
-                    Propiedad: true,
+        let usuarios = await database_1.default.usuario.findMany({
+            skip,
+            take: limit,
+            where: whereConditions,
+            include: {
+                rol: true,
+                Propiedad: {
+                    select: {
+                        id: true,
+                    },
                 },
-                omit: {
-                    password: true,
-                },
-                orderBy: {
-                    createdAt: "desc",
-                },
-            }),
-            database_1.default.usuario.count({
-                where: whereConditions,
-            }),
-        ]);
+            },
+        });
+        // Ordenamos según publicaciones si se solicita
+        if (publicaciones === "1") {
+            usuarios = usuarios.sort((a, b) => b.Propiedad.length - a.Propiedad.length); // Mayor a menor
+        }
+        else if (publicaciones === "0") {
+            usuarios = usuarios.sort((a, b) => a.Propiedad.length - b.Propiedad.length); // Menor a mayor
+        }
+        const total = await database_1.default.usuario.count({ where: whereConditions });
         res.json({
-            data: usuarios,
+            data: usuarios.map((usuario) => ({
+                ...usuario,
+                cant_publicaciones: usuario.Propiedad.length,
+            })),
             pagination: {
                 total,
                 page,
@@ -226,4 +226,32 @@ const getDecodedUser = async (req, res) => {
     }
 };
 exports.getDecodedUser = getDecodedUser;
+const actualizarPublicacionesAutomaticas = async (req, res) => {
+    const { id, valor } = req.body;
+    if (!id || (valor !== "si" && valor !== "no")) {
+        return res.status(400).json({ message: "Datos inválidos" });
+    }
+    try {
+        const usuario = await database_1.default.usuario.update({
+            where: { id },
+            data: {
+                publicaciones_automaticas: valor === "si",
+            },
+        });
+        res.json({
+            mensaje: valor === "si"
+                ? "Habilitado correctamente"
+                : "Deshabilitado correctamente",
+            data: usuario,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al actualizar el usuario" });
+    }
+    finally {
+        await database_1.default.$disconnect();
+    }
+};
+exports.actualizarPublicacionesAutomaticas = actualizarPublicacionesAutomaticas;
 //# sourceMappingURL=user.controller.js.map

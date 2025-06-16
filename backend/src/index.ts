@@ -11,6 +11,8 @@ import tipoPropiedadesRoutes from "../src/routes/tipoPropiedad.routes";
 import propiedadesRoutes from "../src/routes/propiedades.routes";
 import favoritosRoutes from "../src/routes/favoritos.routes";
 import vistosRoutes from "../src/routes/vistos.routes";
+import contactoRoutes from "../src/routes/contacto.routes";
+
 
 app.use(express.static("public"));
 
@@ -35,3 +37,5 @@ app.use("/api/tipo_propiedades", tipoPropiedadesRoutes);
 app.use("/api/propiedades", propiedadesRoutes);
 app.use("/api/favoritos", favoritosRoutes);
 app.use("/api/vistos", vistosRoutes);
+app.use("/api/contacto", contactoRoutes);
+

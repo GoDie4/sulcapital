@@ -12,7 +12,7 @@ export const getUsuarios = async (req: any, res: any) => {
 
   const rol = (req.query.rol as string)?.trim() || "";
   const estado = (req.query.estado as string)?.trim() || "";
-  const publicaciones = (req.query.publicaciones as string)?.trim() || "";
+  const publicaciones = (req.query.cant_publicaciones as string)?.trim() || "";
 
   const whereConditions: any = {};
   if (rol) {
@@ -27,43 +27,48 @@ export const getUsuarios = async (req: any, res: any) => {
     whereConditions.activo = estado === "1" ? true : false;
   }
 
-  if (publicaciones === "1") {
-    whereConditions.Propiedad = {
-      some: {},
-    };
-  }
   if (searchLower) {
     whereConditions.OR = [
-      { nombre: { contains: searchLower } },
-      { correo: { contains: searchLower } },
-      { username: { contains: searchLower } },
+      { nombres: { contains: searchLower } },
+      { apellidos: { contains: searchLower } },
+      { email: { contains: searchLower } },
+      { celular: { contains: searchLower } },
     ];
   }
 
   try {
-    const [usuarios, total] = await Promise.all([
-      prisma.usuario.findMany({
-        skip,
-        take: limit,
-        where: whereConditions,
-        include: {
-          rol: true,
-          Propiedad: true,
+    let usuarios = await prisma.usuario.findMany({
+      skip,
+      take: limit,
+      where: whereConditions,
+      include: {
+        rol: true,
+        Propiedad: {
+          select: {
+            id: true,
+          },
         },
-        omit: {
-          password: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      }),
-      prisma.usuario.count({
-        where: whereConditions,
-      }),
-    ]);
+      },
+    });
+
+    // Ordenamos según publicaciones si se solicita
+    if (publicaciones === "1") {
+      usuarios = usuarios.sort(
+        (a, b) => b.Propiedad.length - a.Propiedad.length
+      ); // Mayor a menor
+    } else if (publicaciones === "0") {
+      usuarios = usuarios.sort(
+        (a, b) => a.Propiedad.length - b.Propiedad.length
+      ); // Menor a mayor
+    }
+
+    const total = await prisma.usuario.count({ where: whereConditions });
 
     res.json({
-      data: usuarios,
+      data: usuarios.map((usuario) => ({
+        ...usuario,
+        cant_publicaciones: usuario.Propiedad.length,
+      })),
       pagination: {
         total,
         page,
@@ -78,7 +83,6 @@ export const getUsuarios = async (req: any, res: any) => {
     await prisma.$disconnect();
   }
 };
-
 export const getUltimosUsuarios = async (req: any, res: any) => {
   try {
     const usuarios = await prisma.usuario.findMany({
@@ -231,5 +235,38 @@ export const getDecodedUser = async (
       .json({ message: "Error interno del servidor.", error: error.message });
   } finally {
     prisma.$disconnect();
+  }
+};
+
+export const actualizarPublicacionesAutomaticas = async (
+  req: any,
+  res: any
+) => {
+  const { id, valor } = req.body;
+
+  if (!id || (valor !== "si" && valor !== "no")) {
+    return res.status(400).json({ message: "Datos inválidos" });
+  }
+
+  try {
+    const usuario = await prisma.usuario.update({
+      where: { id },
+      data: {
+        publicaciones_automaticas: valor === "si",
+      },
+    });
+
+    res.json({
+      mensaje:
+        valor === "si"
+          ? "Habilitado correctamente"
+          : "Deshabilitado correctamente",
+      data: usuario,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al actualizar el usuario" });
+  } finally {
+    await prisma.$disconnect();
   }
 };

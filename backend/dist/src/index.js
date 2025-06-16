@@ -15,6 +15,7 @@ const tipoPropiedad_routes_1 = __importDefault(require("../src/routes/tipoPropie
 const propiedades_routes_1 = __importDefault(require("../src/routes/propiedades.routes"));
 const favoritos_routes_1 = __importDefault(require("../src/routes/favoritos.routes"));
 const vistos_routes_1 = __importDefault(require("../src/routes/vistos.routes"));
+const contacto_routes_1 = __importDefault(require("../src/routes/contacto.routes"));
 server_1.default.use(express_1.default.static("public"));
 server_1.default.use((0, cookie_parser_1.default)());
 database_1.default
@@ -36,4 +37,5 @@ server_1.default.use("/api/tipo_propiedades", tipoPropiedad_routes_1.default);
 server_1.default.use("/api/propiedades", propiedades_routes_1.default);
 server_1.default.use("/api/favoritos", favoritos_routes_1.default);
 server_1.default.use("/api/vistos", vistos_routes_1.default);
+server_1.default.use("/api/contacto", contacto_routes_1.default);
 //# sourceMappingURL=index.js.map
