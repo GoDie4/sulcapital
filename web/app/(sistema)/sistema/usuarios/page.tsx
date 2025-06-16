@@ -30,15 +30,21 @@ export default async function page({ searchParams }: { searchParams: any }) {
       ? searchParams.publicaciones
       : "";
 
+  const cant =
+    typeof searchParams.cant_publicaciones === "string"
+      ? searchParams.cant_publicaciones
+      : "";
+
   const res = await fetch(
     `${
       config.API_URL
     }/listar-usuarios?page=${safePage}&limit=${limit}&search=${encodeURIComponent(
       search
-    )}&rol=${rol}&estado=${estado}&publicaciones=${publicaciones}`
+    )}&rol=${rol}&estado=${estado}&publicaciones=${publicaciones}&cant_publicaciones=${cant}`
   );
   const { data, pagination } = await res.json();
 
+  console.log("DAATA: ", data)
   const filtros = [
     {
       name: "rol",
@@ -85,6 +91,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
         searchColumnId="nombre"
         pagination={pagination}
         filters={filtros}
+        noRenderAddButton
         deleteOptions={{
           apiEndpoint: "",
           pagination: {

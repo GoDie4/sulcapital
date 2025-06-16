@@ -43,6 +43,11 @@ const menuItems = [
     icon: <BsHouseDoor />,
     route: "propiedades",
   },
+  {
+    title: "Contacto",
+    icon: <BsHouseDoor />,
+    route: "contacto",
+  },
 ];
 
 const menuItemsCliente = [

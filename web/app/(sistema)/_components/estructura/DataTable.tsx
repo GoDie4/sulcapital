@@ -257,37 +257,37 @@ export function DataTable<TData, TValue>({
   );
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <form className="w-fit flex items-center gap-2">
+      <div className="flex flex-col md:flex-row items-start md:items-center py-4 gap-4">
+        {/* Formulario de búsqueda ocupa todo el ancho en móvil */}
+        <form className="flex-1 w-full md:w-auto flex items-center gap-2">
           <input
-            placeholder={"Buscar..."}
+            placeholder="Buscar..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-sm border w-full placeholder:text-sm focus:border-secondary-main outline-none  rounded-main py-2 px-3"
+            className="w-full max-w-full border placeholder:text-sm focus:border-secondary-main outline-none rounded-main py-2 px-3"
           />
-          {/* <button
-            type="button"
-            className="flex px-6 py-2 bg-secondary-main rounded-md text-center justify-center text-white-main"
-          >
-            Buscar
-          </button> */}
         </form>
-        <div className="w-fit gap-4 flex ml-auto items-center">
+
+        {/* Contenedor de filtros y botones */}
+        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+          {/* Botón limpiar filtros */}
           {hasActiveFilters && (
             <button
               type="button"
               onClick={handleClearFilters}
-              className="px-3 py-2 text-sm text-red-600 underline"
+              className="px-3 py-2 text-sm text-red-600 underline self-start"
             >
               Limpiar filtros
             </button>
           )}
+
+          {/* Filtros desplegables */}
           {filters.map((filter) => (
-            <div className="flex flex-col gap-1" key={filter.name}>
-              <label
-                htmlFor=""
-                className="text-sm font-semibold text-secondary-main"
-              >
+            <div
+              className="flex flex-col gap-1 w-full md:w-auto"
+              key={filter.name}
+            >
+              <label className="text-sm font-semibold text-secondary-main">
                 {filter.label}
               </label>
               <select
@@ -301,7 +301,7 @@ export function DataTable<TData, TValue>({
                     }));
                   }
                 }}
-                className="p-2 text-sm border rounded-md outline-none focus:border-secondary-main"
+                className="w-full md:w-auto p-2 text-sm border rounded-md outline-none focus:border-secondary-main"
               >
                 <option value="">Seleccionar</option>
                 {filter.options.map((option) => (
@@ -312,6 +312,8 @@ export function DataTable<TData, TValue>({
               </select>
             </div>
           ))}
+
+          {/* Botón Agregar */}
           {!noRenderAddButton && (
             <button
               type="button"
@@ -320,7 +322,7 @@ export function DataTable<TData, TValue>({
                 setModalContent(renderAddForm);
                 openModal();
               }}
-              className="flex w-fit rounded-main h-fit bg-primary-main px-6 py-2 text-center text-white-main transition-all duration-300 hover:bg-primary-700"
+              className="self-start md:self-center flex w-full md:w-auto justify-center rounded-main h-fit bg-primary-main px-6 py-2 text-white-main transition-all duration-300 hover:bg-primary-700"
             >
               Agregar
             </button>
@@ -389,8 +391,8 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between relative gap-2 py-4">
-        <div className="w-fit flex items-center gap-2">
+      <div className="flex flex-col lg:flex-row lg:justify-between items-center justify-center relative gap-6 lg:gap-2 py-4">
+        <div className="w-fit flex items-center gap-2 mb-8 lg:mb-0">
           <select
             id="limit"
             className="py-2 px-3 outline-none text-sm border text-black-main bg-white-main rounded-main"

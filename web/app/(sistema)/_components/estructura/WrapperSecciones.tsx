@@ -11,6 +11,7 @@ import { ActionDefinition } from "./DataTableRowActions";
 import { useRouter } from "next/navigation";
 import { VerPropiedad } from "../../sistema/propiedades/_components/form/VerPropiedad";
 import { CambiarEstadoPropiedad } from "../../sistema/propiedades/_components/form/CambiarEstadoPropiedad";
+import { HabilitarPublicacionesAutomaticas } from "../../sistema/usuarios/_components/form/HabilitarPublicacionesAutomaticas";
 
 type seccionsType =
   | "usuarios"
@@ -54,6 +55,14 @@ export const WrapperSecciones = ({
       label: "Ver propiedades",
       onAction: (row) => {
         router.push(`/sistema/usuarios/propiedades/${row.id}`);
+      },
+      type: "item",
+    },
+    {
+      label: "Publicaciones automáticas",
+      onAction: (row) => {
+        setModalContent(<HabilitarPublicacionesAutomaticas rowEdit={row}/>);
+        openModal()
       },
       type: "item",
     },
