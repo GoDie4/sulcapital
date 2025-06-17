@@ -41,7 +41,7 @@ export const verifyAdmin = async (
 
     (req as any).user = user;
     next();
-  } catch (error) {
+  } catch (error: any) {
     return res.status(401).json({ message: "Token inválido." });
   }
 };
@@ -82,7 +82,7 @@ export const verifyAnunciante = async (
 
     (req as any).user = user;
     next();
-  } catch (error) {
+  } catch (error: any) {
     res.status(401).json({ message: "Token inválido." });
     return;
   }
@@ -121,7 +121,7 @@ export const verifyAdminAndAnunciante = async (
 
     (req as any).user = user;
     next();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error al verificar token:", error);
     return res.status(401).json({ message: "Token inválido o expirado." });
   }
@@ -160,7 +160,7 @@ export const verifyAnuncianteOrCliente = async (
 
     (req as any).user = user;
     next();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error al verificar token:", error);
     return res.status(401).json({ message: "Token inválido o expirado." });
   }
@@ -202,7 +202,7 @@ export const verifyCliente = async (
 
     (req as any).user = user;
     next();
-  } catch (error) {
+  } catch (error: any) {
     res.status(401).json({ message: "Token inválido." });
     return;
   }

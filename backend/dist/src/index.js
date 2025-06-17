@@ -38,4 +38,17 @@ server_1.default.use("/api/propiedades", propiedades_routes_1.default);
 server_1.default.use("/api/favoritos", favoritos_routes_1.default);
 server_1.default.use("/api/vistos", vistos_routes_1.default);
 server_1.default.use("/api/contacto", contacto_routes_1.default);
+// 🔴 Manejar desconexión limpia al cerrar el proceso
+process.on("SIGINT", async () => {
+    console.log("\n🧹 Cerrando conexión a la base de datos...");
+    await database_1.default.$disconnect();
+    console.log("✅ Prisma desconectado. Adiós!");
+    process.exit(0);
+});
+process.on("SIGTERM", async () => {
+    console.log("\n🧹 Cerrando conexión a la base de datos...");
+    await database_1.default.$disconnect();
+    console.log("✅ Prisma desconectado. Adiós!");
+    process.exit(0);
+});
 //# sourceMappingURL=index.js.map

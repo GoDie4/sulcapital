@@ -71,8 +71,10 @@ export const getFavoritosByUser = async (req: any, res: any): Promise<any> => {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+   
+
     res.status(500).json({ message: "Error al obtener favoritos" });
   } finally {
     await prisma.$disconnect();
@@ -100,6 +102,7 @@ export const agregarFavorito = async (req: any, res: any) => {
     if (error.code === "P2002") {
       return res.status(409).json({ message: "Ya está en favoritos" });
     }
+   
     console.error(error);
     return res.status(500).json({ message: "Error al agregar favorito" });
   }
@@ -126,6 +129,8 @@ export const eliminarFavorito = async (req: any, res: any) => {
     return res.status(200).json({ mensaje: "Eliminado de favoritos" });
   } catch (error: any) {
     console.error(error);
+   
+
     return res.status(500).json({ message: "Error al eliminar favorito" });
   }
 };

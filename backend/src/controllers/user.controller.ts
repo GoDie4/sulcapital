@@ -76,7 +76,7 @@ export const getUsuarios = async (req: any, res: any) => {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     res.status(500).json({ message: "Error al obtener los usuarios" });
   } finally {
@@ -100,7 +100,7 @@ export const getUltimosUsuarios = async (req: any, res: any) => {
     });
 
     res.json({ data: usuarios });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     res.status(500).json({ message: "Error al obtener los usuarios" });
   } finally {
@@ -263,7 +263,7 @@ export const actualizarPublicacionesAutomaticas = async (
           : "Deshabilitado correctamente",
       data: usuario,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     res.status(500).json({ message: "Error al actualizar el usuario" });
   } finally {

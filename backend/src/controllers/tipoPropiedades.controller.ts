@@ -39,8 +39,10 @@ export const getTiposPropiedades = async (req: any, res: any) => {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+       
+    
     res
       .status(500)
       .json({ message: "Error al obtener los tipos de propiedades" });
@@ -58,8 +60,10 @@ export const createTipoPropiedad = async (req: Request, res: Response) => {
     res
       .status(201)
       .json({ mensaje: "Tipo de propiedad agregado correctamente" });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+   
+
     res.status(500).json({ message: "Error al crear el tipo de propiedad" });
   }
 };
@@ -136,8 +140,10 @@ export const updateTipoPropiedad = async (req: any, res: any) => {
       mensaje: "Tipo de propiedad actualizado",
       tipoPropiedad: tipoPropiedadActualizada,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+   
+
     return res
       .status(500)
       .json({ message: "Error al actualizar el tipo de propiedad" });
@@ -182,8 +188,10 @@ export const deleteTipoPropiedad = async (req: Request, res: Response) => {
       where: { id: id },
     });
     res.json({ mensaje: "Tipo de propiedad eliminado correctamente" });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+   
+
     res.status(500).json({ message: "Error al eliminar el tipo de propiedad" });
   }
 };

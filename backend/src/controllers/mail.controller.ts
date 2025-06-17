@@ -114,7 +114,7 @@ export const enviarLibroReclamacionMail = async (req: any, res: any) => {
     }
 
     res.status(200).json({ message: "Reclamación enviada correctamente" });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error al enviar correo:", error);
     res.status(500).json({ message: "Error al enviar correo", error });
   }

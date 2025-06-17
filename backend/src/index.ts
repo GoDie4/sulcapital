@@ -13,7 +13,6 @@ import favoritosRoutes from "../src/routes/favoritos.routes";
 import vistosRoutes from "../src/routes/vistos.routes";
 import contactoRoutes from "../src/routes/contacto.routes";
 
-
 app.use(express.static("public"));
 
 app.use(cookieParser());
@@ -39,3 +38,17 @@ app.use("/api/favoritos", favoritosRoutes);
 app.use("/api/vistos", vistosRoutes);
 app.use("/api/contacto", contactoRoutes);
 
+// 🔴 Manejar desconexión limpia al cerrar el proceso
+process.on("SIGINT", async () => {
+  console.log("\n🧹 Cerrando conexión a la base de datos...");
+  await prisma.$disconnect();
+  console.log("✅ Prisma desconectado. Adiós!");
+  process.exit(0);
+});
+
+process.on("SIGTERM", async () => {
+  console.log("\n🧹 Cerrando conexión a la base de datos...");
+  await prisma.$disconnect();
+  console.log("✅ Prisma desconectado. Adiós!");
+  process.exit(0);
+});

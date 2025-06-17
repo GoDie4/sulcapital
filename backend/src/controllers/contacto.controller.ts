@@ -22,7 +22,9 @@ export const getEmpresaContacto = async (req: any, res: any) => {
       status: "success",
       contacto,
     });
-  } catch (error) {
+  } catch (error: any) {
+   
+
     console.error("Error al obtener contacto:", error);
     return res.status(500).json({
       status: "error",
@@ -108,8 +110,10 @@ export const upsertEmpresaContacto = async (req: any, res: any) => {
 
       return res.status(201).json(creado);
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+   
+
     return res
       .status(500)
       .json({ error: "Error al guardar datos de contacto." });

@@ -42,8 +42,10 @@ export const getCiudades = async (req: any, res: any) => {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+   
+
     res.status(500).json({ message: "Error al obtener las ciudades" });
   } finally {
     await prisma.$disconnect();
@@ -57,8 +59,10 @@ export const createCiudad = async (req: Request, res: Response) => {
       data: { nombre, descripcion, coordenadas, imagen: imagenThumbnail },
     });
     res.status(201).json({ mensaje: "Ciudad agregada correctamente" });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+   
+
     res.status(500).json({ message: "Error al crear la ciudad" });
   }
 };
@@ -90,8 +94,10 @@ export const updateCiudad = async (req: Request, res: Response) => {
       data: { nombre, descripcion, imagen: imagenThumbnail, coordenadas },
     });
     res.json({ mensaje: "Ciudad actualizada" });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+   
+
     res.status(500).json({ message: "Error al actualizar la ciudad" });
   }
 };
@@ -121,8 +127,10 @@ export const deleteCiudad = async (req: Request, res: Response) => {
       where: { id: Number(id) },
     });
     res.json({ mensaje: "Ciudad eliminada correctamente" });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+   
+
     res.status(500).json({ message: "Error al eliminar la ciudad" });
   }
 };

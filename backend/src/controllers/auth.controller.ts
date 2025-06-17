@@ -73,6 +73,7 @@ export const login = async (
     console.error("Error al iniciar sesión", error);
     return res.status(500).json({ message: "Error interno del servidor" });
   }
+  
 };
 
 export const register = async (
@@ -166,6 +167,7 @@ export const register = async (
     });
   } catch (error: any) {
     console.error("Error al registrar usuario", error);
+   
     return res.status(500).json({
       message: "Error interno del servidor",
     });
@@ -189,7 +191,7 @@ export const recuperarContrasena = async (req: any, res: any) => {
     },
   });
 
-  const resetLink = `http://localhost:3000/restablecer?token=${token}`;
+  const resetLink = `https://sulcapital.pe/restablecer?token=${token}`;
 
   await sendEmail(
     user.email,
@@ -322,8 +324,9 @@ export const googleAuth = async (req: any, res: any) => {
           : "Autenticado correctamente con Google",
       usuario,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error en autenticación con Google:", error);
+   
     return res.status(500).json({ message: "Error interno al autenticar" });
   }
 };
@@ -418,7 +421,9 @@ export const facebookAuth = async (req: any, res: any) => {
       message: "Autenticado correctamente con Facebook",
       usuario,
     });
-  } catch (error) {
+  } catch (error: any) {
+   
+
     console.error("Error en Facebook auth:", error);
     return res
       .status(500)

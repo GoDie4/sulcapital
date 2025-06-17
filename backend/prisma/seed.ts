@@ -12,7 +12,7 @@ async function main() {
     await registrarAdministrador();
 
     console.log("Seed data inserted successfully!");
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error during seed:", error);
     process.exit(1);
   } finally {

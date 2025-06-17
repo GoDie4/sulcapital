@@ -29,7 +29,7 @@ export const registrarReciente = async (req: any, res: any) => {
     return res
       .status(200)
       .json({ message: "Propiedad registrada como vista recientemente" });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error al registrar recientemente visto:", error);
     return res.status(500).json({ message: "Error interno del servidor" });
   }
@@ -104,7 +104,7 @@ export const getRecientesByUser = async (req: any, res: any): Promise<any> => {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     res.status(500).json({ message: "Error al obtener recientes" });
   } finally {

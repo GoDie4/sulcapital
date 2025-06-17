@@ -150,7 +150,7 @@ const recuperarContrasena = async (req, res) => {
             userId: user.id,
         },
     });
-    const resetLink = `http://localhost:3000/restablecer?token=${token}`;
+    const resetLink = `https://sulcapital.pe/restablecer?token=${token}`;
     await (0, mail_controller_1.sendEmail)(user.email, "Recuperar contraseña", `RecuperarContrasena.html`, {
         enlace: resetLink,
         nombre: user.nombres.split(" ")[0],

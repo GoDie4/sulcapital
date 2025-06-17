@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-    provider = "prisma-client-js"
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "windows", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -32,7 +33,7 @@ model Usuario {
     email                     String   @unique @db.VarChar(255)
     celular                   String   @db.VarChar(20)
     activo                    Boolean  @default(false)
-    password                  String? 
+    password                  String?
     rol_id                    Int      @default(3)
     provider                  String?  @default("credentials")
     avatarUrl                 String?
@@ -196,6 +197,8 @@ model CorreoEmpresa {
     posicion          String
     empresaContacto   EmpresaContacto @relation(fields: [empresaContactoId], references: [id])
     empresaContactoId String
+
+    @@map("correos_empresa")
 }
 
 model TelefonoEmpresa {
@@ -204,4 +207,6 @@ model TelefonoEmpresa {
     posicion          String
     empresaContacto   EmpresaContacto @relation(fields: [empresaContactoId], references: [id])
     empresaContactoId String
+
+    @@map("telefonos_empresa")
 }
