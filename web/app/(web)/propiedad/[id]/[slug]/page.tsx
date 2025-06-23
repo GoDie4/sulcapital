@@ -15,6 +15,84 @@ async function getPropiedad(id: string): Promise<any> {
   return response.data.data;
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: any;
+}) {
+  const response = await axios.get(
+    `${config.API_URL}/propiedades/find/${params.id}`
+  );
+  const propiedad = response.data.data.propiedad;
+
+  function stripHTML(html: string): string {
+    return html.replace(/<[^>]+>/g, "");
+  }
+
+  const seoDescription = `${stripHTML(
+    propiedad?.descripcionLarga ?? ""
+  )}`.slice(0, 160);
+  const seoImage = `${config.API_IMAGE_URL}${
+    propiedad?.imagenes?.[0]?.url ?? ""
+  }`;
+
+  const titleSeo = `${propiedad?.titulo} | Sulcapital Sac`;
+  const url = `https://sulcapital.pe/propiedad/${propiedad.id}/${propiedad.slug}`;
+  return {
+    title: `${propiedad?.titulo} | Sulcapital Sac`,
+    description: seoDescription,
+    generator: "Next.js",
+    authors: [{ name: "Logos Perú" }],
+    icons: {
+      icon: "/assets/images/logo/ico.png",
+    },
+    openGraph: {
+      titleSeo,
+      seoDescription,
+      url,
+      type: "article",
+      siteName: "TuSitio.com",
+      images: [
+        {
+          url: seoImage,
+          width: 1200,
+          height: 630,
+          alt: propiedad.titulo,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      titleSeo,
+      seoDescription,
+      images: [seoImage],
+    },
+
+    other: {
+      // Structured data personalizado
+      "script:ld+json": JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Residence", // puedes usar "House", "Apartment" según el tipo
+        name: propiedad.titulo,
+        seoDescription,
+        image: seoImage,
+        url,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: propiedad.direccion,
+          addressCountry: "PE",
+        },
+        offers: {
+          "@type": "Offer",
+          price: propiedad.precio,
+          priceCurrency: "PEN",
+          availability: "https://schema.org/InStock",
+        },
+      }),
+    },
+  };
+}
+
 export default async function page({
   params,
 }: {
@@ -29,7 +107,7 @@ export default async function page({
   return (
     <>
       <BannerInternas
-        image="/images/fondos/fondo_vista.webp"
+        image={`${config.API_IMAGE_URL}${propiedad.imagenes[0].url}`}
         title={propiedad.titulo}
       />
       <GaleriaInmuebles
@@ -52,9 +130,11 @@ export default async function page({
           </div>
           <div className="w-full lg:w-1/3 space-y-12 ">
             <FormContactoInmueble idPropiedad={propiedad.id} />
-            <OtrosInmueblesUsuario
-              ultimasPropiedades={data.ultimasPropiedades}
-            />
+            {data.ultimasPropiedades && (
+              <OtrosInmueblesUsuario
+                ultimasPropiedades={data.ultimasPropiedades}
+              />
+            )}
           </div>
         </ContentMain>
         <ContentMain className="pb-20">

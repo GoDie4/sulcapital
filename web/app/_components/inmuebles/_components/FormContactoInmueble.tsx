@@ -52,7 +52,7 @@ export const FormContactoInmueble = ({
       );
       if (response.status === 200) {
         toast.success(response.data.mensaje);
-        resetForm()
+        resetForm();
       }
     } catch (error: any) {
       console.log(error);
@@ -136,7 +136,7 @@ export const FormContactoInmueble = ({
     });
   };
   return (
-    <div className="rounded-main border bg-secondary-main border-secondary-main/40 flex justify-center p-4">
+    <div className="rounded-main border bg-secondary-main border-secondary-main/40 flex justify-center p-2 md:p-4">
       <div className=" p-2 sm:p-3 w-full max-w-lg">
         <h2 className="text-xlfont-medium font-TypographBold text-white-main mb-6">
           Déjanos tus datos para contactarte
@@ -279,7 +279,7 @@ export const FormContactoInmueble = ({
           <div className="flex flex-col gap-4">
             <button
               type={loading ? "button" : "submit"}
-              className="bg-primary-main hover:bg-primary-700 text-white-main font-medium py-3 px-6 rounded-main flex gap-2 items-center justify-center transition-colors duration-200"
+              className="bg-primary-main hover:bg-primary-700 text-white-main font-medium text-sm sm:text-base  py-2 sm:py-3 px-6 rounded-main flex gap-2 items-center justify-center transition-colors duration-200"
             >
               <BsEnvelope />
               {loading ? "Enviando..." : "Contactar"}
@@ -287,7 +287,7 @@ export const FormContactoInmueble = ({
             <button
               type={"button"}
               onClick={consultarPorWhatsapp}
-              className="bg-secondary-700 hover:bg-secondary-800 text-white-main font-medium py-3 px-6 rounded-main flex gap-2 items-center justify-center transition-colors duration-200"
+              className="bg-secondary-700 hover:bg-secondary-800 text-white-main text-sm sm:text-base font-medium py-2 sm:py-3 px-6 rounded-main flex gap-2 items-center justify-center transition-colors duration-200"
             >
               <BsWhatsapp />
               Contactar por WhatsApp

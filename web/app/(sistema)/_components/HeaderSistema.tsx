@@ -15,7 +15,6 @@ export const HeaderSistema = ({
   showMenu: boolean;
 }) => {
   const { authUser } = useAuth();
-  console.log("iser: ", authUser);
   return (
     <div
       className={`w-full z-[1200] top-0 left-0 flex items-center justify-between gap-3 pl-4 lg:pl-6 pr-4 h-20 ${
@@ -28,7 +27,7 @@ export const HeaderSistema = ({
           onClick={() => {
             setShowMenu(!showMenu);
           }}
-          className="flex items-center justify-center w-8 h-8 p-1 text-xl rounded-full bg-primary-main lg:hidden text-secondary-main"
+          className="flex items-center justify-center w-8 h-8 p-1 text-xl rounded-full bg-primary-main lg:hidden text-white-main"
         >
           {showMenu ? <IoCloseOutline /> : <TbMenu2 />}
         </button>

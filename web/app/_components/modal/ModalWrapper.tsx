@@ -49,7 +49,7 @@ const ModalWrapper: React.FC<ModalProps> = ({ componente, modalSize }) => {
                 duration: 0.5,
                 ease: "easeOut",
               }}
-              className={`px-6 py-6 w-full  ${
+              className={`px-2 sm:px-6 py-6 w-full  ${
                 modalSize === "small" ? "max-w-xl" : ""
               } ${modalSize === "medium" ? "max-w-5xl" : ""} ${
                 modalSize === "large" ? "max-w-7xl" : ""

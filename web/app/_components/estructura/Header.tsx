@@ -11,12 +11,15 @@ import { TipoPropiedad } from "../../(sistema)/sistema/tipo-propiedades/_compone
 import { CiudadList } from "../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
 import { useAuth } from "@/assets/context/AuthContext";
 import { MenuLogeado } from "./MenuLoggeado";
+import { EmpresaContacto } from "../../(sistema)/sistema/contacto/_components/interface/ContactoInterfaces";
 export const Header = ({
   tipoPropiedades,
   ciudades,
+  contacto,
 }: {
   tipoPropiedades: TipoPropiedad[];
   ciudades: CiudadList[];
+  contacto: EmpresaContacto;
 }) => {
   const menuItems = [
     {
@@ -38,7 +41,7 @@ export const Header = ({
 
   const [scrollY, setScrollY] = useState(false);
 
-  const { authUser } = useAuth();
+  const { authUser, setShowMenu, showMenu } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,33 +55,31 @@ export const Header = ({
     };
   }, []);
 
-  console.log("AUTH: ", authUser)
-
   return (
     <header
       className={`fixed top-0 left-0 w-full  z-[1300] ${
         scrollY ? "bg-white-main shadow-md" : ""
       } transition-all duration-300`}
     >
-      <ContentMain className="py-3">
-        <nav className="flex justify-between items-end">
+      <ContentMain className="pt-2 sm:py-3">
+        <nav className="flex justify-between items-center lg:items-end">
           <Link
             href={"/"}
             className={`block ${
-              scrollY ? "w-[120px]" : " w-[120px] md:w-[140px]"
+              scrollY ? "w-[120px]" : " w-[100px] md:w-[140px]"
             }  transition-all duration-200`}
           >
             <img
               src="/images/logo/logo_white.png"
               alt=""
-              className={` ${
+              className={`mb-0.5 ${
                 scrollY ? "hidden " : "block"
               } transition-all duration-200`}
             />
             <img
               src="/images/logo/logo.png"
               alt=""
-              className={` ${
+              className={`mb-0.5 ${
                 scrollY ? "block " : "hidden"
               } transition-all duration-200`}
             />
@@ -100,9 +101,39 @@ export const Header = ({
           <div className="w-fit flex items-center gap-4">
             {authUser !== null && authUser !== undefined ? (
               <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowMenu(!showMenu);
+                  }}
+                  className={`flex md:hidden items-center justify-center   relative flex-col ${
+                    scrollY ? "text-secondary-main" : "text-white-main"
+                  }`}
+                >
+                  {authUser.provider === "credentials" ? (
+                    <span className="flex items-center justify-center flex-1 w-6 h-6 font-bold uppercase rounded-full bg-primary-main sm:w-8 sm:h-8 text-white-main">
+                      <p className="text-sm sm:text-base text-white-main ">
+                        {authUser !== null && authUser !== undefined
+                          ? authUser.nombres.charAt(0)
+                          : ""}
+                      </p>
+                    </span>
+                  ) : (
+                    <img
+                      src={authUser.avatarUrl}
+                      alt=""
+                      className="block w-9 h-9 rounded-full"
+                    />
+                  )}
+                  <p>{authUser.nombres}</p>
+
+                  <MenuLogeado />
+                </button>
+
                 <Link
-                  href={"/sistema/propiedades"}
-                  className={`flex items-center justify-center  btn--menuProfile relative flex-col ${
+                  type="button"
+                  href={"/sistema/vistos"}
+                  className={`hidden md:flex items-center justify-center   relative flex-col ${
                     scrollY ? "text-secondary-main" : "text-white-main"
                   }`}
                 >
@@ -129,18 +160,20 @@ export const Header = ({
             ) : (
               <Link
                 href={"/iniciar-sesion"}
-                className={`flex w-fit text-4xl ${
+                className={`flex items-end  w-fit text-4xl ${
                   scrollY ? "text-secondary-main" : "text-white-main"
                 }`}
               >
-                <LiaUserSolid />
+                <LiaUserSolid className="object-bottom" />
               </Link>
             )}
             <a
-              href=""
+              target="_blank"
+              href={`https://api.whatsapp.com/send?phone=51${contacto.whatsapp}&text=Hola%20tengo%20unas%20dudas%20en%20su%20plataforma`}
               className="w-fit px-6 py-2 rounded-full hidden lg:flex gap-2  items-center justify-center bg-secondary-main text-white-main transition-all duration-200 hover:bg-green-600"
             >
-              <MdWhatsapp size={30} /> <p className="block"> 987 654 321</p>
+              <MdWhatsapp size={30} />{" "}
+              <p className="block"> {contacto.whatsapp}</p>
             </a>
             <button
               type="button"

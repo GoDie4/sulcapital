@@ -227,7 +227,7 @@ const InnovativeSlider: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-screen lg:h-[77vh] relative overflow-hidden bg-secondary-main">
+    <div className="w-full h-[55vh] lg:h-[77vh] relative overflow-hidden bg-secondary-main">
       <AnimatePresence mode="wait">
         <motion.div
           key={`bg-${currentSlide}-${animationType}`}
@@ -252,7 +252,7 @@ const InnovativeSlider: React.FC = () => {
         <AnimatePresence mode="wait">
           <motion.div
             key={`${currentSlide}-${animationType}`}
-            className="w-full h-full flex items-center mb-36 lg:mb-0 justify-center"
+            className="w-full h-full flex items-start md:items-center  lg:mb-0 justify-center"
             style={{ transformStyle: "preserve-3d" }}
             //@ts-ignore
             variants={getAnimationVariants()}
@@ -261,9 +261,9 @@ const InnovativeSlider: React.FC = () => {
             exit="exit"
           >
             {/* Slide Content centered on screen */}
-            <div className="relative max-w-4xl px-8 text-center">
+            <div className="relative max-w-4xl mt-28 md:mt-0 px-8 text-center">
               <motion.h1
-                className="text-3xl md:text-4xl lg:text-[42px] font-TypographBold leading-[2.5rem] lg:leading-[4rem] font-bold mb-3 text-center text-white-main text-shadow-lg"
+                className="text-base sm:text-3xl md:text-4xl lg:text-[42px] font-TypographBold leading-[1.4rem] md:leading-[2.5rem] lg:leading-[4rem] font-bold mb-3 text-center text-white-main text-shadow-lg"
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
@@ -301,14 +301,14 @@ const InnovativeSlider: React.FC = () => {
       </div>
 
       {/* Navigation Controls positioned at the bottom */}
-      <div className="absolute h-fit w-full px-3 md:px-10 lg:px-20  bottom-0 left-0 right-0 mx-auto top-0 my-auto gap-2 transform justify-between flex items-center z-30">
+      <div className="absolute h-fit w-full px-3 md:px-10 lg:px-20  bottom-0 left-0 right-0 mx-auto -top-[140px] md:top-0 my-auto gap-2 transform justify-between flex items-center z-30">
         <motion.button
           onClick={prevSlide}
           className="p-2 bg-secondary-main bg-opacity-60 rounded-full backdrop-blur-sm  text-white-main hover:bg-opacity-70 transition-all"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <BsChevronLeft size={40} />
+          <BsChevronLeft className="text-base sm:text-2xl md:text-4xl" />
         </motion.button>
 
         {/* <motion.button
@@ -326,7 +326,7 @@ const InnovativeSlider: React.FC = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <BsChevronRight size={40} />
+          <BsChevronRight className="text-base sm:text-2xl md:text-4xl" />
         </motion.button>
       </div>
 

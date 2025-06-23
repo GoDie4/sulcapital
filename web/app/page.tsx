@@ -5,7 +5,6 @@ import InnovativeSlider from "./_components/inicio/Slides";
 import { SwiperInmuebles } from "./_components/inmuebles/SwiperInmuebles";
 import { CardUbicacion } from "./_components/inicio/lugares/CardUbicacion";
 import { CardTipoInmueble } from "./_components/inicio/tiposInmuebles/CardTipoInmueble";
-import Link from "next/link";
 import { MapaGeneral } from "./_components/inicio/lugares/MapaGeneral";
 import { BsFacebook, BsInstagram, BsTiktok } from "react-icons/bs";
 import { Paginacion } from "./_components/estructura/Paginacion";
@@ -15,29 +14,68 @@ import { useAuth } from "@/assets/context/AuthContext";
 import { CiudadList } from "./(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
 import { TipoPropiedad } from "./(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 import { GridPropiedades } from "./_components/inmuebles/GridPropiedades";
+import { useEffect, useState } from "react";
+import { AgregarPropiedad } from "./(sistema)/sistema/propiedades/_components/form/AgregarPropiedad";
+import { SideBarHome } from "./(sistema)/_components/SideBarHome";
 
 export default function Home() {
-  const { dataPropiedades, dataCiudades, dataTiposPropiedades } = useAuth();
+  const {
+    dataPropiedades,
+    dataCiudades,
+    dataTiposPropiedades,
+    dataContacto,
+    setModalContent,
+    openModal,
+    authUser,
+    setShowMenu,
+    showMenu,
+  } = useAuth();
+  const [ocultarSideBar, setOcultarSideBar] = useState<boolean>(false);
+
+  useEffect(() => {
+    const alreadyShown = localStorage.getItem("modalShownAfterLogin");
+
+    if (authUser && !alreadyShown) {
+      setModalContent(
+        <AgregarPropiedad
+          pagination={{ total: 0, totalPages: 0, limit: 1, page: 1 }}
+          totalItems={0}
+        />
+      );
+      openModal();
+
+      // Guardar en localStorage que ya se mostró
+      localStorage.setItem("modalShownAfterLogin", "true");
+    }
+  }, [authUser, setModalContent, openModal]);
   return (
     <>
-      <Header ciudades={dataCiudades} tipoPropiedades={dataTiposPropiedades} />
+      <SideBarHome
+        ocultarSideBar={ocultarSideBar}
+        setOcultarSideBar={setOcultarSideBar}
+        setShowMenu={setShowMenu}
+        showMenu={showMenu}
+      />
+      <Header
+        ciudades={dataCiudades}
+        tipoPropiedades={dataTiposPropiedades}
+        contacto={dataContacto}
+      />
       <section className="relative">
         <InnovativeSlider />
         <div className="w-full absolute bottom-0  left-0 z-[100]">
-          <ContentMain>
-            <SearchSection
-              ciudades={dataCiudades}
-              tipoPropiedades={dataTiposPropiedades}
-            />
-          </ContentMain>
+          <SearchSection
+            ciudades={dataCiudades}
+            tipoPropiedades={dataTiposPropiedades}
+          />
         </div>
       </section>
       <section className="bg-white-main">
-        <ContentMain className="py-20 ">
-          <h2 className="text-center text-2xl  md:text-3xl mb-5  text-secondary-main lg:text-4xl font-TypographBold">
+        <ContentMain className="py-6 sm:py-10 md:py-20 ">
+          <h2 className="text-center text-sm sm:text-[20px]  md:text-3xl mb-5  text-secondary-main lg:text-4xl font-TypographBold">
             Descubre nuestros inmuebles
           </h2>
-          <p className="mb-14 text-center text-lg md:text-xl text-black-900">
+          <p className="hidden md:block mb-5 md:mb-14 text-center text-lg md:text-xl text-black-900">
             Oportunidades únicas para cada estilo de vida
           </p>
           <div className="w-full hidden lg:block">
@@ -53,7 +91,7 @@ export default function Home() {
               ]}
             />
           </div>
-          <Paginacion url="/buscar"/>
+          <Paginacion url="/buscar" />
         </ContentMain>
       </section>
 
@@ -100,12 +138,13 @@ export default function Home() {
             Estamos aquí para brindarte asesoría personalizada y encontrar
             juntos la mejor opción para tu inversión o nuevo hogar.
           </p>
-          <Link
-            href={""}
+          <a
+            target="_blank"
+            href={`https://api.whatsapp.com/send?phone=51${dataContacto.whatsapp}&text=Hola%20tengo%20unas%20dudas%20en%20su%20plataforma`}
             className="flex w-fit mt-8 text-white-main text-xl mx-auto bg-secondary-main rounded-full px-6 py-2"
           >
             Contactar
-          </Link>
+          </a>
         </ContentMain>
       </section>
       {/* <section>
@@ -141,24 +180,33 @@ export default function Home() {
               búsqueda.
             </p>
             <div className="w-full mt-10 flex items-center gap-8">
-              <a
-                href=""
-                className="text-secondary-main text-3xl transition-colors duration-200 hover:text-primary-main"
-              >
-                <BsFacebook />
-              </a>
-              <a
-                href=""
-                className="text-secondary-main text-3xl transition-colors duration-200 hover:text-primary-main"
-              >
-                <BsInstagram />
-              </a>
-              <a
-                href=""
-                className="text-secondary-main text-3xl transition-colors duration-200 hover:text-primary-main"
-              >
-                <BsTiktok />
-              </a>
+              {dataContacto?.facebook && (
+                <a
+                  href={dataContacto.facebook}
+                  target="_blank"
+                  className="text-secondary-main text-3xl transition-colors duration-200 hover:text-primary-main"
+                >
+                  <BsFacebook />
+                </a>
+              )}
+              {dataContacto?.instagram && (
+                <a
+                  href={dataContacto.instagram}
+                  target="_blank"
+                  className="text-secondary-main text-3xl transition-colors duration-200 hover:text-primary-main"
+                >
+                  <BsInstagram />
+                </a>
+              )}
+              {dataContacto?.tiktok && (
+                <a
+                  href={dataContacto.tiktok ?? ""}
+                  target="_blank"
+                  className="text-secondary-main text-3xl transition-colors duration-200 hover:text-primary-main"
+                >
+                  <BsTiktok />
+                </a>
+              )}
             </div>
           </div>
           <div className="w-full lg:w-1/2">
@@ -218,7 +266,11 @@ export default function Home() {
           </div>
         </ContentMain>
       </section>
-      <Footer ciudades={dataCiudades} tipoPropiedades={dataTiposPropiedades} />
+      <Footer
+        ciudades={dataCiudades}
+        tipoPropiedades={dataTiposPropiedades}
+        contacto={dataContacto}
+      />
     </>
   );
 }

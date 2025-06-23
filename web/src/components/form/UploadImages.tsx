@@ -1,8 +1,9 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-// components/ImageDropzone.tsx
+// components/UploadImages.tsx
 import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone, FileRejection } from "react-dropzone";
+import { MdLibraryAdd } from "react-icons/md";
 
 interface ImageDropzoneProps {
   filesInit?: (File | string)[];
@@ -54,7 +55,6 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
     async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
       setErrors([]);
 
-      // Validar rechazos
       fileRejections.forEach((rej) => {
         rej.errors.forEach((e) => {
           if (e.code === "file-too-large") {
@@ -71,6 +71,7 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
           }
         });
       });
+
       const validFiles: File[] = [];
       for (const file of acceptedFiles) {
         if (validFiles.length >= maxFiles) break;
@@ -80,11 +81,8 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
 
       let newFiles: (File | string)[] = [];
       if (maxFiles === 1) {
-        // Reemplazar todo por el primer archivo válido, o vaciar si ninguno
         newFiles = validFiles.length > 0 ? [validFiles[0]] : [];
       } else {
-        // maxFiles > 1, agregar validFiles sin perder previos, respetando maxFiles
-        // Primero filtramos previos para no exceder maxFiles
         const prevFilesFiltered = files.slice(0, maxFiles - validFiles.length);
         newFiles = [...prevFilesFiltered, ...validFiles];
       }
@@ -92,7 +90,6 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
       setFiles(newFiles);
       onChange(newFiles.filter((f): f is File => typeof f !== "string"));
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [files, maxFiles, maxSize, maxWidth, maxHeight, onChange]
   );
 
@@ -104,7 +101,6 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
     maxSize,
   });
 
-  // Generar previews (crear URLs sólo para Files)
   useEffect(() => {
     const urls = files.map((file) =>
       typeof file === "string" ? file : URL.createObjectURL(file)
@@ -118,68 +114,63 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
     };
   }, [files]);
 
-  const cols = Math.min(files.length || 1, maxFiles, 3);
-
   const removeImage = (index: number) => {
     const newFiles = files.filter((_, i) => i !== index);
     setFiles(newFiles);
     onChange(newFiles.filter((f): f is File => typeof f !== "string"));
   };
+
   return (
     <div>
       <div
         {...getRootProps()}
-        className={`p-4 border-2 border-dashed rounded cursor-pointer
-          ${isDragActive ? "border-blue-500" : "border-gray-300"}`}
+        className={
+          `px-4 py-8 border-2 border-dashed rounded cursor-pointer w-full ` +
+          (isDragActive ? "border-blue-500" : "border-gray-300")
+        }
       >
         <input {...getInputProps()} />
-        {isDragActive ? (
-          <p>Suelta las imágenes aquí…</p>
+        {previews.length > 0 ? (
+          <div className="flex space-x-4 overflow-x-auto max-w-full">
+            {previews.map((src, i) => (
+              <div key={i} className="relative flex-shrink-0 w-32 h-32">
+                <button
+                  type="button"
+                  onClick={() => removeImage(i)}
+                  className="absolute top-1 right-1 bg-white rounded-full p-1 bg-white-main shadow hover:bg-red-500 hover:text-white font-bold"
+                >
+                  ✕
+                </button>
+                <img
+                  src={src}
+                  alt={`preview-${i}`}
+                  className="w-full h-full object-cover rounded"
+                />
+              </div>
+            ))}
+          </div>
+        ) : isDragActive ? (
+          <p className="flex flex-col justify-center items-center">
+            Suelta las imágenes aquí…
+          </p>
         ) : (
-          <p>Arrastra o haz clic para seleccionar ({maxFiles} máx.)</p>
+          <p className="flex flex-col justify-center items-center text-center gap-2">
+            <MdLibraryAdd className="text-4xl" />
+            <span>Arrastra o haz clic para seleccionar ({maxFiles} máx.)</span>
+          </p>
         )}
       </div>
 
-      {/* Errores */}
       {errors.length > 0 && (
         <ul className="mt-2 text-red-600">
           {errors.map((err, i) => (
-            <li key={i} className="text-sm">
-              • {err}
-            </li>
+            <li key={i} className="text-sm">• {err}</li>
           ))}
         </ul>
       )}
 
-      {/* Previews */}
-      {previews.length > 0 && (
-        <div
-          className="mt-4 grid content-center gap-4"
-          style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-        >
-          {previews.map((src, i) => (
-            <div
-              key={i}
-              className="relative max-h-40 h-full  block w-full max-w-40"
-            >
-              <button
-                type="button"
-                onClick={() => removeImage(i)}
-                className="absolute w-7 text-sm h-7 top-1 right-1 bg-white-main rounded-full p-1 shadow hover:bg-secondary-main hover:text-white-main font-bold"
-              >
-                ✕
-              </button>
-              <img
-                src={src}
-                className="max-h-40 h-full  block w-full max-w-40 object-cover rounded"
-                alt={`preview-${i}`}
-              />
-            </div>
-          ))}
-        </div>
-      )}
-      <p className="mt-2 text-sm text-black-800">
-        Seleccionaste {files.length} archivo(s).
+      <p className="mt-2 text-sm text-gray-800">
+        Seleccionaste {files.length} archivo{files.length !== 1 ? 's' : ''}.
       </p>
     </div>
   );

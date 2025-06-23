@@ -31,7 +31,6 @@ export const AgregarPropiedad = ({
   pagination: Pagination;
   totalItems: number;
 }) => {
-  const [portada, setPortada] = useState<(File | string)[]>([]);
   const [imagenes, setImagenes] = useState<(File | string)[]>([]);
 
   const { closeModal, authUser } = useAuth();
@@ -59,11 +58,7 @@ export const AgregarPropiedad = ({
       setLoading(false);
       return;
     }
-    if (portada.length === 0) {
-      toast.error("Debes agregar un icono para el tipo de propiedad");
-      setLoading(false);
-      return;
-    }
+
     try {
       const formData = new FormData();
       formData.append("titulo", values.titulo);
@@ -86,9 +81,6 @@ export const AgregarPropiedad = ({
       formData.append("estado", values.estado);
       formData.append("idUser", String(authUser?.id));
 
-      if (portada.length > 0) {
-        formData.append("fondoPortada", portada[0]);
-      }
       if (imagenes.length > 0) {
         imagenes.forEach((file) => {
           formData.append("imagenes", file);
@@ -201,12 +193,31 @@ export const AgregarPropiedad = ({
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <div className="w-full mt-8 mb-12">
-          <h2 className="text-3xl font-semibold text-secondary-main text-center">
+        <div className="w-full mt-8 mb-6 md:mb-12 flex items-center justify-between">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-secondary-main text-center">
             Agregar propiedad
           </h2>
+          <button className="bg-secondary-main text-white-main rounded-full py-2 px-4 text-center">
+            Agregar
+          </button>
         </div>
         <div className="w-full space-y-6">
+          <div className="w-full">
+            <label
+              htmlFor=""
+              className="flex gap-1 text-sm text-black-900 mb-1"
+            >
+              Imagenes{" "}
+            </label>
+            <UploadImages
+              maxFiles={6}
+              maxHeight={5500}
+              maxWidth={5500}
+              maxSize={5 * 1024 * 1024}
+              onChange={setImagenes}
+            />
+          </div>
+
           <div className="w-full flex flex-col md:flex-row gap-4 items-start">
             <div className="w-full lg:w-1/3">
               <InputForm
@@ -262,14 +273,6 @@ export const AgregarPropiedad = ({
                 touched={touched.tipoPropiedadId}
               />
             </div>
-          </div>
-
-          <div className="w-full">
-            <RichTextEditor
-              label="Descripción"
-              initialValue={descripcion}
-              onChange={setDescripcion}
-            />
           </div>
           <div className="w-full flex flex-col md:flex-row gap-4">
             <div className="w-full lg:w-1/2  space-y-4">
@@ -396,6 +399,14 @@ export const AgregarPropiedad = ({
               />
             </div>
           </div>
+          <div className="w-full">
+            <RichTextEditor
+              label="Descripción"
+              initialValue={descripcion}
+              onChange={setDescripcion}
+            />
+          </div>
+
           <div className="w-full flex flex-col md:flex-row gap-4">
             <div className="w-full lg:w-1/2">
               <InputForm
@@ -434,38 +445,6 @@ export const AgregarPropiedad = ({
               />
               <Errors errors={errors.video} touched={touched.video} />
             </div>
-          </div>
-
-          <div className="w-full">
-            <label
-              htmlFor=""
-              className="flex gap-1 text-sm text-black-900 mb-1"
-            >
-              Imagenes{" "}
-            </label>
-            <UploadImages
-              maxFiles={6}
-              maxHeight={2048}
-              maxWidth={2560}
-              maxSize={1 * 1024 * 1024}
-              onChange={setImagenes}
-            />
-          </div>
-
-          <div className="w-full">
-            <label
-              htmlFor=""
-              className="flex gap-1 text-sm text-black-900 mb-1"
-            >
-              Portada{" "}
-            </label>
-            <UploadImages
-              maxFiles={3}
-              maxHeight={1024}
-              maxWidth={1024}
-              maxSize={0.5 * 1024 * 1024}
-              onChange={setPortada}
-            />
           </div>
         </div>
         <div className="w-full flex flex-col-reverse md:flex-row gap-2 md:gap-4 items-center justify-center mt-6">

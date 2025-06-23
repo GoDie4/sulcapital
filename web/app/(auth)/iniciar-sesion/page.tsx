@@ -1,13 +1,20 @@
 import Link from "next/link";
 import { FormLogin } from "./_components/FormLogin";
+import { BsArrowLeft } from "react-icons/bs";
 
 /* eslint-disable @next/next/no-img-element */
 export default function page() {
   return (
     <section className="h-screen flex items-center justify-center bg-[url(/images/fondos/portada_login.webp)] relative z-10 before:absolute before:w-full before:h-full before:inset-0 before:bg-black-main before:opacity-30 before:-z-10">
       <div className="py-8 ">
-        <div className="w-full min-w-[450px] animate-fade-in">
-          <div className="shadow-xl border-0 bg-white-main p-6">
+        <div className="w-full  md:min-w-[450px] animate-fade-in">
+          <div className="shadow-xl border-0 bg-white-main p-6 relative">
+            <Link
+              href={"/"}
+              className="flex items-center gap-1 text-sm  text-primary-main absolute top-3 left-3"
+            >
+              <BsArrowLeft /> Regresar
+            </Link>
             <div className="text-center pb-6 mb-6">
               <div className="flex justify-center mb-4">
                 <Link

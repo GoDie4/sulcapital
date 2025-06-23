@@ -104,7 +104,7 @@ const menuItemsAnunciante = [
   },
 ];
 
-export const SideBarSistema = ({
+export const SideBarHome = ({
   showMenu,
   setShowMenu,
   ocultarSideBar,
@@ -135,8 +135,8 @@ export const SideBarSistema = ({
       className={`py-8 lg:py-12 fixed z-[1706] ${
         path.includes("sistema") ? "top-[90px]" : "top-0"
       } lg:top-0 ${
-        showMenu ? "left-0" : "-left-full lg:left-0"
-      }  lg:relative lg:block ${
+        showMenu ? "left-0" : "-left-full "
+      }   lg:block ${
         ocultarSideBar
           ? "w-full lg:min-w-20 lg:w-20"
           : "w-full lg:min-w-56 lg:w-56"

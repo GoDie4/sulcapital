@@ -17,7 +17,11 @@ export async function getServerSideProps(url: string) {
     }
     const data = await res.json();
     console.log("DATA: ", data);
-    return data.data;
+    if (url === "contacto") {
+      return data.contacto;
+    } else {
+      return data.data;
+    }
   } catch (error) {
     console.log("error");
     console.log(error);

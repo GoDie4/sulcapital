@@ -15,6 +15,7 @@ import { TipoPropiedad } from "../../../app/(sistema)/sistema/tipo-propiedades/_
 import { UserInterface } from "../../../app/(auth)/_components/AuthInterfaces";
 import axios from "axios";
 import { config } from "../config/config";
+import { EmpresaContacto } from "../../../app/(sistema)/sistema/contacto/_components/interface/ContactoInterfaces";
 
 interface AuthContextInterface {
   modalContent: ReactNode | null;
@@ -30,8 +31,11 @@ interface AuthContextInterface {
   dataPropiedades: Propiedad[];
   dataTiposPropiedades: TipoPropiedad[];
   dataCiudades: CiudadList[];
+  dataContacto: EmpresaContacto;
   authUser: UserInterface | null;
   setAuthUser: Dispatch<SetStateAction<UserInterface | null>>;
+  setShowMenu: Dispatch<SetStateAction<boolean>>;
+  showMenu: boolean;
 }
 
 interface AuthProviderInterface {
@@ -39,6 +43,7 @@ interface AuthProviderInterface {
   dataCiudadesInitial: any[];
   dataTiposPropiedadesInitial: any[];
   dataPropiedadesInitial: any[];
+  dataContactoInitial: any;
   userAuthenticated: UserInterface | null;
 }
 
@@ -54,6 +59,7 @@ export const AuthProvider: React.FC<AuthProviderInterface> = ({
   dataPropiedadesInitial,
   dataTiposPropiedadesInitial,
   userAuthenticated,
+  dataContactoInitial,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>(
@@ -65,10 +71,11 @@ export const AuthProvider: React.FC<AuthProviderInterface> = ({
   const [dataTiposPropiedades] = useState<TipoPropiedad[]>(
     dataTiposPropiedadesInitial
   );
-
+  const [dataContacto] = useState<EmpresaContacto>(dataContactoInitial);
   const [authUser, setAuthUser] = useState<UserInterface | null>(
     userAuthenticated
   );
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
   const [modalSize, setModalSize] = useState<ModalSizes>("small");
   const [rowEdit, setRowEdit] = useState<any | null>(null);
@@ -112,7 +119,10 @@ export const AuthProvider: React.FC<AuthProviderInterface> = ({
         dataTiposPropiedades,
         authUser,
         setAuthUser,
-        cerrarSesion
+        cerrarSesion,
+        dataContacto,
+        setShowMenu,
+        showMenu,
       }}
     >
       {children}

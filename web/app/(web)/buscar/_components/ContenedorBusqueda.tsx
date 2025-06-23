@@ -63,19 +63,17 @@ export const ContenedorBusqueda = ({
         </div>
       </div>
       <div
-        className={`w-full relative grid  ${
-          gridOrList === "grid"
-            ? "md:grid-cols-2 lg:grid-cols-3"
-            : "grid-cols-1"
-        }  gap-5`}
+        className={`w-full min-h-[300px] relative grid  ${
+          gridOrList === "grid" ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
+        }  gap-2 md:gap-5`}
       >
         {data.length === 0 && (
-          <p className="min-h-[300px] flex items-center flex-col justify-center gap-2 absolute left-0 right-0 top-0 m-auto">
+          <p className="min-h-[300px] text-center flex items-center flex-col justify-center gap-2 absolute left-0 right-0 top-0 m-auto">
             No se encontraron resultados para esta búsqueda:{" "}
             <button
               type="button"
               onClick={() => {
-                setModalContent(<FormContactoInmueble idPropiedad=""/>);
+                setModalContent(<FormContactoInmueble idPropiedad="" />);
                 openModal();
               }}
               className="text-red-500"
@@ -89,7 +87,7 @@ export const ContenedorBusqueda = ({
           <CardInmueble data={inmueble} key={inmueble.id} type={gridOrList} />
         ))}
       </div>
-      <div className="w-full flex items-center justify-between">
+      <div className="w-full flex items-center flex-col lg:flex-row mt-5 lg:mt-0 justify-between">
         <div className="w-fit flex items-center gap-2">
           <select
             id="limit"

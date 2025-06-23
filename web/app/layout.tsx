@@ -20,13 +20,13 @@ const geistMontserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "SULCAPITAL | Property Investments",
+  title: "SULCAPITAL SAC",
   description:
     "SULCAPITAL ofrece distintos tipos de inmuebles en la selva central del Perú, incluyendo terrenos, departamentos y casas para inversión o vivienda. Encuentra oportunidades únicas con asesoría especializada.",
   openGraph: {
     images: [
       {
-        url: "https://sulcapital.exportando.online/images/slides/slide1.webp",
+        url: "https://sulcapital.pe/images/slides/slide1.webp",
         width: 1200,
         height: 630,
         alt: "Inmuebles en la selva central del Perú",
@@ -40,7 +40,6 @@ async function getUser() {
   const token = cookieStore.get("token")?.value || "";
 
   if (!token) {
-    console.log("No hay token");
 
     return;
   }
@@ -70,6 +69,7 @@ export default async function RootLayout({
   let dataPropiedades;
   const dataCiudades = await getServerSideProps("ciudades");
   const dataTiposPropiedades = await getServerSideProps("tipo_propiedades");
+  const dataContacto = await getServerSideProps("contacto");
 
   const user = await getUser();
   const cookieStore = await cookies();
@@ -93,6 +93,7 @@ export default async function RootLayout({
           dataPropiedadesInitial={dataPropiedades}
           dataTiposPropiedadesInitial={dataTiposPropiedades}
           userAuthenticated={user}
+          dataContactoInitial={dataContacto}
         >
           {children}
           <ModalRender />

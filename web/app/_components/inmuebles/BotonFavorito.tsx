@@ -63,7 +63,7 @@ const BotonFavorito: React.FC<BotonFavoritoProps> = ({
       <button
         type="button"
         onClick={handleClick}
-        className={`text-gray-400 group active:scale-75 w-5 h-5 text-xl transition-all duration-150 ${
+        className={`text-gray-400 group active:scale-75 w-5 h-5 text-lg sm:text-xl transition-all duration-150 ${
           isLoading ? "opacity-50 cursor-not-allowed" : ""
         }`}
         disabled={isLoading}

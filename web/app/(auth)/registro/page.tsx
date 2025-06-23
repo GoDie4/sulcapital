@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { BsArrowLeft } from "react-icons/bs";
 import { FormRegistro } from "./_components/FormRegistro";
 import Link from "next/link";
 
@@ -8,7 +9,13 @@ const Register = () => {
       <div className=" bg-transparent">
         <div className="flex items-center justify-center  py-8 px-4 sm:px-6 lg:px-8">
           <div className="w-full max-w-xl animate-fade-in">
-            <div className="shadow-xl border-0 bg-white-main p-6">
+            <div className="shadow-xl border-0 bg-white-main p-6 relative">
+              <Link
+                href={"/"}
+                className="flex items-center gap-1 text-sm  text-primary-main absolute top-3 left-3"
+              >
+                <BsArrowLeft /> Regresar
+              </Link>
               <div className="text-center pb-5 mb-4">
                 <div className="flex justify-center mb-4">
                   <Link

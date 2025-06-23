@@ -1,5 +1,5 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
+
 import React from "react";
 import { ContentMain } from "./ContentMain";
 import {
@@ -14,12 +14,15 @@ import Link from "next/link";
 import { TipoPropiedad } from "../../(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 import { CiudadList } from "../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
 import { FloatingWhatsApp } from "react-floating-whatsapp";
+import { EmpresaContacto } from "../../(sistema)/sistema/contacto/_components/interface/ContactoInterfaces";
 export const Footer = ({
   tipoPropiedades,
   ciudades,
+  contacto,
 }: {
   tipoPropiedades: TipoPropiedad[];
   ciudades: CiudadList[];
+  contacto: EmpresaContacto;
 }) => {
   return (
     <footer className="bg-secondary-main">
@@ -33,30 +36,55 @@ export const Footer = ({
               <span>
                 <BsMap />
               </span>
-              <p>Av. General 123, Los Olivos. Lima</p>
+              <p>{contacto.direccion}</p>
             </li>
-            <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <span>
-                <BsPhoneFill />
-              </span>
-              <p>987 654 312</p>
-            </li>
-            <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <span>
-                <BsEnvelope />
-              </span>
-              <p>ventas@dominio.com</p>
-            </li>
+            {contacto?.TelefonoEmpresa.sort(
+              (a, b) => Number(a.posicion) - Number(b.posicion)
+            )
+              .slice(0, 3)
+              .map((telefono) => (
+                <li
+                  key={telefono.id}
+                  className="flex items-center gap-3 text-white-200 hover:text-white-main"
+                >
+                  <span>
+                    <BsPhoneFill />
+                  </span>
+                  <p>{telefono.numero}</p>
+                </li>
+              ))}
+            {contacto?.CorreoEmpresa.sort(
+              (a, b) => Number(a.posicion) - Number(b.posicion)
+            )
+              .slice(0, 3)
+              .map((telefono) => (
+                <li
+                  key={telefono.id}
+                  className="flex items-center gap-3 text-white-200 hover:text-white-main"
+                >
+                  <span>
+                    <BsEnvelope />
+                  </span>
+                  <p>{telefono.email}</p>
+                </li>
+              ))}
+
             <li className="flex pt-6 text-white-main text-3xl items-center gap-5">
-              <a href="">
-                <BsFacebook />
-              </a>
-              <a href="">
-                <BsInstagram />
-              </a>
-              <a href="">
-                <BsTiktok />
-              </a>
+              {contacto?.facebook && (
+                <a href={contacto.facebook} target="_blank">
+                  <BsFacebook />
+                </a>
+              )}
+              {contacto?.instagram && (
+                <a href={contacto.instagram} target="_blank">
+                  <BsInstagram />
+                </a>
+              )}
+              {contacto?.tiktok && (
+                <a href={contacto.tiktok} target="_blank">
+                  <BsTiktok />
+                </a>
+              )}
             </li>
           </ul>
         </div>
@@ -117,10 +145,7 @@ export const Footer = ({
       </ContentMain>
       <ContentMain className="flex flex-col lg:flex-row gap-4 justify-between border-t py-4">
         <p className="text-white-main flex gap-2 items-center">
-          SULCAPITAL © 2025 | Todos los derechos reservados - Design by:{" "}
-          <a href="https://logosperu.com.pe/" target="_blank">
-            <img src="/images/logo/lp.svg" alt="" className="block w-[18px]" />
-          </a>
+          SULCAPITAL © 2025 | Todos los derechos reservados 
         </p>
         <ul className="flex items-center gap-3 text-white-main">
           <li>
@@ -133,7 +158,7 @@ export const Footer = ({
       </ContentMain>
 
       <FloatingWhatsApp
-        phoneNumber="51953528808" // tu número con código de país
+        phoneNumber={contacto.whatsapp ?? ""} // tu número con código de país
         accountName="Sulcapital"
         avatar="/images/logo/ico_color.png" // opcional: imagen del logo o avatar
         statusMessage="En línea"

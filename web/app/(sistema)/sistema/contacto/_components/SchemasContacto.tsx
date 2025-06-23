@@ -7,7 +7,7 @@ export const empresaContactoSchema = yup.object({
   tiktok: yup.string().url().nullable(),
   youtube: yup.string().url().nullable(),
   linkedin: yup.string().url().nullable(),
-  whatsapp: yup.string().url().nullable(),
+  whatsapp: yup.string().nullable(),
   direccion: yup.string().required("La dirección es obligatoria"),
   horarios: yup.string().nullable(),
 });

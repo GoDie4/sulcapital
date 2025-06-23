@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -256,7 +257,7 @@ export function DataTable<TData, TValue>({
     (value) => value !== ""
   );
   return (
-    <div className="w-full">
+    <>
       <div className="flex flex-col md:flex-row items-start md:items-center py-4 gap-4">
         {/* Formulario de búsqueda ocupa todo el ancho en móvil */}
         <form className="flex-1 w-full md:w-auto flex items-center gap-2">
@@ -329,67 +330,103 @@ export function DataTable<TData, TValue>({
           )}
         </div>
       </div>
-      <div className="rounded-lg overflow-hidden border">
-        <Table className=" overflow-hidden">
-          <TableHeader className="bg-secondary-main rounded-main text-white-main">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                key={headerGroup.id}
-                className="hover:bg-secondary-main px-3"
-              >
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className="text-white-main "
-                      style={{
-                        width:
-                          header.getSize() !== 150
-                            ? header.getSize()
-                            : undefined,
-                      }}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No hay resultados.
-                </TableCell>
-              </TableRow>
+      {/* VISTA MÓVIL: tarjetas apiladas */}
+      <div className="md:hidden">
+        {table.getRowModel().rows.map((row) => (
+          <div
+            key={row.id}
+            className="border rounded-main p-4 mb-4 bg-white-main shadow-sm"
+          >
+            {row.getVisibleCells().map((cell) =>
+              cell.column.id === actionColumnId ? null : (
+                <div key={cell.id} className="flex justify-between py-1">
+                  <span className="font-semibold text-sm">
+                    {flexRender(
+                      cell.column.columnDef.header,
+                      //@ts-ignore
+                      cell.getContext()
+                    )}
+                  </span>
+                  <span className="text-sm">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </span>
+                </div>
+              )
             )}
-          </TableBody>
-        </Table>
+            {/* Acciones en móvil al final */}
+            {!disableActionsColumn && renderRowActions && (
+              <div className="mt-2">{renderRowActions(row as any)}</div>
+            )}
+          </div>
+        ))}
+        {table.getRowModel().rows.length === 0 && (
+          <p className="text-center py-4">No hay resultados.</p>
+        )}
+      </div>
+
+      <div className="w-full hidden lg:block">
+        <div className="rounded-lg overflow-hidden border">
+          <Table className=" overflow-hidden">
+            <TableHeader className="bg-secondary-main rounded-main text-white-main">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow
+                  key={headerGroup.id}
+                  className="hover:bg-secondary-main px-3"
+                >
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        className="text-white-main "
+                        style={{
+                          width:
+                            header.getSize() !== 150
+                              ? header.getSize()
+                              : undefined,
+                        }}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No hay resultados.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
       <div className="flex flex-col lg:flex-row lg:justify-between items-center justify-center relative gap-6 lg:gap-2 py-4">
         <div className="w-fit flex items-center gap-2 mb-8 lg:mb-0">
@@ -434,6 +471,6 @@ export function DataTable<TData, TValue>({
           </Button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

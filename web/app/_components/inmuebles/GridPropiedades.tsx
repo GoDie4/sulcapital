@@ -9,7 +9,7 @@ export const GridPropiedades = ({
   reverse?: boolean;
 }) => {
   return (
-    <div className=" grid lg:hidden grid-cols-2 md:grid-cols-3 gap-5">
+    <div className=" grid lg:hidden grid-cols-2 md:grid-cols-3 gap-2 sm:gap-5">
       {propiedades.map((item, index) => (
         <CardInmueble data={item} type="grid" key={`${item.id}${index}`} />
       ))}

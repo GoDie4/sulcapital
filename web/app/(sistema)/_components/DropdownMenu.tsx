@@ -1,8 +1,16 @@
-import { ReactNode, useLayoutEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { GoChevronDown } from "react-icons/go";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/assets/context/AuthContext";
 
 type Option = {
   label: string;
@@ -19,13 +27,17 @@ export type MenuCategory = {
 interface DropdownMenuProps {
   menuItems: MenuCategory[];
   ocultarSideBar?: boolean;
+  setOcultarSideBar: Dispatch<SetStateAction<boolean>>;
 }
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({
   menuItems,
   ocultarSideBar,
+  setOcultarSideBar,
 }) => {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+
+  const { setShowMenu } = useAuth();
 
   const pathname = usePathname();
   const toggleMenu = (title: string) => {
@@ -103,7 +115,13 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
               </button>
             ) : (
               <Link
-                href={`/sistema/${menuItem.route}` || "/sistema"}
+                href={`${
+                  menuItem.title === "Web" ? "/" : `/sistema/${menuItem.route}`
+                } `}
+                onClick={() => {
+                  setOcultarSideBar(false);
+                  setShowMenu(false);
+                }}
                 className={`flex items-center w-full ${
                   menuItem.route
                 } ${pathname} px-7 py-3 border-l-4 group border-transparent space-x-2    transition-all duration-200 

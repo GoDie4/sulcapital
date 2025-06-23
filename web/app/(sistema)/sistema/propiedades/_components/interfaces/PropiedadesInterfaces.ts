@@ -36,10 +36,10 @@ export const disponibilidadPropiedades: listaDisponibilidadPropiedades[] = [
     value: "EN_VENTA",
     nombre: "Venta",
   },
-  {
-    value: "EN_COMPRA",
-    nombre: "Compra",
-  },
+//   {
+//     value: "EN_COMPRA",
+//     nombre: "Compra",
+//   },
 
   {
     value: "EN_ALQUILER",

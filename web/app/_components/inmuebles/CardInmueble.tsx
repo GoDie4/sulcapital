@@ -71,15 +71,13 @@ const CardInmuebleList = ({
               navigation={variasImagenes}
               className="w-full  swp--Inmuebles--images"
             >
-              {data.imagenes.map((image) => (
-                <SwiperSlide key={image.id}>
-                  <img
-                    src={`${config.API_IMAGE_URL}${image.url}`}
-                    alt={`${data.tipoPropiedad.nombre} en ${data.ciudad.nombre}`}
-                    className="w-full h-32 sm:h-40 object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </SwiperSlide>
-              ))}
+              <SwiperSlide>
+                <img
+                  src={`${config.API_IMAGE_URL}${data.imagenes[0].url}`}
+                  alt={`${data.tipoPropiedad.nombre} en ${data.ciudad.nombre}`}
+                  className="w-full h-32 sm:h-40 object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </SwiperSlide>
             </Swiper>
 
             <div className=" absolute z-10 w-full h-full inset-0 bg-black-main/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
@@ -155,17 +153,15 @@ const CardInmuebleGrid = ({
             slidesPerView={1}
             loop={variasImagenes}
             navigation={variasImagenes}
-            className="w-full h-32 sm:h-40 swp--Inmuebles--images"
+            className="w-full h-24 sm:h-40 swp--Inmuebles--images"
           >
-            {data.fondoPortada.map((image) => (
-              <SwiperSlide key={image.id}>
-                <img
-                  src={`${config.API_IMAGE_URL}${image.url}`}
-                  alt={`${data.tipoPropiedad.nombre} en ${data.ciudad.nombre}`}
-                  className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </SwiperSlide>
-            ))}
+            <SwiperSlide>
+              <img
+                src={`${config.API_IMAGE_URL}${data.imagenes[0].url}`}
+                alt={`${data.tipoPropiedad.nombre} en ${data.ciudad.nombre}`}
+                className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            </SwiperSlide>
           </Swiper>
 
           <div className=" absolute z-10 w-full h-full inset-0 bg-black-main/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
@@ -179,11 +175,11 @@ const CardInmuebleGrid = ({
         )}
       </div>
 
-      <div className="block p-4 space-y-3 bg-white-main">
+      <div className="block px-2 py-3 sm:p-4 space-y-3 bg-white-main">
         <div className="w-full flex gap-2 items-center justify-between">
           <div className="flex flex-col gap-1">
-            <span className="text-sm text-black-700">Desde</span>
-            <div className="text-lg font-bold text-secondary-main font-TypographBold ">
+            <span className="text-xs sm:text-sm text-black-700">Desde</span>
+            <div className="text-sm sm:text-lg font-bold text-secondary-main font-TypographBold ">
               S/ {data.precio}
             </div>
           </div>
@@ -192,12 +188,12 @@ const CardInmuebleGrid = ({
           )}
         </div>
 
-        <div className="text-black-800 text-sm leading-relaxed line-clamp-1">
+        <div className="text-black-800 text-xs sm:text-sm leading-relaxed line-clamp-1">
           {data.direccion}
         </div>
 
         <div className="w-full flex gap-1 items-center">
-          <p className="text-sm line-clamp-1 ">
+          <p className="text-xs sm:text-sm line-clamp-1 ">
             <span className="">{data.tipoPropiedad.nombre}</span> en{" "}
             <span className="cursor-pointer text-secondary-main underline">
               {data.ciudad.nombre}

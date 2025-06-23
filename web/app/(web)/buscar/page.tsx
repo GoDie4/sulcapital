@@ -5,6 +5,61 @@ import { ContentMain } from "../../_components/estructura/ContentMain";
 import { ContenedorBusqueda } from "./_components/ContenedorBusqueda";
 import { FiltrosBusqueda } from "./_components/FiltrosBusqueda";
 
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: any;
+}) {
+  const { tipo_propiedad, ciudad, disponibilidad } = searchParams;
+
+  const capitalizar = (texto: string) =>
+    texto
+      .split(" ")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ");
+
+  const disponibilidadMap: Record<string, string> = {
+    EN_VENTA: "en venta",
+    EN_ALQUILER: "en alquiler",
+    EN_COMPRA: "en compra",
+  };
+
+  let title = "Buscar propiedades | Sulcapital Sac";
+  let description =
+    "Explora nuestro catálogo de propiedades en la selva central del Perú.";
+  let robots = "noindex, follow";
+
+  const disponibilidadValida =
+    disponibilidad && disponibilidadMap[disponibilidad];
+  const tipoValido = tipo_propiedad && tipo_propiedad.length > 1;
+  const ciudadValida = ciudad && ciudad.length > 1;
+
+  if (disponibilidadValida && tipoValido && ciudadValida) {
+    const tipo = capitalizar(tipo_propiedad!);
+    const ciudadCapitalizada = capitalizar(ciudad!);
+    const disp = disponibilidadMap[disponibilidad!];
+
+    title = `${tipo} ${disp} en ${ciudadCapitalizada} | Sulcapital Sac`;
+    description = `Encuentra ${tipo.toLowerCase()}s ${disp} en ${ciudadCapitalizada}. Consulta precios, ubicación y más.`;
+    robots = "index, follow";
+  }
+
+  return {
+    title,
+    description,
+    generator: "Next.js",
+    authors: [{ name: "Logos Perú" }],
+    robots,
+    icons: {
+      icon: "/assets/images/logo/ico.png",
+    },
+    alternates: {
+      canonical: `https://sulcapital.pe/buscar?tipo_propiedad=${tipo_propiedad}&ciudad=${ciudad}&disponibilidad=${disponibilidad}`,
+    },
+
+  };
+}
+
 export default async function page({ searchParams }: { searchParams: any }) {
   const limitParam = searchParams?.limit;
   const rawLimit = Array.isArray(limitParam)
@@ -21,7 +76,6 @@ export default async function page({ searchParams }: { searchParams: any }) {
   const disponibilidad = searchParams?.disponibilidad ?? "";
   const search = searchParams?.search ?? "";
 
-
   const query = new URLSearchParams({
     page: safePage.toString(),
     limit: limit.toString(),
@@ -32,7 +86,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
   });
 
   const res = await fetch(
-    `${config.API_URL}/propiedades/buscar?${query.toString()}`,
+    `${config.API_URL}/propiedades/buscar?${query.toString()}`
   );
 
   const { data, pagination } = await res.json();
@@ -44,7 +98,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
         title="Búsqueda"
       />
       <section className="">
-        <ContentMain className="py-16">
+        <ContentMain className="py-4 md:py-8 lg:py-16">
           <div className="w-full flex flex-col xl:flex-row gap-8">
             <div className="w-full xl:w-1/5">
               <FiltrosBusqueda

@@ -24,6 +24,9 @@ export const FormLogin = () => {
 
   const router = useRouter();
 
+  const searchParams = new URLSearchParams(window.location.search);
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
+
   const login = async (values: LoginInterface): Promise<void> => {
     setLoading(true);
 
@@ -42,11 +45,11 @@ export const FormLogin = () => {
       if (response.status === 200) {
         setAuthUser(response.data.usuario);
         if (response.data.usuario.rol_id === 2) {
-          router.push("/sistema/propiedades");
+            router.push('/')
         } else if (response.data.usuario.rol_id === 3) {
-          router.push("/sistema/favoritos");
+          router.push(callbackUrl);
         } else {
-          router.push("/sistema");
+          router.push(callbackUrl);
         }
         toast.success(response.data.message);
       }
@@ -222,7 +225,7 @@ export const FormLogin = () => {
           />
         </div>
         <div className="w-full md:w-1/2">
-          <FacebookLoginButton rol="CLIENTE"/>
+          <FacebookLoginButton rol="CLIENTE" />
         </div>
       </div>
     </form>

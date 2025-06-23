@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { SistemaProvider } from "@/assets/context/SistemaContext";
 import { SideBarSistema } from "./SideBarSistema";
 import { HeaderSistema } from "./HeaderSistema";
+import Link from "next/link";
 
 export function ContentSistema({ children }: { children: React.ReactNode }) {
   const [ocultarSideBar, setOcultarSideBar] = useState<boolean>(false);
@@ -27,6 +28,12 @@ export function ContentSistema({ children }: { children: React.ReactNode }) {
   }, []);
   return (
     <SistemaProvider>
+      <Link
+        href={"/"}
+        className="bg-primary-main fixed bottom-6 left-2 rounded-full py-2 px-4 text-sm text-white-main text-center"
+      >
+        Regresar a la web
+      </Link>
       <div className="flex">
         <SideBarSistema
           showMenu={menuShow}
