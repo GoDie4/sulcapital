@@ -5,21 +5,19 @@ import { BannerInternas } from "../../../../_components/estructura/BannerInterna
 import DescripcionInmueble from "../../../../_components/inmuebles/_components/DescripcionInmueble";
 import { GaleriaInmuebles } from "../../../../_components/inmuebles/_components/GaleriaInmuebles";
 import { ContentMain } from "../../../../_components/estructura/ContentMain";
-import { FormContactoInmueble } from "../../../../_components/inmuebles/_components/FormContactoInmueble";
 import { OtrosInmueblesUsuario } from "../../../../_components/inmuebles/_components/OtrosInmueblesUsuario";
 import { ContenteInmuebles } from "../../_components/ContenteInmuebles";
 import ClientMediaInmueble from "../../../../_components/inmuebles/_components/ImportDynamicUbicacionVideoInmueble";
+import { ConsultarPorWhatsapp } from "../../_components/ConsultarPorWhatsapp";
 
 async function getPropiedad(id: string): Promise<any> {
   const response = await axios.get(`${config.API_URL}/propiedades/find/${id}`);
+
+  console.log(response.data.data);
   return response.data.data;
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: any;
-}) {
+export async function generateMetadata({ params }: { params: any }) {
   const response = await axios.get(
     `${config.API_URL}/propiedades/find/${params.id}`
   );
@@ -129,7 +127,6 @@ export default async function page({
             />
           </div>
           <div className="w-full lg:w-1/3 space-y-12 ">
-            <FormContactoInmueble idPropiedad={propiedad.id} />
             {data.ultimasPropiedades && (
               <OtrosInmueblesUsuario
                 ultimasPropiedades={data.ultimasPropiedades}
@@ -146,6 +143,8 @@ export default async function page({
           />
         </ContentMain>
       </section>
+
+      <ConsultarPorWhatsapp propiedad={data} />
     </>
   );
 }

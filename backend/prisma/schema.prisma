@@ -210,3 +210,13 @@ model TelefonoEmpresa {
 
     @@map("telefonos_empresa")
 }
+
+model BannersWeb {
+    id          String @id @default(uuid())
+    titulo      String
+    descripcion String
+    imagen      String
+    posicion    Int
+
+    @@map("banners_web")
+}

@@ -93,7 +93,6 @@ const CardInmuebleList = ({
 
         <div className="px-4 py-3">
           <div className="flex flex-col gap-1">
-            <span className="text-sm text-black-700">Desde</span>
             <div className="text-base sm:text-lg font-bold text-secondary-main font-TypographBold ">
               S/ {data.precio}
             </div>
@@ -178,7 +177,6 @@ const CardInmuebleGrid = ({
       <div className="block px-2 py-3 sm:p-4 space-y-3 bg-white-main">
         <div className="w-full flex gap-2 items-center justify-between">
           <div className="flex flex-col gap-1">
-            <span className="text-xs sm:text-sm text-black-700">Desde</span>
             <div className="text-sm sm:text-lg font-bold text-secondary-main font-TypographBold ">
               S/ {data.precio}
             </div>

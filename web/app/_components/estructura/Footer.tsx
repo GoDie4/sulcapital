@@ -13,7 +13,6 @@ import {
 import Link from "next/link";
 import { TipoPropiedad } from "../../(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 import { CiudadList } from "../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
-import { FloatingWhatsApp } from "react-floating-whatsapp";
 import { EmpresaContacto } from "../../(sistema)/sistema/contacto/_components/interface/ContactoInterfaces";
 export const Footer = ({
   tipoPropiedades,
@@ -38,21 +37,14 @@ export const Footer = ({
               </span>
               <p>{contacto.direccion}</p>
             </li>
-            {contacto?.TelefonoEmpresa.sort(
-              (a, b) => Number(a.posicion) - Number(b.posicion)
-            )
-              .slice(0, 3)
-              .map((telefono) => (
-                <li
-                  key={telefono.id}
-                  className="flex items-center gap-3 text-white-200 hover:text-white-main"
-                >
-                  <span>
-                    <BsPhoneFill />
-                  </span>
-                  <p>{telefono.numero}</p>
-                </li>
-              ))}
+            {contacto.direccion && (
+              <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
+                <span>
+                  <BsPhoneFill />
+                </span>
+                <p>{contacto.whatsapp}</p>
+              </li>
+            )}
             {contacto?.CorreoEmpresa.sort(
               (a, b) => Number(a.posicion) - Number(b.posicion)
             )
@@ -96,9 +88,7 @@ export const Footer = ({
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
               <Link href={"/buscar?disponibilidad=EN_VENTA"}>Vender</Link>
             </li>
-            <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
-              <Link href={"/buscar?disponibilidad=EN_COMPRA"}>Comprar</Link>
-            </li>
+
             <li className="flex items-center gap-3 text-white-200 hover:text-white-main">
               <Link href={"/buscar?disponibilidad=EN_ALQUILER"}>Alquiler</Link>
             </li>
@@ -145,7 +135,7 @@ export const Footer = ({
       </ContentMain>
       <ContentMain className="flex flex-col lg:flex-row gap-4 justify-between border-t py-4">
         <p className="text-white-main flex gap-2 items-center">
-          SULCAPITAL © 2025 | Todos los derechos reservados 
+          SULCAPITAL © 2025 | Todos los derechos reservados
         </p>
         <ul className="flex items-center gap-3 text-white-main">
           <li>
@@ -157,17 +147,7 @@ export const Footer = ({
         </ul>
       </ContentMain>
 
-      <FloatingWhatsApp
-        phoneNumber={contacto.whatsapp ?? ""} // tu número con código de país
-        accountName="Sulcapital"
-        avatar="/images/logo/ico_color.png" // opcional: imagen del logo o avatar
-        statusMessage="En línea"
-        chatMessage="¡Hola! ¿En qué podemos ayudarte?"
-        placeholder="Escribe un mensaje"
-        allowClickAway
-        notification
-        notificationSound
-      />
+    
     </footer>
   );
 };

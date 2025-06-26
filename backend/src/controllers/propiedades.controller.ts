@@ -96,7 +96,6 @@ export const getPropiedades = async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-       
     console.error(error);
     res.status(500).json({ message: "Error al obtener las propiedades" });
   } finally {
@@ -137,7 +136,6 @@ export const getUltimasPropiedades = async (req: Request, res: Response) => {
     res.json({ data: propiedades });
   } catch (error: any) {
     console.error(error);
-   
 
     res.status(500).json({ message: "Error al obtener las propiedades" });
   } finally {
@@ -237,7 +235,7 @@ export const getPropiedadesConFavoritos = async (
     });
   } catch (error: any) {
     console.error(error);
-   
+
     res.status(500).json({ message: "Error al obtener las propiedades" });
   } finally {
     await prisma.$disconnect();
@@ -334,7 +332,6 @@ export const getPropiedadesByUser = async (
     });
   } catch (error: any) {
     console.error(error);
-   
 
     res.status(500).json({ message: "Error al obtener las propiedades" });
   } finally {
@@ -419,7 +416,6 @@ export const getPropiedadesByUserFromAdmin = async (
     });
   } catch (error: any) {
     console.error(error);
-   
 
     res.status(500).json({ message: "Error al obtener las propiedades" });
   } finally {
@@ -470,7 +466,9 @@ export const crearPropiedad = async (
       select: { publicaciones_automaticas: true },
     });
 
-    const estadoFinal = usuario?.publicaciones_automaticas ? "PUBLICADO" : estado;
+    const estadoFinal = usuario?.publicaciones_automaticas
+      ? "PUBLICADO"
+      : estado;
 
     const nuevaPropiedad = await prisma.propiedad.create({
       data: {
@@ -526,7 +524,6 @@ export const crearPropiedad = async (
     res.status(201).json({ mensaje: "Propiedad agregada" });
   } catch (error: any) {
     console.error(error);
-   
 
     res.status(500).json({ message: "Error al crear la propiedad" });
   }
@@ -657,7 +654,6 @@ export const editarPropiedad = async (
     });
   } catch (error: any) {
     console.error(error);
-   
 
     return res
       .status(500)
@@ -716,7 +712,6 @@ export const cambiarEstadoPropiedad = async (
     });
   } catch (error: any) {
     console.error(error);
-   
 
     return res
       .status(500)
@@ -743,7 +738,7 @@ export const eliminarPropiedad = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Propiedad eliminada correctamente" });
   } catch (error: any) {
     console.error(error);
-   
+
     res.status(500).json({ message: "Error al eliminar la propiedad" });
   }
 };
@@ -768,6 +763,12 @@ export const getPropiedadById = async (req: any, res: any) => {
         imagenes: true,
         tipoPropiedad: true,
         ciudad: true,
+        usuario: {
+          select: {
+            celular: true,
+            nombres: true
+          },
+        },
       },
     });
 
@@ -829,7 +830,7 @@ export const getPropiedadById = async (req: any, res: any) => {
     });
   } catch (error: any) {
     console.error("Error al buscar la propiedad:", error);
-   
+
     return res.status(500).json({
       ok: false,
       message: "Error interno del servidor",
@@ -998,7 +999,6 @@ export const buscarPropiedades = async (req: any, res: any) => {
       },
     });
   } catch (error: any) {
-   
     console.error("Error en buscarPropiedades:", error);
     return res.status(500).json({
       message: "Error interno al buscar propiedades.",
@@ -1046,7 +1046,7 @@ export const enviarConsultaPropiedad = async (
     });
   } catch (error: any) {
     console.error("Error al registrar usuario", error);
-   
+
     return res.status(500).json({
       message: "Error interno del servidor",
     });

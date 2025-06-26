@@ -16,7 +16,6 @@ export async function getServerSideProps(url: string) {
       return;
     }
     const data = await res.json();
-    console.log("DATA: ", data);
     if (url === "contacto") {
       return data.contacto;
     } else {

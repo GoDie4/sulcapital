@@ -47,7 +47,7 @@ const SearchSection = ({
 
           <div className="flex bg-white-main flex-col md:flex-row gap-2 sm:gap-4 rounded-tr-none md:rounded-tr-main rounded-tl-none rounded-main px-3 md:px-4 py-2 sm:py-4 border border-gray-100 items-center">
             {/* Input de texto */}
-            <div className="w-full flex-1 h-[40px] sm:h-[60px] relative">
+            <div className="hidden md:block w-full flex-1 h-[40px] sm:h-[60px] relative">
               <MdSearch className="absolute left-3 h-[40px] sm:h-[60px] top-0 transform bottom-0 my-auto text-gray-400 w-5" />
               <input
                 type="text"
@@ -66,7 +66,7 @@ const SearchSection = ({
                 onChange={(e) => setPropertyType(e.target.value)}
                 className="w-full lg:w-fit h-full px-4 text-sm md:text-base border-2 border-gray-200 rounded-xl focus:border-secondary-main focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white-main"
               >
-                <option value="">Tipo de propiedad</option>
+                <option value="">Todas las propiedades</option>
                 {tipoPropiedades.map((tipo: TipoPropiedad) => (
                   <option value={tipo.id} key={tipo.id}>
                     {tipo.nombre}
@@ -82,7 +82,7 @@ const SearchSection = ({
                 onChange={(e) => setLocacion(e.target.value)}
                 className="w-full lg:w-fit h-full px-4 text-sm md:text-base border-2 border-gray-200 rounded-xl focus:border-secondary-main focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white-main"
               >
-                <option value="">Ubicación</option>
+                <option value="">Todas las ubicaciones</option>
                 {ciudades.map((ciudad: CiudadList) => (
                   <option value={ciudad.id} key={ciudad.id}>
                     {ciudad.nombre}

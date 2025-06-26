@@ -16,7 +16,6 @@ const PropertyFilter = ({
   const { authUser, setModalContent, openModal } = useAuth();
   const filters = [
     { id: "EN_VENTA", label: "Vender" },
-    { id: "EN_COMPRA", label: "Comprar" },
     { id: "EN_ALQUILER", label: "Alquilar" },
   ];
 
@@ -57,7 +56,7 @@ const PropertyFilter = ({
                 Vender
               </button>
             ) : (
-              <div key={filter.id} className="w-full radio-button items-center">
+              <div key={filter.id} className="w-fit sm:w-full radio-button items-center">
                 <input
                   type="radio"
                   name="propertyFilter"

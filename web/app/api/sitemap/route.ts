@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { config } from "@/assets/config/config";
 import axios from "axios";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const baseUrl = "https://www.sulcapital.pe"; // dominio del frontend
+  const baseUrl = "https://www.sulcapital.pe"; 
 
   try {
     // Cambia esta URL a tu API real
     const response = await axios.get(
-      "https://www.api.sulcapital.pe/api/propiedades"
+      `${config.API_URL}/propiedades`
     );
-    const propiedades = response.data.data.propiedades ?? [];
+    const propiedades = response.data.data ?? [];
+    console.log(propiedades)
 
     const urls = propiedades.map((p: any) => {
       return `
@@ -40,6 +42,16 @@ export async function GET() {
       },
     });
   } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", {
+        message: error.message,
+        url: error.config?.url,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+    } else {
+      console.error("Unexpected error:", error);
+    }
     console.log(error);
     return new NextResponse("Error al generar sitemap", { status: 500 });
   }

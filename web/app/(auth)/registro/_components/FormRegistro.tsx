@@ -241,7 +241,7 @@ export const FormRegistro = () => {
         >
           <option value="">Selecciona una opción</option>
           <option value="ANUNCIANTE">Publicar mis inmuebles</option>
-          <option value="CLIENTE">Comprar o alquilar inmuebles</option>
+          <option value="CLIENTE">Consulta propiedades</option>
         </select>
         {errors.rol && <Errors errors={errors.rol} touched={touched.rol} />}
       </div>

@@ -214,7 +214,7 @@ body {
 }
 @media (max-width: 520px) {
   .radio-buttons-container {
-    gap: 5px;
+    gap: 12px;
   }
 
   .radio-button__label {
