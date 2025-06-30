@@ -8,6 +8,7 @@ import { Gallery, Item } from "react-photoswipe-gallery";
 import { config } from "@/assets/config/config";
 import { registrarReciente } from "@/lib/registrarReciente";
 import { useAuth } from "@/assets/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export interface ImagenPropiedad {
   id: number;
@@ -42,6 +43,7 @@ export const GaleriaInmuebles = ({
   direccion,
   disponibilidad,
   propiedadId,
+  celular,
 }: {
   imagenes: ImagenPropiedad[];
   precio: string;
@@ -49,6 +51,7 @@ export const GaleriaInmuebles = ({
   direccion: string;
   disponibilidad: string;
   propiedadId: string;
+  celular: string;
 }) => {
   //   const imagenes = [
   //     "/images/inmueble/foto1.webp",
@@ -60,6 +63,20 @@ export const GaleriaInmuebles = ({
   //   ];
 
   const { authUser } = useAuth();
+
+  const ruta = useRouter();
+
+  function sendWhatsAppMessage(phone: string, message: string) {
+    if (!authUser) {
+      ruta.push("/iniciar-sesion");
+      return;
+    }
+
+    const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(url, "_blank");
+  }
 
   useEffect(() => {
     if (authUser) {
@@ -130,6 +147,19 @@ export const GaleriaInmuebles = ({
                 <p className="text-black-900 line-clamp-2">
                   {descripcionCorta}
                 </p>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    sendWhatsAppMessage(
+                      `${celular}`,
+                      `Hola! Estoy interesado en tu propiedad 🚀\n\n¿Podrías brindarme más detalles?`
+                    );
+                  }}
+                  className="bg-green-500 w-full mt-6 text-white-main  rounded-full py-2 px-4 flex items-center justify-center hover:bg-green-600 transition-all duration-200"
+                >
+                  Contactar con el anunciante
+                </button>
               </div>
             </div>
           </div>

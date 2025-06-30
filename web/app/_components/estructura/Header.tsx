@@ -12,6 +12,8 @@ import { CiudadList } from "../../(sistema)/sistema/ciudades/_components/interfa
 import { useAuth } from "@/assets/context/AuthContext";
 import { MenuLogeado } from "./MenuLoggeado";
 import { EmpresaContacto } from "../../(sistema)/sistema/contacto/_components/interface/ContactoInterfaces";
+import { useRouter } from "next/navigation";
+import { AgregarPropiedad } from "../../(sistema)/sistema/propiedades/_components/form/AgregarPropiedad";
 export const Header = ({
   tipoPropiedades,
   ciudades,
@@ -40,8 +42,9 @@ export const Header = ({
   ];
 
   const [scrollY, setScrollY] = useState(false);
-
-  const { authUser, setShowMenu, showMenu } = useAuth();
+  const router = useRouter();
+  const { authUser, setShowMenu, showMenu, setModalContent, openModal } =
+    useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,6 +58,22 @@ export const Header = ({
     };
   }, []);
 
+  const handleClick = () => {
+    if (!authUser) {
+      const currentPath = "https://sulcapital.pe/sistema/propiedades";
+      router.push(
+        `/iniciar-sesion?callbackUrl=${encodeURIComponent(currentPath)}`
+      );
+    } else {
+      setModalContent(
+        <AgregarPropiedad
+          pagination={{ total: 0, totalPages: 0, limit: 1, page: 1 }}
+          totalItems={0}
+        />
+      );
+      openModal();
+    }
+  };
   return (
     <header
       className={`fixed top-0 left-0 w-full  z-[1300] ${
@@ -62,7 +81,7 @@ export const Header = ({
       } transition-all duration-300`}
     >
       <ContentMain className="pt-2 sm:py-3">
-        <nav className="flex justify-between items-center lg:items-end">
+        <nav className="flex justify-between items-center">
           <Link
             href={"/"}
             className={`block ${
@@ -99,6 +118,15 @@ export const Header = ({
             ))}
           </ul>
           <div className="w-fit flex items-center gap-4">
+            {authUser && (
+              <button
+                type="button"
+                onClick={handleClick}
+                className="bg-secondary-main rounded-full px-5 py-2 text-center text-white-main"
+              >
+                Vender
+              </button>
+            )}
             {authUser !== null && authUser !== undefined ? (
               <>
                 <button

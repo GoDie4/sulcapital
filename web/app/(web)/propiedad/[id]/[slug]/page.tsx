@@ -115,6 +115,7 @@ export default async function page({
         precio={String(propiedad.precio)}
         disponibilidad={propiedad.disponibilidad}
         propiedadId={id}
+        celular={propiedad.usuario.celular}
       />
       <section>
         <ContentMain className="w-full flex flex-col lg:flex-row gap-8 pb-10">
@@ -144,7 +145,7 @@ export default async function page({
         </ContentMain>
       </section>
 
-      <ConsultarPorWhatsapp propiedad={data} />
+      <ConsultarPorWhatsapp propiedad={data.propiedad} />
     </>
   );
 }
