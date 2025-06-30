@@ -40,7 +40,6 @@ async function getUser() {
   const token = cookieStore.get("token")?.value || "";
 
   if (!token) {
-
     return;
   }
 
@@ -67,18 +66,24 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   let dataPropiedades;
-  const dataCiudades = await getServerSideProps("ciudades");
-  const dataTiposPropiedades = await getServerSideProps("tipo_propiedades");
-  const dataContacto = await getServerSideProps("contacto");
-
+  const [dataCiudades, dataTiposPropiedades, dataContacto, dataBanners] =
+    await Promise.all([
+      getServerSideProps("ciudades", 604800),
+      getServerSideProps("tipo_propiedades", 604800),
+      getServerSideProps("contacto", 86400),
+      getServerSideProps("banners", 86400),
+    ]);
   const user = await getUser();
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value || "";
 
   if (!token) {
-    dataPropiedades = await getServerSideProps("propiedades");
+    dataPropiedades = await getServerSideProps("propiedades", 3600);
   } else {
-    dataPropiedades = await getServerSideProps("propiedades/propiedadesConFavoritos");
+    dataPropiedades = await getServerSideProps(
+      "propiedades/propiedadesConFavoritos",
+      0
+    );
   }
 
   return (
@@ -86,30 +91,30 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMontserrat.variable} antialiased`}
       >
-         <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID!}>
-
-        <AuthProvider
-          dataCiudadesInitial={dataCiudades}
-          dataPropiedadesInitial={dataPropiedades}
-          dataTiposPropiedadesInitial={dataTiposPropiedades}
-          userAuthenticated={user}
-          dataContactoInitial={dataContacto}
-        >
-          {children}
-          <ModalRender />
-        </AuthProvider>
-        <Toaster
-          position="top-center"
-          richColors
-          closeButton
-          duration={4000}
-          toastOptions={{
-            style: {
-              fontFamily: "inherit",
-            },
-          }}
-        />
-         </GoogleOAuthProvider>
+        <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID!}>
+          <AuthProvider
+            dataCiudadesInitial={dataCiudades}
+            dataPropiedadesInitial={dataPropiedades}
+            dataTiposPropiedadesInitial={dataTiposPropiedades}
+            userAuthenticated={user}
+            dataContactoInitial={dataContacto}
+            dataBannersInitial={dataBanners}
+          >
+            {children}
+            <ModalRender />
+          </AuthProvider>
+          <Toaster
+            position="top-center"
+            richColors
+            closeButton
+            duration={4000}
+            toastOptions={{
+              style: {
+                fontFamily: "inherit",
+              },
+            }}
+          />
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

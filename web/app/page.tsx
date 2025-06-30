@@ -24,6 +24,7 @@ export default function Home() {
     dataCiudades,
     dataTiposPropiedades,
     dataContacto,
+    dataBanners,
     setModalContent,
     openModal,
     authUser,
@@ -44,7 +45,6 @@ export default function Home() {
       );
       openModal();
 
-      // Guardar en localStorage que ya se mostró
       localStorage.setItem("modalShownAfterLogin", "true");
     }
   }, [authUser, setModalContent, openModal]);
@@ -62,7 +62,7 @@ export default function Home() {
         contacto={dataContacto}
       />
       <section className="relative">
-        <InnovativeSlider />
+        <InnovativeSlider dataBanners={dataBanners}/>
         <div className="w-full absolute bottom-0  left-0 z-[100]">
           <SearchSection
             ciudades={dataCiudades}

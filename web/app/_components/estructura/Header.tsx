@@ -80,12 +80,12 @@ export const Header = ({
         scrollY ? "bg-white-main shadow-md" : ""
       } transition-all duration-300`}
     >
-      <ContentMain className="pt-2 sm:py-3">
+      <ContentMain className="py-1 sm:py-3">
         <nav className="flex justify-between items-center">
           <Link
             href={"/"}
             className={`block ${
-              scrollY ? "w-[120px]" : " w-[100px] md:w-[140px]"
+              scrollY ? "w-[80px] md:w-[120px]" : " w-[85px] md:w-[140px]"
             }  transition-all duration-200`}
           >
             <img

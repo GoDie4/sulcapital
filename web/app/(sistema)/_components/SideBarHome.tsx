@@ -4,105 +4,12 @@ import Link from "next/link";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CgLogOut } from "react-icons/cg";
 import { IoChevronBackOutline } from "react-icons/io5";
-import {
-  BsPeople, // Usuarios
-  BsGeoAlt, // Ciudades
-  BsHouseDoor, // Tipo de propiedad / Propiedades
-  BsPerson, // Mi perfil
-  BsEye, // Vistos
-  BsHeart,
-  BsDiagram2, // Mis favoritos
-} from "react-icons/bs";
 
 import DropdownMenu, { MenuCategory } from "./DropdownMenu";
 import { useAuth } from "@/assets/context/AuthContext";
-import { FaGlobe } from "react-icons/fa6";
 import { usePathname } from "next/navigation";
+import { menuItems, menuItemsAnunciante, menuItemsCliente } from "./SideBarSistema";
 
-const menuItems = [
-  {
-    title: "Web",
-    icon: <FaGlobe />,
-    route: "",
-  },
-  {
-    title: "Dashboard",
-    icon: <BsDiagram2 />,
-    route: "",
-  },
-  {
-    title: "Usuarios",
-    icon: <BsPeople />,
-    route: "usuarios",
-  },
-  {
-    title: "Ciudades",
-    icon: <BsGeoAlt />,
-    route: "ciudades",
-  },
-  {
-    title: "Tipo de prop.",
-    icon: <BsHouseDoor />,
-    route: "tipo-propiedades",
-  },
-  {
-    title: "Propiedades",
-    icon: <BsHouseDoor />,
-    route: "propiedades",
-  },
-  {
-    title: "Contacto",
-    icon: <BsHouseDoor />,
-    route: "contacto",
-  },
-];
-
-const menuItemsCliente = [
-  {
-    title: "Mi perfil",
-    icon: <BsPerson />,
-    route: "perfil",
-  },
-
-  {
-    title: "Vistos",
-    icon: <BsEye />,
-    route: "vistos",
-  },
-  {
-    title: "Mis favoritos",
-    icon: <BsHeart />,
-    route: "favoritos",
-  },
-];
-
-const menuItemsAnunciante = [
-  {
-    title: "Web",
-    icon: <FaGlobe />,
-    route: "",
-  },
-  {
-    title: "Mi perfil",
-    icon: <BsPerson />,
-    route: "perfil",
-  },
-  {
-    title: "Mis Propiedades",
-    icon: <BsHouseDoor />,
-    route: "propiedades",
-  },
-  {
-    title: "Vistos",
-    icon: <BsEye />,
-    route: "vistos",
-  },
-  {
-    title: "Mis favoritos",
-    icon: <BsHeart />,
-    route: "favoritos",
-  },
-];
 
 export const SideBarHome = ({
   showMenu,

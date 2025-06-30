@@ -1,11 +1,12 @@
-// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { jwtVerify, JWTPayload } from "jose";
-
-// Rutas que cada rol puede visitar
+import { compactVerify } from "jose";
+export interface JWTPayload {
+  id: number | string;
+  role: number | string;
+}
 const ROLE_ROUTES: Record<string, string[]> = {
-  administrador: ["/ciudades", "/usuarios", "/propiedades", "/sistema/perfil"],
+  administrador: ["/ciudades", "/usuarios", "/propiedades", "/sistema/perfil", "banners"],
   anunciante: [
     "/sistema/ciudades",
     "/sistema/propiedades",
@@ -21,16 +22,14 @@ const ROLE_ROUTES: Record<string, string[]> = {
   ],
 };
 
-async function getUserRoleFromToken(token: string): Promise<string | null> {
+ async function getUserRoleFromToken(token: string): Promise<string | null> {
   try {
-    const secret = new TextEncoder().encode(process.env.TOKEN_SECRET!);
-    const { payload }: { payload: JWTPayload } = await jwtVerify(token, secret);
+    const secret = new TextEncoder().encode('sulcapital_2025');
 
-    console.log("🔐 Payload JWT (jose):", payload);
-    if (payload && typeof payload === "object" && "role" in payload) {
-      return payload.role as string;
-    }
-    return null;
+    const { payload } = await compactVerify(token, secret);
+    const decodedPayload = JSON.parse(new TextDecoder().decode(payload)) as JWTPayload;
+
+    return decodedPayload?.role?.toString() ?? null;
   } catch (err) {
     console.error("❌ Error verificando JWT con jose:", err);
     return null;

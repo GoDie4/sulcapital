@@ -405,7 +405,9 @@ const crearPropiedad = async (req, res) => {
             where: { id: idUser },
             select: { publicaciones_automaticas: true },
         });
-        const estadoFinal = usuario?.publicaciones_automaticas ? "PUBLICADO" : estado;
+        const estadoFinal = usuario?.publicaciones_automaticas
+            ? "PUBLICADO"
+            : estado;
         const nuevaPropiedad = await prisma.propiedad.create({
             data: {
                 titulo,
@@ -649,6 +651,12 @@ const getPropiedadById = async (req, res) => {
                 imagenes: true,
                 tipoPropiedad: true,
                 ciudad: true,
+                usuario: {
+                    select: {
+                        celular: true,
+                        nombres: true
+                    },
+                },
             },
         });
         if (!propiedad) {

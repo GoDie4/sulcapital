@@ -19,7 +19,7 @@ import { useAuth } from "@/assets/context/AuthContext";
 import { FaGlobe } from "react-icons/fa6";
 import { usePathname } from "next/navigation";
 
-const menuItems = [
+export const menuItems = [
   {
     title: "Web",
     icon: <FaGlobe />,
@@ -29,6 +29,11 @@ const menuItems = [
     title: "Dashboard",
     icon: <BsDiagram2 />,
     route: "",
+  },
+  {
+    title: "Banners",
+    icon: <BsDiagram2 />,
+    route: "banners",
   },
   {
     title: "Usuarios",
@@ -57,7 +62,7 @@ const menuItems = [
   },
 ];
 
-const menuItemsCliente = [
+export const menuItemsCliente = [
   {
     title: "Mi perfil",
     icon: <BsPerson />,
@@ -76,7 +81,7 @@ const menuItemsCliente = [
   },
 ];
 
-const menuItemsAnunciante = [
+export const menuItemsAnunciante = [
   {
     title: "Web",
     icon: <FaGlobe />,

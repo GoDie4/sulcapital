@@ -3,36 +3,42 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
+import { Banner } from "../../(sistema)/sistema/banners/_components/table/ColumnasBanners";
+import { config } from "@/assets/config/config";
 
-interface SlideData {
-  id: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-}
+// interface SlideData {
+//   id: number;
+//   titulo: string;
+//   descripcion: string;
+//   imagen: string;
+//   posicion: string;
+// }
 
-const slides: SlideData[] = [
-  {
-    id: 1,
-    title: " Tu portal inmobiliario en la selva central",
-    description:
-      "Descubre propiedades únicas que se adaptan a tu estilo de vida.",
-    imageUrl: "/images/slides/slide1.webp",
-  },
-  {
-    id: 2,
-    title: " Haz realidad tus sueños",
-    description: "Te ayudamos a encontrar la propiedad perfecta para ti.",
-    imageUrl: "/images/slides/slide2.webp",
-  },
-  {
-    id: 3,
-    title: " Tu nuevo comienzo está aquí",
-    description:
-      "Explora nuestras exclusivas opciones de casas y departamentos.",
-    imageUrl: "/images/slides/slide3.webp",
-  },
-];
+// const slides: SlideData[] = [
+//   {
+//     id: 1,
+//     titulo: " Tu portal inmobiliario en la selva central",
+//     descripcion:
+//       "Descubre propiedades únicas que se adaptan a tu estilo de vida.",
+//     imagen: "/images/slides/slide1.webp",
+//     posicion: "1",
+//   },
+//   {
+//     id: 2,
+//     titulo: " Haz realidad tus sueños",
+//     descripcion: "Te ayudamos a encontrar la propiedad perfecta para ti.",
+//     imagen: "/images/slides/slide2.webp",
+//     posicion: "2",
+//   },
+//   {
+//     id: 3,
+//     titulo: " Tu nuevo comienzo está aquí",
+//     descripcion:
+//       "Explora nuestras exclusivas opciones de casas y departamentos.",
+//     imagen: "/images/slides/slide3.webp",
+//     posicion: "3",
+//   },
+// ];
 
 type AnimationType =
   | "morph3d"
@@ -41,7 +47,7 @@ type AnimationType =
   | "geometric"
   | "kaleidoscope";
 
-const InnovativeSlider: React.FC = () => {
+const InnovativeSlider = ({ dataBanners }: { dataBanners: Banner[] }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [animationType] = useState<AnimationType>("morph3d");
   const [isPlaying] = useState(true);
@@ -49,18 +55,18 @@ const InnovativeSlider: React.FC = () => {
   useEffect(() => {
     if (isPlaying) {
       const interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
+        setCurrentSlide((prev) => (prev + 1) % dataBanners.length);
       }, 12000);
       return () => clearInterval(interval);
     }
-  }, [isPlaying]);
+  }, [isPlaying, dataBanners]);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
+    setCurrentSlide((prev) => (prev + 1) % dataBanners.length);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    setCurrentSlide((prev) => (prev - 1 + dataBanners.length) % dataBanners.length);
   };
 
   const getAnimationVariants = () => {
@@ -240,7 +246,7 @@ const InnovativeSlider: React.FC = () => {
           <div
             className="absolute inset-0 w-full h-full bg-cover bg-center"
             style={{
-              backgroundImage: `url(${slides[currentSlide].imageUrl})`,
+              backgroundImage: `url(${config.API_IMAGE_URL}${dataBanners[currentSlide].imagen})`,
             }}
           />
           <div className="absolute inset-0 bg-black-main bg-opacity-40" />
@@ -269,7 +275,7 @@ const InnovativeSlider: React.FC = () => {
                 transition={{ delay: 0.3, duration: 0.8 }}
               >
                 {(() => {
-                  const words = slides[currentSlide].title.split(" ");
+                  const words = dataBanners[currentSlide].titulo.split(" ");
                   return words.map((word, index) => (
                     <span
                       key={index}
@@ -293,7 +299,7 @@ const InnovativeSlider: React.FC = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
               >
-                {slides[currentSlide].description}
+                {dataBanners[currentSlide].descripcion}
               </motion.p>
             </div>
           </motion.div>
@@ -332,7 +338,7 @@ const InnovativeSlider: React.FC = () => {
 
       {/* Slide Indicators */}
       <div className="fixed bottom-8 right-8 flex space-x-2 z-30">
-        {slides.map((_, index) => (
+        {dataBanners.map((_, index) => (
           <motion.button
             key={index}
             onClick={() => setCurrentSlide(index)}

@@ -5,4 +5,5 @@ export const config = {
   DOMAIN: process.env.NEXT_PUBLIC_DOMAIN || "",
   GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
   FIREBASE_KEY: process.env.NEXT_PUBLIC_FIREBASE_KEY || "",
+  TOKEN_SECRET: process.env.NEXT_PUBLIC_TOKEN_SECRET || ""
 };

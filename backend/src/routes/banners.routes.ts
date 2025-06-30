@@ -5,7 +5,7 @@ import { handleImageUpload, upload } from "../middlewares/images/uploadImage";
 import path from "path";
 import { verifyAdmin } from "../middlewares/JWTMiddleware";
 import {
-  createBanner,
+    createBanner,
   deleteBanner,
   getAllBanners,
   updateBanner,
@@ -16,7 +16,6 @@ const UPLOAD_DIR = path.resolve(__dirname, "../../public/banners");
 
 router.get("/", getAllBanners);
 
-// Crear con imagen
 router.post(
   "/agregar",
   verifyAdmin,
@@ -29,7 +28,6 @@ router.post(
   createBanner
 );
 
-// Actualizar con posible nueva imagen
 router.put(
   "/editar/:id",
   verifyAdmin,
@@ -42,7 +40,6 @@ router.put(
   updateBanner
 );
 
-// Eliminar
 router.delete("/eliminar/:id", verifyAdmin, deleteBanner);
 
 export default router;

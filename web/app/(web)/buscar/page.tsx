@@ -4,6 +4,7 @@ import { BannerInternas } from "../../_components/estructura/BannerInternas";
 import { ContentMain } from "../../_components/estructura/ContentMain";
 import { ContenedorBusqueda } from "./_components/ContenedorBusqueda";
 import { FiltrosBusqueda } from "./_components/FiltrosBusqueda";
+import { Suspense } from "react";
 
 export async function generateMetadata({
   searchParams,
@@ -56,7 +57,6 @@ export async function generateMetadata({
     alternates: {
       canonical: `https://sulcapital.pe/buscar?tipo_propiedad=${tipo_propiedad}&ciudad=${ciudad}&disponibilidad=${disponibilidad}`,
     },
-
   };
 }
 
@@ -86,7 +86,10 @@ export default async function page({ searchParams }: { searchParams: any }) {
   });
 
   const res = await fetch(
-    `${config.API_URL}/propiedades/buscar?${query.toString()}`
+    `${config.API_URL}/propiedades/buscar?${query.toString()}`,
+    {
+      next: { revalidate: 3600 },
+    }
   );
 
   const { data, pagination } = await res.json();
@@ -111,16 +114,20 @@ export default async function page({ searchParams }: { searchParams: any }) {
               />
             </div>
             <div className="w-full xl:w-4/5">
-              <ContenedorBusqueda
-                data={data}
-                pagination={pagination}
-                dataFiltrosActivos={{
-                  ciudad: ciudad,
-                  disponibilidad: disponibilidad,
-                  search: search,
-                  tipo_propiedad: tipo_propiedad,
-                }}
-              />
+              <Suspense
+                fallback={<div>Cargando resultados de búsqueda...</div>}
+              >
+                <ContenedorBusqueda
+                  data={data}
+                  pagination={pagination}
+                  dataFiltrosActivos={{
+                    ciudad: ciudad,
+                    disponibilidad: disponibilidad,
+                    search: search,
+                    tipo_propiedad: tipo_propiedad,
+                  }}
+                />
+              </Suspense>
             </div>
           </div>
         </ContentMain>

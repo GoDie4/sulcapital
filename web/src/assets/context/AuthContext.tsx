@@ -16,6 +16,7 @@ import { UserInterface } from "../../../app/(auth)/_components/AuthInterfaces";
 import axios from "axios";
 import { config } from "../config/config";
 import { EmpresaContacto } from "../../../app/(sistema)/sistema/contacto/_components/interface/ContactoInterfaces";
+import { Banner } from "../../../app/(sistema)/sistema/banners/_components/table/ColumnasBanners";
 
 interface AuthContextInterface {
   modalContent: ReactNode | null;
@@ -32,6 +33,7 @@ interface AuthContextInterface {
   dataTiposPropiedades: TipoPropiedad[];
   dataCiudades: CiudadList[];
   dataContacto: EmpresaContacto;
+  dataBanners: Banner[]
   authUser: UserInterface | null;
   setAuthUser: Dispatch<SetStateAction<UserInterface | null>>;
   setShowMenu: Dispatch<SetStateAction<boolean>>;
@@ -45,6 +47,7 @@ interface AuthProviderInterface {
   dataPropiedadesInitial: any[];
   dataContactoInitial: any;
   userAuthenticated: UserInterface | null;
+  dataBannersInitial: any[];
 }
 
 export type AuthContextValue = AuthContextInterface;
@@ -60,6 +63,7 @@ export const AuthProvider: React.FC<AuthProviderInterface> = ({
   dataTiposPropiedadesInitial,
   userAuthenticated,
   dataContactoInitial,
+  dataBannersInitial,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<React.ReactNode | null>(
@@ -71,6 +75,7 @@ export const AuthProvider: React.FC<AuthProviderInterface> = ({
   const [dataTiposPropiedades] = useState<TipoPropiedad[]>(
     dataTiposPropiedadesInitial
   );
+  const [dataBanners] = useState<Banner[]>(dataBannersInitial);
   const [dataContacto] = useState<EmpresaContacto>(dataContactoInitial);
   const [authUser, setAuthUser] = useState<UserInterface | null>(
     userAuthenticated
@@ -123,6 +128,7 @@ export const AuthProvider: React.FC<AuthProviderInterface> = ({
         dataContacto,
         setShowMenu,
         showMenu,
+        dataBanners
       }}
     >
       {children}
