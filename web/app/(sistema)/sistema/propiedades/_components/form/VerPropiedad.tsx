@@ -16,6 +16,7 @@ export const VerPropiedad = ({ row }: { row: any }) => {
           imagenes={row.imagenes}
           precio={row.precio}
           propiedadId={row.id}
+          celular=""
         />
         <DescripcionInmueble descripcion={row.descripcionLarga} />
         <VideoInmueble url={row.video ?? ""} />

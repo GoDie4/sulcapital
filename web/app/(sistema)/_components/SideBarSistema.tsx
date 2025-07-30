@@ -137,6 +137,7 @@ export const SideBarSistema = ({
   }, [authUser?.rol_id]);
   return (
     <header
+      id="HEADERSISTEMA"
       className={`py-8 lg:py-12 fixed z-[1706] ${
         path.includes("sistema") ? "top-[90px]" : "top-0"
       } lg:top-0 ${
@@ -183,6 +184,7 @@ export const SideBarSistema = ({
               menuItems={rutas}
               ocultarSideBar={ocultarSideBar}
               setOcultarSideBar={setOcultarSideBar}
+              setMenuRealSistemShow={setShowMenu}
             />
           </nav>
         </div>

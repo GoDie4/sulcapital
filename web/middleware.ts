@@ -24,7 +24,7 @@ const ROLE_ROUTES: Record<string, string[]> = {
 
  async function getUserRoleFromToken(token: string): Promise<string | null> {
   try {
-    const secret = new TextEncoder().encode('sulcapital_2025');
+    const secret = new TextEncoder().encode('SULCAPITAL__LOGOSPERU_2025');
 
     const { payload } = await compactVerify(token, secret);
     const decodedPayload = JSON.parse(new TextDecoder().decode(payload)) as JWTPayload;

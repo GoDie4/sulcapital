@@ -38,18 +38,30 @@ export const login = async (
       where: { id: usuarioExiste.rol_id },
     });
 
+    console.error("TOKEN PROCESS ENV:", process.env.TOKEN_SECRET);
+
+    console.error(
+      "TOKEN_SECRET:",
+      ENV.TOKEN_SECRET ? "[OK]" : "[❌ NO DEFINIDO]"
+    );
+
     const token = await createAccessToken({
       id: usuarioExiste.id,
       role: role?.nombre !== undefined ? role.nombre : "",
     });
 
+    console.error("TOKEN GENERADO:", token);
+
     res.cookie("token", token, {
-      sameSite: "none", // "lax" funciona bien localmente
-      secure: true, // false porque en localhost normalmente usas http
+      sameSite: "lax", // "lax" funciona bien localmente
+      secure: false, // false porque en localhost normalmente usas http
       httpOnly: true,
       domain: ENV.COOKIE_DOMAIN, // o simplemente omítelo en entorno local
       maxAge: mantenerConexion ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
     });
+
+    console.error("ENV.COOKIE_DOMAIN:", ENV.COOKIE_DOMAIN);
+
 
     const primerNombre = usuarioExiste.nombres.split(" ");
 
@@ -70,10 +82,24 @@ export const login = async (
       token: token,
     });
   } catch (error: any) {
-    console.error("Error al iniciar sesión", error);
-    return res.status(500).json({ message: "Error interno del servidor" });
+    console.error(
+      "TOKEN_SECRET:",
+      ENV.TOKEN_SECRET ? "[OK]" : "[❌ NO DEFINIDO]"
+    );
+
+    console.error("Error al iniciar sesión");
+    console.error("Detalles del error:", JSON.stringify(error, null, 2));
+    if (error instanceof Error) {
+      console.error("Mensaje:", error.message);
+      console.error("Stack:", error.stack);
+    } else {
+      console.error("Error no estándar:", error);
+    }
+
+    return res
+      .status(500)
+      .json({ message: "Error interno", error: error?.message || error });
   }
-  
 };
 
 export const register = async (
@@ -167,7 +193,7 @@ export const register = async (
     });
   } catch (error: any) {
     console.error("Error al registrar usuario", error);
-   
+
     return res.status(500).json({
       message: "Error interno del servidor",
     });
@@ -326,7 +352,7 @@ export const googleAuth = async (req: any, res: any) => {
     });
   } catch (error: any) {
     console.error("Error en autenticación con Google:", error);
-   
+
     return res.status(500).json({ message: "Error interno al autenticar" });
   }
 };
@@ -422,8 +448,6 @@ export const facebookAuth = async (req: any, res: any) => {
       usuario,
     });
   } catch (error: any) {
-   
-
     console.error("Error en Facebook auth:", error);
     return res
       .status(500)

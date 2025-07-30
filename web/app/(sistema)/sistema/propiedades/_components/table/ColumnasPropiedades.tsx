@@ -123,18 +123,20 @@ export const columnsPropiedad: ColumnDef<Propiedad>[] = [
     },
   },
   {
-    accessorKey: "fondoPortada",
-    header: "Portada",
+    accessorKey: "imagenes",
+    header: "Imágenes",
     cell: ({ row }) => {
-      const fondoPortadas = row.getValue("fondoPortada") as { url: string }[];
+      console.log(row.original);
+      console.log(row.getValue("imagenes"));
+      const imagenes = row.getValue("imagenes") as { url: string }[];
       return (
-        <img
-          src={`${config.API_IMAGE_URL}${
-            fondoPortadas[0] ? fondoPortadas[0].url : ""
-          }`}
-          alt={row.getValue("titulo")}
-          className="h-12 w-12 object-cover rounded"
-        />
+        <div className="flex gap-1">
+          <img
+            src={`${config.API_IMAGE_URL}${imagenes[0].url}`}
+            alt={`Imagen`}
+            className="h-10 w-10 object-cover rounded"
+          />
+        </div>
       );
     },
   },

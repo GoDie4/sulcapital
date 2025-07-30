@@ -13,7 +13,6 @@ import { ConsultarPorWhatsapp } from "../../_components/ConsultarPorWhatsapp";
 async function getPropiedad(id: string): Promise<any> {
   const response = await axios.get(`${config.API_URL}/propiedades/find/${id}`);
 
-  console.log(response.data.data);
   return response.data.data;
 }
 
@@ -144,7 +143,7 @@ export default async function page({
           />
         </ContentMain>
       </section>
-
+            
       <ConsultarPorWhatsapp propiedad={data.propiedad} />
     </>
   );

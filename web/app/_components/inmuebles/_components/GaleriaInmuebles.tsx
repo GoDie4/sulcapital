@@ -138,15 +138,19 @@ export const GaleriaInmuebles = ({
                 <h2 className=" mb-3 text-xl text-secondary-main font-TypographBold">
                   S/ {precio}
                 </h2>
-                <p className="flex items-center gap-1 mb-2 text-sm">
-                  <span className="text-secondary-main text-lg">
-                    <MdLocationPin />
-                  </span>
-                  <p>{direccion}</p>
-                </p>
-                <p className="text-black-900 line-clamp-2">
-                  {descripcionCorta}
-                </p>
+                {direccion && (
+                  <p className="flex items-center gap-1 mb-2 text-sm">
+                    <span className="text-secondary-main text-lg">
+                      <MdLocationPin />
+                    </span>
+                    <p>{direccion}</p>
+                  </p>
+                )}
+                {descripcionCorta && (
+                  <p className="text-black-900 line-clamp-2">
+                    {descripcionCorta}
+                  </p>
+                )}
 
                 <button
                   type="button"

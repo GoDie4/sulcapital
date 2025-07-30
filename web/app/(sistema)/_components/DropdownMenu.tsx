@@ -28,20 +28,24 @@ interface DropdownMenuProps {
   menuItems: MenuCategory[];
   ocultarSideBar?: boolean;
   setOcultarSideBar: Dispatch<SetStateAction<boolean>>;
+  setMenuRealSistemShow?: Dispatch<SetStateAction<boolean>>;
 }
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({
   menuItems,
   ocultarSideBar,
   setOcultarSideBar,
+  setMenuRealSistemShow,
 }) => {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
-  const { setShowMenu } = useAuth();
+  const {  setShowMenu } = useAuth();
 
   const pathname = usePathname();
   const toggleMenu = (title: string) => {
     setOpenMenu(openMenu === title ? null : title);
+    setShowMenu(false)
+    setMenuRealSistemShow?.(false)
   };
 
   const [submenuHeight, setSubmenuHeight] = useState(0);
@@ -73,7 +77,10 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
             {hasSubmenu ? (
               <button
                 type="button"
-                onClick={() => toggleMenu(menuItem.title)}
+                onClick={() => {
+                  toggleMenu(menuItem.title);
+                  setOcultarSideBar(false);
+                }}
                 className={`flex items-center ${
                   menuItem.route
                 } justify-between w-full px-3 py-2 space-x-2 bg-transparent rounded-md outline-none min-h-10 text-white-main hover:bg-secondary-800 
@@ -121,6 +128,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                 onClick={() => {
                   setOcultarSideBar(false);
                   setShowMenu(false);
+                  setMenuRealSistemShow?.(true);
                 }}
                 className={`flex items-center w-full ${
                   menuItem.route

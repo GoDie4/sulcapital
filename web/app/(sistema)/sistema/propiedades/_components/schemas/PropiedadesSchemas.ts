@@ -2,12 +2,11 @@ import * as yup from "yup";
 
 export const addPropiedadSchema = yup.object({
   titulo: yup.string().required("El título es obligatorio"),
-  descripcionCorta: yup.string().optional(),
-  direccion: yup.string().required("La dirección es obligatoria"),
+  //descripcionCorta: yup.string().optional(),
+  //direccion: yup.string().required("La dirección es obligatoria"),
   precio: yup
-    .number()
-    .required("El precio es obligatorio")
-    .positive("El precio debe ser positivo"),
+    .string()
+    .required("El precio es obligatorio"),
   video: yup.string().url("Debe ser una URL válida").nullable().optional(),
   coordenadas: yup.string().optional().nullable(),
   disponibilidad: yup

@@ -3,7 +3,7 @@ export interface AddPropiedad {
   descripcionLarga: string;
   descripcionCorta?: string;
   direccion: string;
-  precio: number;
+  precio: string;
   video?: string;
   coordenadas?: string;
   disponibilidad: disponibilidadPropiedad;

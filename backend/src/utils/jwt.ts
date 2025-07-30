@@ -7,6 +7,10 @@ export interface JWTPayload {
 }
 
 export default function createAccessToken(payload: JWTPayload) {
+  console.log("🛠️ Creando access token...");
+  console.log("Payload:", payload);
+  console.log("TOKEN_SECRET:", ENV.TOKEN_SECRET ? "[OK]" : "[❌ NO DEFINIDO]");
+
   return new Promise((resolve, reject) => {
     jwt.sign(
       payload,
@@ -15,7 +19,12 @@ export default function createAccessToken(payload: JWTPayload) {
         expiresIn: "1d",
       },
       (err: any, token: any) => {
-        if (err) reject();
+        if (err) {
+          console.error("❌ Error al firmar el token JWT:", err);
+          return reject(err);
+        }
+
+        console.log("✅ Token generado correctamente");
         resolve(token);
       }
     );

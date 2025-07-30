@@ -84,7 +84,7 @@ const SearchSection = ({
               >
                 <option value="">Todas las ubicaciones</option>
                 {ciudades.map((ciudad: CiudadList) => (
-                  <option value={ciudad.id} key={ciudad.id}>
+                  <option value={ciudad.nombre} key={ciudad.id}>
                     {ciudad.nombre}
                   </option>
                 ))}

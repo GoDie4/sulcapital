@@ -5,10 +5,11 @@ import { SistemaProvider } from "@/assets/context/SistemaContext";
 import { SideBarSistema } from "./SideBarSistema";
 import { HeaderSistema } from "./HeaderSistema";
 import Link from "next/link";
+import { useAuth } from "@/assets/context/AuthContext";
 
 export function ContentSistema({ children }: { children: React.ReactNode }) {
+  const { setShowMenu, showMenu } = useAuth();
   const [ocultarSideBar, setOcultarSideBar] = useState<boolean>(false);
-  const [menuShow, setMenuShow] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
 
   useEffect(() => {
@@ -36,10 +37,10 @@ export function ContentSistema({ children }: { children: React.ReactNode }) {
       </Link>
       <div className="flex">
         <SideBarSistema
-          showMenu={menuShow}
+          showMenu={showMenu}
           ocultarSideBar={ocultarSideBar}
           setOcultarSideBar={setOcultarSideBar}
-          setShowMenu={setMenuShow}
+          setShowMenu={setShowMenu}
         />
         <div
           className={`${
@@ -50,8 +51,8 @@ export function ContentSistema({ children }: { children: React.ReactNode }) {
         >
           <HeaderSistema
             scrolled={scrolled}
-            setShowMenu={setMenuShow}
-            showMenu={menuShow}
+            setShowMenu={setShowMenu}
+            showMenu={showMenu}
           />
           <div
             className={`w-full p-2 sm:p-4 md:p-6 md:pt-0 h-[calc(100dvh-90px)] overflow-y-auto ${

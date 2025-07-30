@@ -39,20 +39,13 @@ router.put("/cambiarEstado/:id", verifyAdmin, cambiarEstadoPropiedad);
 router.post(
   "/agregar",
   verifyAdminAndAnunciante,
-  upload.fields([
-    { name: "imagenes", maxCount: 6 },
-    { name: "fondoPortada", maxCount: 1 },
-  ]),
+  upload.fields([{ name: "imagenes", maxCount: 6 }]),
   handleMultipleImagesUpload("imagenes", {
     uploadDir: UPLOAD_DIR,
     filePrefix: "foto",
     thumbnailSize: { width: 1000, height: 667 },
   }),
-  handleMultipleImagesUpload("fondoPortada", {
-    uploadDir: UPLOAD_DIR,
-    filePrefix: "portada",
-    thumbnailSize: { width: 554, height: 360 },
-  }),
+
   crearPropiedad
 );
 router.put(

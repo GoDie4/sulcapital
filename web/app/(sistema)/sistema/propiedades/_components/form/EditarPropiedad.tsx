@@ -21,7 +21,6 @@ import { CiudadList } from "../../../ciudades/_components/interfaces/CiudadesInt
 import { SelectForm } from "@/components/form/SelectForm";
 import { TipoPropiedad } from "../../../tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 import RichTextEditor from "@/components/form/TextEditor";
-import { TextareaForm } from "@/components/form/TextArea";
 
 export const EditarPropiedad = () => {
   const { closeModal, authUser, rowEdit } = useAuth();
@@ -137,7 +136,7 @@ export const EditarPropiedad = () => {
       direccion: "",
       disponibilidad: "",
       estado: "EN_REVISION",
-      precio: 0,
+      precio: "",
       tipoPropiedadId: "",
       coordenadas: "",
       descripcionCorta: "",
@@ -316,7 +315,7 @@ export const EditarPropiedad = () => {
             />
           </div>
           <div className="w-full flex flex-col md:flex-row gap-4">
-            <div className="w-full lg:w-1/2  space-y-4">
+            <div className="w-full  space-y-4">
               <div className="w-full flex flex-col md:flex-row gap-4 ">
                 <div
                   className={`w-full  ${
@@ -327,7 +326,7 @@ export const EditarPropiedad = () => {
                     label="Precio"
                     placeholder="Escriba el precio"
                     name="precio"
-                    type="number"
+                    type="text"
                     value={values.precio}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -402,7 +401,7 @@ export const EditarPropiedad = () => {
                   </div>
                 )}
               </div>
-              <div className="w-full">
+              {/* <div className="w-full">
                 <InputForm
                   label="Dirección"
                   placeholder="Escriba la dirección de la propiedad"
@@ -418,9 +417,9 @@ export const EditarPropiedad = () => {
                   }`}
                 />
                 <Errors errors={errors.direccion} touched={touched.direccion} />
-              </div>
+              </div> */}
             </div>
-            <div className="w-full lg:w-1/2">
+            {/* <div className="w-full lg:w-1/2">
               <TextareaForm
                 label="Descripción corta"
                 name="descripcionCorta"
@@ -438,7 +437,7 @@ export const EditarPropiedad = () => {
                 errors={errors.descripcionCorta}
                 touched={touched.descripcionCorta}
               />
-            </div>
+            </div> */}
           </div>
           <div className="w-full flex flex-col md:flex-row gap-4">
             <div className="w-full lg:w-1/2">
