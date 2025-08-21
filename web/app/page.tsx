@@ -34,9 +34,11 @@ export default function Home() {
   const [ocultarSideBar, setOcultarSideBar] = useState<boolean>(false);
 
   useEffect(() => {
+    if(showMenu) setShowMenu(false)
+
     const alreadyShown = localStorage.getItem("modalShownAfterLogin");
 
-    if (authUser && !alreadyShown) {
+    if (authUser && Number(authUser.rol_id) === 2 && !alreadyShown) {
       setModalContent(
         <AgregarPropiedad
           pagination={{ total: 0, totalPages: 0, limit: 1, page: 1 }}
@@ -47,7 +49,8 @@ export default function Home() {
 
       localStorage.setItem("modalShownAfterLogin", "true");
     }
-  }, [authUser, setModalContent, openModal]);
+
+  }, [authUser, setModalContent, openModal, showMenu, setShowMenu]);
   return (
     <>
       <SideBarHome
@@ -62,7 +65,7 @@ export default function Home() {
         contacto={dataContacto}
       />
       <section className="relative">
-        <InnovativeSlider dataBanners={dataBanners}/>
+        <InnovativeSlider dataBanners={dataBanners} />
         <div className="w-full absolute bottom-0  left-0 z-[100]">
           <SearchSection
             ciudades={dataCiudades}

@@ -30,7 +30,7 @@ export interface CambiarEstado {
 export const disponibilidadPropiedades: listaDisponibilidadPropiedades[] = [
   {
     value: "",
-    nombre: "Seleccionar",
+    nombre: "Todos",
   },
   {
     value: "EN_VENTA",

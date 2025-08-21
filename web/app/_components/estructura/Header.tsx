@@ -118,7 +118,7 @@ export const Header = ({
             ))}
           </ul>
           <div className="w-fit flex items-center gap-4">
-            {authUser && (
+            {authUser && Number(authUser.rol_id) === 2 && (
               <button
                 type="button"
                 onClick={handleClick}

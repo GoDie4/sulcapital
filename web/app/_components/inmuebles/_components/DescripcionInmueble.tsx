@@ -14,7 +14,11 @@ const DescripcionInmueble = ({ descripcion }: { descripcion: string }) => {
           showMore ? "max-h-[1000px]" : "max-h-[320px]"
         }`}
       >
-        <div dangerouslySetInnerHTML={{ __html: descripcion }}></div>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: descripcion.replace(/^"+|"+$/g, "").trim(),
+          }}
+        ></div>
 
         {/* <p>
           Ubicada en un terreno de más de 8,000 pies cuadrados, con una

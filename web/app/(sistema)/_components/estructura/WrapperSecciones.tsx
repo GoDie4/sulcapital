@@ -46,7 +46,14 @@ export const WrapperSecciones = ({
   filters?: FilterBuscador[];
   noRenderAddButton?: boolean;
 }) => {
-  const { setModalContent, openModal, setRowEdit, setModalSize } = useAuth();
+  const {
+    setModalContent,
+    openModal,
+    setRowEdit,
+    setModalSize,
+    authUser,
+    setShowMenu,
+  } = useAuth();
   const router = useRouter();
   let accionesTable: ActionDefinition<any>[] = [{ type: "" }];
 
@@ -61,8 +68,8 @@ export const WrapperSecciones = ({
     {
       label: "Publicaciones automáticas",
       onAction: (row) => {
-        setModalContent(<HabilitarPublicacionesAutomaticas rowEdit={row}/>);
-        openModal()
+        setModalContent(<HabilitarPublicacionesAutomaticas rowEdit={row} />);
+        openModal();
       },
       type: "item",
     },
@@ -76,17 +83,21 @@ export const WrapperSecciones = ({
         setModalContent(<VerPropiedad row={row} />);
         openModal();
       },
-      type: "item",
+      type: "item" as const,
     },
-    {
-      label: "Cambiar estado",
-      onAction: (row) => {
-        setModalSize("small");
-        setModalContent(<CambiarEstadoPropiedad rowEdit={row} />);
-        openModal();
-      },
-      type: "item",
-    },
+    ...(authUser?.rol_id !== 2
+      ? [
+          {
+            label: "Cambiar estado",
+            onAction: (row: any) => {
+              setModalSize("small");
+              setModalContent(<CambiarEstadoPropiedad rowEdit={row} />);
+              openModal();
+            },
+            type: "item" as const,
+          },
+        ]
+      : []),
   ];
 
   if (actionsSeccion === "usuarios") {
@@ -105,12 +116,20 @@ export const WrapperSecciones = ({
     accionesTable
   );
 
+  const finalColumns =
+    typeof columns === "function"
+      ? columns((row: any) => {
+          setShowMenu(false);
+          router.push(`/propiedad/${row.id}/try`);
+        })
+      : columns;
+
   return (
     <DataTable
       data={data}
       rowActions={rowActions}
       pagination={pagination}
-      columns={columns}
+      columns={finalColumns}
       renderAddForm={renderAddForm}
       searchColumnId={searchColumnId}
       modalSize={modalSize}

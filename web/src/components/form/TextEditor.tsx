@@ -1,6 +1,6 @@
 "use client";
 // src/components/RichTextEditor.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
@@ -43,7 +43,11 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       },
     },
   });
-
+  useEffect(() => {
+    if (editor && initialValue) {
+      editor.commands.setContent(initialValue, false);
+    }
+  }, [initialValue, editor]);
   if (!editor) {
     return (
       <div className="animate-pulse">

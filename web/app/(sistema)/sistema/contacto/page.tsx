@@ -13,7 +13,6 @@ async function getContacto(): Promise<any> {
   }
 
   const data = await res.json();
-  console.log("👉 data recibida:", data);
   return data.contacto || null;
 }
 

@@ -10,7 +10,7 @@ const path_1 = __importDefault(require("path"));
 const ciudades_controller_1 = require("../controllers/ciudades.controller");
 const JWTMiddleware_1 = require("../middlewares/JWTMiddleware");
 const router = (0, express_1.Router)();
-const UPLOAD_DIR = path_1.default.resolve(__dirname, "../../public/ciudades");
+const UPLOAD_DIR = path_1.default.join(process.cwd(), "public", "ciudades");
 router.get("/", ciudades_controller_1.getCiudades);
 // Crear con imagen
 router.post("/agregar", JWTMiddleware_1.verifyAdmin, uploadImage_1.upload.fields([{ name: "imagen", maxCount: 1 }]), (0, uploadImage_1.handleImageUpload)("imagen", {

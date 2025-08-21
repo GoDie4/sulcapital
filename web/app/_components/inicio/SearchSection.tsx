@@ -17,7 +17,7 @@ const SearchSection = ({
   const router = useRouter();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("EN_VENTA");
+  const [selectedFilter, setSelectedFilter] = useState("");
   const [propertyType, setPropertyType] = useState("");
   const [locacion, setLocacion] = useState("");
 

@@ -119,7 +119,7 @@ export const FiltrosBusqueda = ({
             setFiltrosActivos({
               ...filtrosActivos,
               disponibilidad:
-                selectedName !== "Seleccionar" ? selectedName : "",
+                selectedName !== "Todos" ? selectedName : "",
             });
           }}
           className="w-full h-[50px] md:h-[60px] px-4 text-sm border-2 border-gray-200 rounded-main focus:border-secondary-main focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white-main"
@@ -147,12 +147,12 @@ export const FiltrosBusqueda = ({
             setFiltrosActivos({
               ...filtrosActivos,
               ciudad:
-                selectedName !== "Seleccionar ubicación" ? selectedName : "",
+                selectedName !== "Todas las ubicaciones" ? selectedName : "",
             });
           }}
           className="w-full h-[50px] md:h-[60px] px-4 text-sm border-2 border-gray-200 rounded-main focus:border-secondary-main focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white-main"
         >
-          <option value="">Seleccionar ubicación</option>
+          <option value="">Todas las ubicaciones</option>
           {dataCiudades.map((ciudad: CiudadList) => (
             <option value={ciudad.nombre.toLocaleLowerCase()} key={ciudad.id}>
               {ciudad.nombre}
@@ -176,12 +176,12 @@ export const FiltrosBusqueda = ({
             setFiltrosActivos({
               ...filtrosActivos,
               tipo_propiedad:
-                selectedName !== "Seleccionar" ? selectedName : "",
+                selectedName !== "Todos" ? selectedName : "",
             });
           }}
           className="w-full h-[50px] md:h-[60px] text-sm px-4 border-2 border-gray-200 rounded-main focus:border-secondary-main focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white-main"
         >
-          <option value="">Seleccionar</option>
+          <option value="">Todos</option>
           {dataTiposPropiedades.map((tipo: TipoPropiedad) => (
             <option value={tipo.nombre.toLocaleLowerCase()} key={tipo.id}>
               {tipo.nombre}

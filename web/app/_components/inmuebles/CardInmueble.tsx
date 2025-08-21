@@ -73,8 +73,16 @@ const CardInmuebleList = ({
             >
               <SwiperSlide>
                 <img
-                  src={`${config.API_IMAGE_URL}${data.imagenes[0].url}`}
-                  alt={`${data.tipoPropiedad.nombre} en ${data.ciudad.nombre}`}
+                  src={
+                    data?.imagenes?.[0]?.url
+                      ? `${config.API_IMAGE_URL}${data.imagenes[0].url}`
+                      : "/images/placeholder.jpg" // Imagen por defecto
+                  }
+                  alt={
+                    data?.tipoPropiedad?.nombre && data?.ciudad?.nombre
+                      ? `${data.tipoPropiedad.nombre} en ${data.ciudad.nombre}`
+                      : "Propiedad"
+                  }
                   className="w-full h-32 sm:h-40 object-cover transition-transform duration-300 group-hover:scale-105"
                 />
               </SwiperSlide>
@@ -156,8 +164,16 @@ const CardInmuebleGrid = ({
           >
             <SwiperSlide>
               <img
-                src={`${config.API_IMAGE_URL}${data.imagenes[0].url}`}
-                alt={`${data.tipoPropiedad.nombre} en ${data.ciudad.nombre}`}
+                src={
+                  data?.imagenes?.[0]?.url
+                    ? `${config.API_IMAGE_URL}${data.imagenes[0].url}`
+                    : "/images/placeholder.jpg" // Imagen por defecto
+                }
+                alt={
+                  data?.tipoPropiedad?.nombre && data?.ciudad?.nombre
+                    ? `${data.tipoPropiedad.nombre} en ${data.ciudad.nombre}`
+                    : "Propiedad"
+                }
                 className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-105"
               />
             </SwiperSlide>

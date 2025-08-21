@@ -73,7 +73,13 @@ export const ContenedorBusqueda = ({
             <button
               type="button"
               onClick={() => {
-                setModalContent(<FormContactoInmueble idPropiedad="" />);
+                setModalContent(
+                  <FormContactoInmueble
+                    idPropiedad=""
+                    ciudad={dataFiltrosActivos.ciudad}
+                    tipo={dataFiltrosActivos.tipo_propiedad}
+                  />
+                );
                 openModal();
               }}
               className="text-red-500"

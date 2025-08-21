@@ -51,9 +51,6 @@ exports.recuperarSchema = zod_1.z.object({
     }),
 });
 exports.cambiarContrasenaSchema = zod_1.z.object({
-    token: zod_1.z.string({
-        required_error: "Token requerido",
-    }),
     newPassword: zod_1.z.string({
         required_error: "La contraseña es requerida",
     }),

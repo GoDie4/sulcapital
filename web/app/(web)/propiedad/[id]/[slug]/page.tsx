@@ -9,11 +9,21 @@ import { OtrosInmueblesUsuario } from "../../../../_components/inmuebles/_compon
 import { ContenteInmuebles } from "../../_components/ContenteInmuebles";
 import ClientMediaInmueble from "../../../../_components/inmuebles/_components/ImportDynamicUbicacionVideoInmueble";
 import { ConsultarPorWhatsapp } from "../../_components/ConsultarPorWhatsapp";
+import { redirect } from "next/navigation";
 
 async function getPropiedad(id: string): Promise<any> {
-  const response = await axios.get(`${config.API_URL}/propiedades/find/${id}`);
-
-  return response.data.data;
+  try {
+    const response = await axios.get(
+      `${config.API_URL}/propiedades/find/${id}`
+    );
+    return response.data.data;
+  } catch (error: any) {
+    // Si es un 404 o cualquier otro error
+    if (axios.isAxiosError(error)) {
+      redirect("/"); // ⬅️ Redirige al inicio
+    }
+    throw error;
+  }
 }
 
 export async function generateMetadata({ params }: { params: any }) {
@@ -143,7 +153,7 @@ export default async function page({
           />
         </ContentMain>
       </section>
-            
+
       <ConsultarPorWhatsapp propiedad={data.propiedad} />
     </>
   );

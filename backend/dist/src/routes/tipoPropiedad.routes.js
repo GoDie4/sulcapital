@@ -10,7 +10,7 @@ const path_1 = __importDefault(require("path"));
 const tipoPropiedades_controller_1 = require("../controllers/tipoPropiedades.controller");
 const JWTMiddleware_1 = require("../middlewares/JWTMiddleware");
 const router = (0, express_1.Router)();
-const UPLOAD_DIR = path_1.default.resolve(__dirname, "../../public/tipo_propiedades");
+const UPLOAD_DIR = path_1.default.join(process.cwd(), "public", "tipo_propiedades");
 router.get("/", tipoPropiedades_controller_1.getTiposPropiedades);
 router.post("/agregar", JWTMiddleware_1.verifyAdmin, uploadImage_1.upload.fields([
     { name: "imagen", maxCount: 1 },

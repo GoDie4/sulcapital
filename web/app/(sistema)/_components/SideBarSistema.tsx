@@ -26,6 +26,11 @@ export const menuItems = [
     route: "",
   },
   {
+    title: "Mi perfil",
+    icon: <BsPerson />,
+    route: "perfil",
+  },
+  {
     title: "Dashboard",
     icon: <BsDiagram2 />,
     route: "",

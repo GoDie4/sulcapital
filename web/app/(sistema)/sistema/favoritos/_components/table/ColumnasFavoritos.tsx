@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { Propiedad } from "../../../propiedades/_components/table/ColumnasPropiedades";
 import { config } from "@/assets/config/config";
 import Link from "next/link";
 import axios from "axios";
 import { toast } from "sonner";
 
 /* eslint-disable @next/next/no-img-element */
-export const columnsFavoritos: ColumnDef<Propiedad>[] = [
+export const columnsFavoritos = (
+  onVerEnWeb: (row: any) => void
+): ColumnDef<any>[] => [
   {
     accessorKey: "id",
     header: "Ir",
@@ -15,6 +17,7 @@ export const columnsFavoritos: ColumnDef<Propiedad>[] = [
       return (
         <Link
           href={`/propiedad/${row.original.id}/try`}
+          onClick={() => onVerEnWeb(row.original)} // 👈 Dispara el estado global
           className="underline text-secondary-main text-center"
         >
           Ver en la web
@@ -31,7 +34,6 @@ export const columnsFavoritos: ColumnDef<Propiedad>[] = [
     header: "Precio",
     cell: ({ row }) => <span>{String(row.getValue("precio"))}</span>,
   },
-
   {
     accessorKey: "disponibilidad",
     header: "Disponibilidad",
@@ -78,11 +80,19 @@ export const columnsFavoritos: ColumnDef<Propiedad>[] = [
     accessorKey: "fondoPortada",
     header: "Portada",
     cell: ({ row }) => {
-      const fondoPortadas = row.getValue("fondoPortada") as { url: string }[];
+      const fondoPortadas = row.getValue("fondoPortada") as
+        | { url: string }[]
+        | undefined;
+
+      const url =
+        fondoPortadas && fondoPortadas.length > 0 && fondoPortadas[0].url
+          ? `${config.API_IMAGE_URL}${fondoPortadas[0].url}`
+          : "/placeholder.jpg";
+
       return (
         <img
-          src={`${config.API_IMAGE_URL}${fondoPortadas[0].url}`}
-          alt={row.getValue("titulo")}
+          src={url}
+          alt={row.getValue("titulo") || "Sin portada"}
           className="h-12 w-12 object-cover rounded"
         />
       );
@@ -106,7 +116,6 @@ export const columnsFavoritos: ColumnDef<Propiedad>[] = [
           );
 
           toast.success(response.data?.mensaje);
-
           window.location.reload();
         } catch (err) {
           console.error("Error al actualizar favorito:", err);

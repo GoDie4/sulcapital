@@ -25,7 +25,6 @@ import RichTextEditor from "@/components/form/TextEditor";
 export const EditarPropiedad = () => {
   const { closeModal, authUser, rowEdit } = useAuth();
 
-  const [portada, setPortada] = useState<(File | string)[]>([]);
   const [imagenes, setImagenes] = useState<(File | string)[]>([]);
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -42,10 +41,6 @@ export const EditarPropiedad = () => {
     (img: any) => `${config.API_IMAGE_URL}${img.url}`
   );
 
-  const urlsPortadas: string[] = rowEdit.fondoPortada.map(
-    (img: any) => `${config.API_IMAGE_URL}${img.url}`
-  );
-
   const searchParams = useSearchParams();
 
   const router = useRouter();
@@ -58,11 +53,7 @@ export const EditarPropiedad = () => {
       setLoading(false);
       return;
     }
-    if (rowEdit.fondoPortada.length === 0 && portada.length === 0) {
-      toast.error("Debes agregar un icono para el tipo de propiedad");
-      setLoading(false);
-      return;
-    }
+
     try {
       const formData = new FormData();
       formData.append("titulo", values.titulo);
@@ -85,9 +76,6 @@ export const EditarPropiedad = () => {
       formData.append("estado", values.estado);
       formData.append("idUser", String(authUser?.id));
 
-      if (portada.length > 0) {
-        formData.append("fondoPortada", portada[0]);
-      }
       if (imagenes.length > 0) {
         imagenes.forEach((file) => {
           formData.append("imagenes", file);
@@ -196,9 +184,16 @@ export const EditarPropiedad = () => {
     if (rowEdit !== null) {
       setFieldValue("exclusivo", rowEdit.exclusivo === 1 ? "si" : "no");
       setValues({ ...rowEdit });
+      // Limpia comillas dobles escapadas
+      let html = rowEdit.descripcionLarga || "";
+      try {
+        html = JSON.parse(html);
+      } catch {
+        html = html.replace(/^"|"$/g, "");
+      }
+      setDescripcion(html);
     }
   }, [rowEdit, setValues, setFieldValue]);
-
 
   return (
     <>
@@ -209,6 +204,22 @@ export const EditarPropiedad = () => {
           </h2>
         </div>
         <div className="w-full space-y-6">
+          <div className="w-full">
+            <label
+              htmlFor=""
+              className="flex gap-1 text-sm text-black-900 mb-1"
+            >
+              Imagenes{" "}
+            </label>
+            <UploadImages
+              maxFiles={6}
+              maxHeight={2048}
+              maxWidth={2560}
+              maxSize={1 * 1024 * 1024}
+              onChange={setImagenes}
+              filesInit={urlsImagenes}
+            />
+          </div>
           <div className="w-full flex flex-wrap space-y-4 justify-between items-start">
             <div
               className={`w-full  ${
@@ -477,40 +488,6 @@ export const EditarPropiedad = () => {
               />
               <Errors errors={errors.video} touched={touched.video} />
             </div>
-          </div>
-
-          <div className="w-full">
-            <label
-              htmlFor=""
-              className="flex gap-1 text-sm text-black-900 mb-1"
-            >
-              Imagenes{" "}
-            </label>
-            <UploadImages
-              maxFiles={6}
-              maxHeight={2048}
-              maxWidth={2560}
-              maxSize={1 * 1024 * 1024}
-              onChange={setImagenes}
-              filesInit={urlsImagenes}
-            />
-          </div>
-
-          <div className="w-full">
-            <label
-              htmlFor=""
-              className="flex gap-1 text-sm text-black-900 mb-1"
-            >
-              Portada{" "}
-            </label>
-            <UploadImages
-              filesInit={urlsPortadas}
-              maxFiles={3}
-              maxHeight={1024}
-              maxWidth={1024}
-              maxSize={0.5 * 1024 * 1024}
-              onChange={setPortada}
-            />
           </div>
         </div>
         <div className="w-full flex flex-col-reverse md:flex-row gap-2 md:gap-4 items-center justify-center mt-6">

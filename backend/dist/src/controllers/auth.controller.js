@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.facebookAuth = exports.googleAuth = exports.logout = exports.cambiarContrasena = exports.recuperarContrasena = exports.register = exports.login = void 0;
+exports.facebookAuth = exports.googleAuth = exports.logout = exports.cambiarContrasena = exports.cambiarContrasenaLogueado = exports.cambiarContrasenaConToken = exports.recuperarContrasena = exports.register = exports.login = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const crypto_1 = __importDefault(require("crypto"));
 const jwt_1 = __importDefault(require("../utils/jwt"));
@@ -36,8 +36,8 @@ const login = async (req, res) => {
         });
         console.error("TOKEN GENERADO:", token);
         res.cookie("token", token, {
-            sameSite: "none", // "lax" funciona bien localmente
-            secure: true, // false porque en localhost normalmente usas http
+            sameSite: "lax", // "lax" funciona bien localmente
+            secure: false, // false porque en localhost normalmente usas http
             httpOnly: true,
             domain: config_1.ENV.COOKIE_DOMAIN, // o simplemente omítelo en entorno local
             maxAge: mantenerConexion ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
@@ -175,21 +175,100 @@ const recuperarContrasena = async (req, res) => {
     });
 };
 exports.recuperarContrasena = recuperarContrasena;
+const cambiarContrasenaConToken = async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+        if (!token || !newPassword) {
+            return res
+                .status(400)
+                .json({ message: "Token y nueva contraseña son obligatorios" });
+        }
+        // 1️⃣ Buscar el token en la base de datos
+        const tokenRecord = await database_1.default.passwordResetToken.findUnique({
+            where: {
+                token,
+            },
+        });
+        if (!tokenRecord) {
+            return res.status(400).json({ message: "Token inválido" });
+        }
+        // 2️⃣ Verificar si expiró
+        if (tokenRecord.expiresAt < new Date()) {
+            return res.status(400).json({ message: "El token ha expirado" });
+        }
+        // 3️⃣ Hashear la nueva contraseña
+        const hashedPassword = await bcrypt_1.default.hash(newPassword, 10);
+        // 4️⃣ Actualizar la contraseña del usuario
+        await database_1.default.usuario.update({
+            where: { id: tokenRecord.userId },
+            data: { password: hashedPassword },
+        });
+        // 5️⃣ Eliminar el token para que no se reutilice
+        await database_1.default.passwordResetToken.delete({
+            where: { id: tokenRecord.id },
+        });
+        return res.json({ message: "Contraseña cambiada correctamente" });
+    }
+    catch (error) {
+        console.error("Error al cambiar la contraseña:", error);
+        return res.status(500).json({ message: "Error al cambiar la contraseña" });
+    }
+};
+exports.cambiarContrasenaConToken = cambiarContrasenaConToken;
+const cambiarContrasenaLogueado = async (req, res) => {
+    try {
+        const { newPassword } = req.body;
+        if (!newPassword) {
+            return res.status(400).json({ message: "Faltan datos" });
+        }
+        const usuario = await database_1.default.usuario.findUnique({
+            where: { id: req.user.id },
+        });
+        if (!usuario) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+        const hashedPassword = await bcrypt_1.default.hash(newPassword, 10);
+        await database_1.default.usuario.update({
+            where: { id: usuario.id },
+            data: { password: hashedPassword },
+        });
+        return res.json({ message: "Contraseña actualizada correctamente" });
+    }
+    catch (error) {
+        console.error("Error al cambiar contraseña:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
+};
+exports.cambiarContrasenaLogueado = cambiarContrasenaLogueado;
 const cambiarContrasena = async (req, res) => {
     const { token, newPassword } = req.body;
-    const registro = await database_1.default.passwordResetToken.findUnique({
-        where: { token },
-    });
-    if (!registro || registro.expiresAt < new Date()) {
-        return res.status(400).json({ message: "Token inválido o expirado" });
+    let userId = undefined;
+    if (token) {
+        // 🔹 Modo recuperación vía email
+        const registro = await database_1.default.passwordResetToken.findUnique({
+            where: { token },
+        });
+        if (!registro || registro.expiresAt < new Date()) {
+            return res.status(400).json({ message: "Token inválido o expirado" });
+        }
+        userId = registro.userId;
+        // Borramos el token ya usado
+        await database_1.default.passwordResetToken.delete({ where: { token } });
     }
+    else if (req.user?.id) {
+        // 🔹 Modo usuario logueado
+        userId = req.user.id;
+    }
+    else {
+        return res.status(401).json({ message: "No autorizado" });
+    }
+    // 🔹 Actualizamos contraseña
     const hashed = await bcrypt_1.default.hash(newPassword, 10);
     await database_1.default.usuario.update({
-        where: { id: registro.userId },
+        where: { id: userId },
         data: { password: hashed },
     });
-    await database_1.default.passwordResetToken.delete({ where: { token } });
-    res.json({ message: "Contraseña actualizada con éxito" });
+    return res.json({ message: "Contraseña actualizada con éxito" });
 };
 exports.cambiarContrasena = cambiarContrasena;
 const logout = (req, res) => {

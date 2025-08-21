@@ -159,7 +159,6 @@ export const AgregarPropiedad = ({
       try {
         setLoadCiudades(true);
         const response = await axios.get(`${config.API_URL}/ciudades`);
-        console.log("DATA: ", response.data.data);
         setCiudades(response.data.data);
       } catch (error: any) {
         toast.error(

@@ -39,7 +39,7 @@ const ModalWrapper: React.FC<ModalProps> = ({ componente, modalSize }) => {
           onMouseDown={handleMouseDown}
           onClick={handleBackdropClick}
         >
-          <div className="fixed inset-0  flex items-center justify-center bg-black-main/20 z-[1300]">
+          <div className="fixed inset-0  flex items-center justify-center bg-black-main/20 z-[1710]">
             <motion.div
               initial={{ bottom: "-250%" }}
               animate={{ bottom: "0" }}

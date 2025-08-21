@@ -238,6 +238,18 @@ export const addUserReq = async (req: any, res: any, next: NextFunction) => {
     next();
   } catch (error: any) {
     console.error("Error en attachUser middleware:", error);
+
+    // Detectar token vencido
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expirado" });
+    }
+
+    // Detectar token inválido
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Token inválido" });
+    }
+
+    // Otros errores
     return res
       .status(500)
       .json({ message: "Error al autenticar usuario.", error: error.message });

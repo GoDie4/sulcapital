@@ -39,24 +39,37 @@ async function getUser() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value || "";
 
-  if (!token) {
-    return;
+  // Si no hay token, devolver null
+  if (!token) return null;
+
+  // Validar que sea un JWT válido en formato (3 partes)
+  if (token.split(".").length !== 3) {
+    cookieStore.delete("token");
+    return null;
   }
 
-  if (token && token.split(".").length === 3) {
-    try {
-      const response = await axios.get(`${config.API_URL}/user/yo`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Cookie: `token=${token}`,
-        },
-        withCredentials: true,
-      });
+  try {
+    const response = await axios.get(`${config.API_URL}/user/yo`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Cookie: `token=${token}`,
+      },
+      withCredentials: true,
+    });
 
+    // Validar que la API realmente devuelva el usuario
+    if (response.data?.usuario) {
       return response.data.usuario;
-    } catch (error) {
-      console.log(error);
+    } else {
+      // Si la API no devuelve el usuario esperado, borrar token
+      cookieStore.delete("token");
+      return null;
     }
+  } catch (error) {
+    console.error("Error al obtener usuario:", error);
+    // Si hay error (401, 500, etc.), eliminar token y devolver null
+    cookieStore.delete("token");
+    return null;
   }
 }
 
@@ -68,17 +81,17 @@ export default async function RootLayout({
   let dataPropiedades;
   const [dataCiudades, dataTiposPropiedades, dataContacto, dataBanners] =
     await Promise.all([
-      getServerSideProps("ciudades", 604800),
-      getServerSideProps("tipo_propiedades", 604800),
-      getServerSideProps("contacto", 86400),
-      getServerSideProps("banners", 86400),
+      getServerSideProps("ciudades", 0),
+      getServerSideProps("tipo_propiedades", 0),
+      getServerSideProps("contacto", 0),
+      getServerSideProps("banners", 0),
     ]);
   const user = await getUser();
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value || "";
 
   if (!token) {
-    dataPropiedades = await getServerSideProps("propiedades", 3600);
+    dataPropiedades = await getServerSideProps("propiedades", 0);
   } else {
     dataPropiedades = await getServerSideProps(
       "propiedades/propiedadesConFavoritos",

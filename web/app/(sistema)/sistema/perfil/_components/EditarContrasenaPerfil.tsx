@@ -26,8 +26,8 @@ export const FormEditarContrasena = () => {
     };
 
     try {
-      const response = await axios.post(
-        `${config.API_URL}/cambiarContrasena`,
+      const response = await axios.put(
+        `${config.API_URL}/user/cambiarContrasena/logueado`,
         data,
         {
           headers: { "Content-Type": "application/json" },
@@ -37,7 +37,7 @@ export const FormEditarContrasena = () => {
 
       if (response.status === 200) {
         toast.success(response.data.message);
-        router.push("/login");
+        router.push("/iniciar-sesion");
       }
     } catch (error: any) {
       console.log(error);

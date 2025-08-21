@@ -76,15 +76,22 @@ export const columnsVistos: ColumnDef<Propiedad>[] = [
     accessorKey: "fondoPortada",
     header: "Portada",
     cell: ({ row }) => {
-      const fondoPortadas = row.getValue("fondoPortada") as { url: string }[];
+      const fondoPortadas = row.getValue("fondoPortada") as
+        | { url: string }[]
+        | undefined;
+
+      const url =
+        fondoPortadas && fondoPortadas.length > 0 && fondoPortadas[0].url
+          ? `${config.API_IMAGE_URL}${fondoPortadas[0].url}`
+          : "/placeholder.jpg"; // ruta a imagen por defecto
+
       return (
         <img
-          src={`${config.API_IMAGE_URL}${fondoPortadas[0].url}`}
-          alt={row.getValue("titulo")}
+          src={url}
+          alt={row.getValue("titulo") || "Sin portada"}
           className="h-12 w-12 object-cover rounded"
         />
       );
     },
   },
-
 ];

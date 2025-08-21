@@ -13,7 +13,10 @@ import {
   verifyAnuncianteOrCliente,
 } from "../middlewares/JWTMiddleware";
 import { validateSchema } from "../middlewares/validatorSchemas.middleware";
-import { cambiarContrasena } from "../controllers/auth.controller";
+import {
+  cambiarContrasenaConToken,
+  cambiarContrasenaLogueado,
+} from "../controllers/auth.controller";
 import { cambiarContrasenaSchema } from "../schemas/auth.schema";
 
 const router = Router();
@@ -23,10 +26,18 @@ router.get("/perfil/:userId", authRequired, profile);
 router.put("/editarPerfil", verifyAnuncianteOrCliente, editarPerfil);
 router.get("/yo", addUserReq, yo);
 router.put(
-  "/cambiarContrasena",
+  "/cambiarContrasena/token",
   validateSchema(cambiarContrasenaSchema),
-  cambiarContrasena
+  cambiarContrasenaConToken
 );
+
+router.put(
+    "/cambiarContrasena/logueado",
+    addUserReq,
+    validateSchema(cambiarContrasenaSchema),
+    cambiarContrasenaLogueado
+  );
+
 router.post(
   "/publicaciones-automaticas",
   verifyAdmin,

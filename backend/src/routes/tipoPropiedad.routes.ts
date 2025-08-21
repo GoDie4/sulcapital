@@ -12,7 +12,8 @@ import {
 import { verifyAdmin } from "../middlewares/JWTMiddleware";
 
 const router = Router();
-const UPLOAD_DIR = path.resolve(__dirname, "../../public/tipo_propiedades");
+const UPLOAD_DIR = path.join(process.cwd(), "public", "tipo_propiedades");
+
 
 router.get("/", getTiposPropiedades);
 

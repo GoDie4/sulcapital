@@ -1,61 +1,68 @@
 import multer from "multer";
-import sharp from "sharp";
-import { Request, Response, NextFunction } from "express";
 import path from "path";
-import fs from "fs/promises";
+import fs from "fs";
+import { RequestHandler } from "express";
 
-// Configuración de Multer: usamos memoryStorage para procesar con Sharp
+interface UploadOptions {
+  uploadDir: string; // Debe ser ruta absoluta hacia /public/<carpeta>
+  filePrefix?: string;
+  // thumbnailSize?: { width: number; height: number }; // ← ya no se usa
+}
+
+// Usamos memoryStorage: los archivos vienen en memoria (buffer)
 const storage = multer.memoryStorage();
 export const upload = multer({ storage });
-export function handleMultipleImagesUpload(
+
+export const handleMultipleImagesUpload = (
   fieldName: string,
-  opts: {
-    uploadDir: string;
-    filePrefix?: string;
-    thumbnailSize?: { width: number; height: number };
-  }
-) {
-  const {
-    uploadDir,
-    filePrefix = "",
-    thumbnailSize = { width: 120, height: 120 },
-  } = opts;
+  opts: UploadOptions
+): RequestHandler => {
+  const { uploadDir, filePrefix = "" } = opts;
 
-  fs.mkdir(uploadDir, { recursive: true }).catch(console.error);
-
-  return async (req: Request, res: Response, next: NextFunction) => {
-    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-    const fileFields = files[fieldName];
-    if (!fileFields || fileFields.length === 0) return next();
-
-    const relativePath = uploadDir.split("public")[1]?.replace(/\\/g, "/");
-    const imagePaths: string[] = [];
-
+  return async (req, res, next) => {
     try {
-      for (const file of fileFields) {
-        const ext = path.extname(file.originalname).toLowerCase();
-        const baseName = `${filePrefix}-${Date.now()}-${Math.round(
-          Math.random() * 1e9
-        )}`;
-        //const originalName = `${baseName}${ext}`;
-        const thumbName = `${baseName}-${fieldName}${ext}`;
-
-        // Procesar y guardar la miniatura (o la imagen original si quieres)
-        await sharp(file.buffer)
-          .resize(thumbnailSize.width, thumbnailSize.height)
-          .toFile(path.join(uploadDir, thumbName));
-
-        // Guardar la ruta (puedes usar originalName si quieres la original también)
-        imagePaths.push(`${relativePath}/${thumbName}`);
+      // Asegurar carpeta destino
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
       }
 
-      // Inyecta las rutas en req.body como array
-      req.body[`${fieldName}`] = imagePaths;
+      // Archivos del campo (ej: "imagenes" o "fondoPortada")
+      const files = (req.files as Record<string, Express.Multer.File[]>)?.[
+        fieldName
+      ];
+
+      if (!files || files.length === 0) {
+        // No llegaron archivos en ese campo; no rompemos, seguimos
+        return next();
+      }
+
+      const processedFiles: string[] = [];
+      // nombre de la carpeta pública (p.ej. "propiedades")
+      const publicFolderName = path.basename(uploadDir); 
+
+      for (const file of files) {
+        const ext = path.extname(file.originalname) || ".jpg";
+        const baseName = `${filePrefix}-${Date.now()}-${Math.round(
+          Math.random() * 1e9
+        )}${ext}`;
+        const filePath = path.join(uploadDir, baseName);
+
+        // 👉 Guardar el archivo tal cual (SIN sharp)
+        await fs.promises.writeFile(filePath, file.buffer);
+
+        // URL pública (sirve con app.use(express.static("public")))
+        processedFiles.push(`/${publicFolderName}/${baseName}`);
+      }
+
+      // Dejamos las rutas en req.body[fieldName] para que tu controlador las use
+      (req.body as any)[fieldName] = processedFiles;
 
       next();
     } catch (err) {
       console.error("Error al procesar múltiples imágenes:", err);
-      res.status(500).json({ message: "Error al procesar las imágenes" });
+      res
+        .status(500)
+        .json({ message: "Error al procesar las imágenes", error: String(err) });
     }
   };
-}
+};

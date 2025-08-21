@@ -1,8 +1,48 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.enviarConsultaPropiedad = exports.buscarPropiedades = exports.getPropiedadById = exports.eliminarPropiedad = exports.cambiarEstadoPropiedad = exports.editarPropiedad = exports.crearPropiedad = exports.getPropiedadesByUserFromAdmin = exports.getPropiedadesByUser = exports.getPropiedadesConFavoritos = exports.getUltimasPropiedades = exports.getPropiedades = void 0;
 const client_1 = require("@prisma/client");
 const mail_controller_1 = require("./mail.controller");
+const fs_1 = __importDefault(require("fs"));
+const fses = __importStar(require("fs/promises"));
+const path_1 = __importDefault(require("path"));
+const config_1 = require("../config/config");
 const prisma = new client_1.PrismaClient();
 /**
  * Genera un slug único para una propiedad.
@@ -88,7 +128,7 @@ const getPropiedades = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error al obtener las propiedades" });
+        res.status(500).json({ mensaje: "Error al obtener las propiedades" });
     }
     finally {
         await prisma.$disconnect();
@@ -128,7 +168,7 @@ const getUltimasPropiedades = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error al obtener las propiedades" });
+        res.status(500).json({ mensaje: "Error al obtener las propiedades" });
     }
     finally {
         await prisma.$disconnect();
@@ -217,7 +257,7 @@ const getPropiedadesConFavoritos = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error al obtener las propiedades" });
+        res.status(500).json({ mensaje: "Error al obtener las propiedades" });
     }
     finally {
         await prisma.$disconnect();
@@ -236,7 +276,7 @@ const getPropiedadesByUser = async (req, res) => {
     const tipo = req.query.tipo?.trim() || "";
     const user = req.user;
     if (!user) {
-        return res.status(401).json({ message: "Usuario no autenticado" });
+        return res.status(401).json({ mensaje: "Usuario no autenticado" });
     }
     const whereConditions = {};
     if (estado) {
@@ -304,7 +344,7 @@ const getPropiedadesByUser = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error al obtener las propiedades" });
+        res.status(500).json({ mensaje: "Error al obtener las propiedades" });
     }
     finally {
         await prisma.$disconnect();
@@ -319,7 +359,7 @@ const getPropiedadesByUserFromAdmin = async (req, res) => {
     const searchLower = search.toLowerCase();
     const id = req.params.id;
     if (!id) {
-        return res.status(401).json({ message: "Usuario no autenticado" });
+        return res.status(401).json({ mensaje: "Usuario no autenticado" });
     }
     const whereConditions = {};
     whereConditions.idUser = id;
@@ -377,7 +417,7 @@ const getPropiedadesByUserFromAdmin = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error al obtener las propiedades" });
+        res.status(500).json({ mensaje: "Error al obtener las propiedades" });
     }
     finally {
         await prisma.$disconnect();
@@ -387,9 +427,6 @@ exports.getPropiedadesByUserFromAdmin = getPropiedadesByUserFromAdmin;
 const crearPropiedad = async (req, res) => {
     try {
         const { titulo, descripcionLarga, descripcionCorta, direccion, precio, video, coordenadas, idUser, fondoPortada, disponibilidad, exclusivo, tipoPropiedadId, ciudadId, estado, imagenes, } = req.body;
-        if (imagenes.length > 6) {
-            return res.status(400).json({ message: "Máximo 6 imágenes permitidas" });
-        }
         const imagenesUrls = Array.isArray(imagenes) ? imagenes : [];
         const fondoPortadaUrls = Array.isArray(fondoPortada)
             ? fondoPortada
@@ -458,112 +495,163 @@ const crearPropiedad = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error al crear la propiedad" });
+        res.status(500).json({ mensaje: "Error al crear la propiedad" });
     }
 };
 exports.crearPropiedad = crearPropiedad;
 const editarPropiedad = async (req, res) => {
     try {
         const { id } = req.params;
-        const { titulo, descripcionLarga, descripcionCorta, direccion, precio, video, coordenadas, fondoPortada, // Array de URLs para portadas
-        disponibilidad, exclusivo, tipoPropiedadId, ciudadId, estado, imagenes, // Array de URLs para imágenes normales
-         } = req.body;
-        // 1) Validaciones básicas de cantidad (solo si vienen los campos)
-        if (imagenes && Array.isArray(imagenes) && imagenes.length > 6) {
-            return res.status(400).json({ message: "Máximo 6 imágenes permitidas" });
-        }
-        if (fondoPortada &&
-            Array.isArray(fondoPortada) &&
-            fondoPortada.length > 6) {
+        // Helper para convertir cadenas en arrays
+        const parseToArray = (v) => {
+            if (!v)
+                return [];
+            if (Array.isArray(v))
+                return v;
+            if (typeof v === "string") {
+                try {
+                    const parsed = JSON.parse(v);
+                    if (Array.isArray(parsed))
+                        return parsed;
+                }
+                catch {
+                    return v
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean);
+                }
+            }
+            return [];
+        };
+        const { titulo, descripcionLarga, descripcionCorta, direccion, precio, video, coordenadas, disponibilidad, exclusivo, tipoPropiedadId, ciudadId, estado, } = req.body;
+        // Arrays de imágenes que llegan (pueden incluir antiguas y nuevas)
+        const imagenesIncoming = parseToArray(req.body.imagenes);
+        const portadasIncoming = parseToArray(req.body.fondoPortada);
+        if (imagenesIncoming.length > 6)
+            return res.status(400).json({ mensaje: "Máximo 6 imágenes permitidas" });
+        if (portadasIncoming.length > 6)
             return res
                 .status(400)
-                .json({ message: "Máximo 6 imágenes de portada permitidas" });
-        }
-        const slugBase = titulo
+                .json({ mensaje: "Máximo 6 imágenes de portada permitidas" });
+        // Generar slug único si hay título
+        const slugBase = (titulo || "")
             .toLowerCase()
             .replace(/[^a-z0-9\s-]/g, "")
             .replace(/\s+/g, "-")
             .replace(/-+/g, "-")
             .replace(/^-+|-+$/g, "");
         const slugUnico = await generarSlugUnico(slugBase);
-        // ------------------------------------------------------------
-        // 2) Actualizar campos básicos de la propiedad (siempre)
-        // ------------------------------------------------------------
-        await prisma.propiedad.update({
-            where: { id },
-            data: {
-                titulo,
-                slug: slugUnico,
-                descripcionLarga,
-                descripcionCorta,
-                direccion,
-                precio: Number(precio),
-                video,
-                coordenadas,
-                disponibilidad,
-                exclusivo: exclusivo === "si" || exclusivo === true,
-                estado,
-                tipoPropiedad: { connect: { id: tipoPropiedadId } },
-                ciudad: { connect: { id: Number(ciudadId) } },
-            },
-        });
-        // ------------------------------------------------------------
-        // 3) Si vienen nuevas imágenes O nuevas portadas, reemplazar:
-        // ------------------------------------------------------------
-        const vienenImagenesNormales = Array.isArray(imagenes) && imagenes.length > 0;
-        const vienenPortadas = Array.isArray(fondoPortada) && fondoPortada.length > 0;
-        if (vienenImagenesNormales || vienenPortadas) {
-            // 3a) Borrar TODO lo que exista (normales + portadas) solo si se
-            //     sube al menos uno de los dos tipos en este update
-            await prisma.imagen.deleteMany({
-                where: {
-                    OR: [
-                        { propiedadImagenId: id }, // imágenes normales
-                        { propiedadFondoPortadaId: id }, // portadas
-                    ],
+        const publicDir = path_1.default.join(process.cwd(), "public");
+        await prisma.$transaction(async (tx) => {
+            // 1) Actualizar datos de la propiedad
+            await tx.propiedad.update({
+                where: { id },
+                data: {
+                    titulo,
+                    slug: slugUnico,
+                    descripcionLarga,
+                    descripcionCorta,
+                    direccion,
+                    precio: precio !== undefined ? Number(precio) : undefined,
+                    video,
+                    coordenadas,
+                    disponibilidad,
+                    exclusivo: exclusivo === "si" || exclusivo === true || exclusivo === "true",
+                    estado,
+                    tipoPropiedad: tipoPropiedadId
+                        ? { connect: { id: tipoPropiedadId } }
+                        : undefined,
+                    ciudad: ciudadId ? { connect: { id: Number(ciudadId) } } : undefined,
                 },
             });
-            // 3b) Insertar nuevas imágenes normales (si vienen)
-            if (vienenImagenesNormales) {
-                const dataFotosNormales = imagenes.map((url) => ({
-                    url,
-                    propiedadImagenId: id,
-                }));
-                await prisma.imagen.createMany({
-                    data: dataFotosNormales,
+            // 2) Actualizar imágenes normales (galería)
+            if (imagenesIncoming.length > 0) {
+                const oldNormal = await tx.imagen.findMany({
+                    where: { propiedadImagenId: id },
                 });
+                const urlsToKeep = new Set(imagenesIncoming);
+                const toDelete = oldNormal.filter((img) => !urlsToKeep.has(img.url));
+                // Eliminar físicamente las que se quitan
+                for (const row of toDelete) {
+                    try {
+                        const absolute = path_1.default.join(publicDir, row.url.replace(/^\/*/, ""));
+                        await fses.unlink(absolute).catch(() => { });
+                    }
+                    catch (e) {
+                        console.warn("No se pudo eliminar archivo (normal):", row.url, e);
+                    }
+                }
+                // Eliminar de DB las que se quitan
+                if (toDelete.length > 0) {
+                    await tx.imagen.deleteMany({
+                        where: { id: { in: toDelete.map((img) => img.id) } },
+                    });
+                }
+                // Agregar nuevas (las que no están en la DB)
+                const existingUrls = new Set(oldNormal.map((img) => img.url));
+                const newImages = imagenesIncoming.filter((url) => !existingUrls.has(url));
+                if (newImages.length > 0) {
+                    await tx.imagen.createMany({
+                        data: newImages.map((url) => ({
+                            url,
+                            propiedadImagenId: id,
+                        })),
+                    });
+                }
             }
-            // 3c) Insertar nuevas portadas (si vienen)
-            if (vienenPortadas) {
-                const dataFotosPortada = fondoPortada.map((urlFondo) => ({
-                    url: urlFondo,
-                    propiedadFondoPortadaId: id,
-                }));
-                await prisma.imagen.createMany({
-                    data: dataFotosPortada,
+            // 3) Actualizar imágenes de portada
+            if (portadasIncoming.length > 0) {
+                const oldPortadas = await tx.imagen.findMany({
+                    where: { propiedadFondoPortadaId: id },
                 });
+                const urlsToKeep = new Set(portadasIncoming);
+                const toDelete = oldPortadas.filter((img) => !urlsToKeep.has(img.url));
+                for (const row of toDelete) {
+                    try {
+                        const absolute = path_1.default.join(publicDir, row.url.replace(/^\/*/, ""));
+                        await fses.unlink(absolute).catch(() => { });
+                    }
+                    catch (e) {
+                        console.warn("No se pudo eliminar archivo (portada):", row.url, e);
+                    }
+                }
+                if (toDelete.length > 0) {
+                    await tx.imagen.deleteMany({
+                        where: { id: { in: toDelete.map((img) => img.id) } },
+                    });
+                }
+                const existingUrls = new Set(oldPortadas.map((img) => img.url));
+                const newImages = portadasIncoming.filter((url) => !existingUrls.has(url));
+                if (newImages.length > 0) {
+                    await tx.imagen.createMany({
+                        data: newImages.map((url) => ({
+                            url,
+                            propiedadFondoPortadaId: id,
+                        })),
+                    });
+                }
             }
-        }
-        // ------------------------------------------------------------
-        // 4) Traer la propiedad resultante con sus relaciones e imágenes
-        // ------------------------------------------------------------
-        await prisma.propiedad.findUnique({
+        });
+        // 4) Obtener propiedad actualizada
+        const propiedadActualizada = await prisma.propiedad.findUnique({
             where: { id },
             include: {
                 tipoPropiedad: { select: { nombre: true } },
-                imagenes: true, // filas con propiedadImagenId = id
-                fondoPortada: true, // filas con propiedadFondoPortadaId = id
+                imagenes: true,
+                fondoPortada: true,
             },
         });
         return res.status(200).json({
-            mensaje: "Propiedad actualizada",
+            mensaje: "Propiedad actualizada correctamente",
+            data: propiedadActualizada,
         });
     }
     catch (error) {
-        console.error(error);
-        return res
-            .status(500)
-            .json({ message: "Error al actualizar la propiedad", error });
+        console.error("editarPropiedad error:", error);
+        return res.status(500).json({
+            mensaje: "Error al actualizar la propiedad",
+            error: String(error),
+        });
     }
 };
 exports.editarPropiedad = editarPropiedad;
@@ -578,10 +666,10 @@ const cambiarEstadoPropiedad = async (req, res) => {
             },
         });
         if (!propiedad) {
-            return res.status(404).json({ message: "Propiedad no encontrada" });
+            return res.status(404).json({ mensaje: "Propiedad no encontrada" });
         }
         const estadoLegible = {
-            APROBADO: "aprobada",
+            PUBLICADO: "aprobada",
             RECHAZADO: "rechazada",
             OCULTO: "ocultada",
         };
@@ -608,31 +696,59 @@ const cambiarEstadoPropiedad = async (req, res) => {
         console.error(error);
         return res
             .status(500)
-            .json({ message: "Error al actualizar la propiedad", error });
+            .json({ mensaje: "Error al actualizar la propiedad", error });
     }
 };
 exports.cambiarEstadoPropiedad = cambiarEstadoPropiedad;
 const eliminarPropiedad = async (req, res) => {
     try {
         const { id } = req.params;
-        // Primero elimina las imágenes
+        // 1. Buscar las imágenes en BD para poder borrarlas físicamente
+        const imagenes = await prisma.imagen.findMany({
+            where: {
+                OR: [{ propiedadImagenId: id }, { propiedadFondoPortadaId: id }],
+            },
+        });
+        // 2. Eliminar cada archivo físico
+        imagenes.forEach((img) => {
+            const filePath = path_1.default.join(__dirname, "../../public", img.url);
+            if (fs_1.default.existsSync(filePath)) {
+                fs_1.default.unlinkSync(filePath);
+                console.log(`Eliminado: ${filePath}`);
+            }
+            else {
+                console.log(`No encontrado: ${filePath}`);
+            }
+        });
+        // 3. Eliminar favoritos
+        await prisma.favorito.deleteMany({
+            where: { propiedadId: id },
+        });
+        // 4. Eliminar "recientemente visto"
+        await prisma.recientementeVisto.deleteMany({
+            where: { propiedadId: id },
+        });
+        // 5. Eliminar registros de imágenes en BD
         await prisma.imagen.deleteMany({
             where: {
                 OR: [{ propiedadImagenId: id }, { propiedadFondoPortadaId: id }],
             },
         });
-        // Luego elimina la propiedad
+        // 6. Eliminar propiedad
         await prisma.propiedad.delete({
             where: { id },
         });
-        res.status(200).json({ message: "Propiedad eliminada correctamente" });
+        res
+            .status(200)
+            .json({ mensaje: "Propiedad e imágenes eliminadas correctamente" });
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error al eliminar la propiedad" });
+        res.status(500).json({ mensaje: "Error al eliminar la propiedad" });
     }
 };
 exports.eliminarPropiedad = eliminarPropiedad;
+// Luego elimina la propiedad await prisma.propiedad.delete({ where: { id }, }); res.status(200).json({ mensaje: "Propiedad eliminada correctamente" }); } catch (error: any) { console.error(error); res.status(500).json({ mensaje: "Error al eliminar la propiedad" }); } };
 /********************************************* */
 const getPropiedadById = async (req, res) => {
     try {
@@ -640,7 +756,7 @@ const getPropiedadById = async (req, res) => {
         if (!id) {
             return res.status(400).json({
                 ok: false,
-                message: "Falta el parámetro 'id'",
+                mensaje: "Falta el parámetro 'id'",
             });
         }
         // Buscar la propiedad principal
@@ -654,7 +770,7 @@ const getPropiedadById = async (req, res) => {
                 usuario: {
                     select: {
                         celular: true,
-                        nombres: true
+                        nombres: true,
                     },
                 },
             },
@@ -662,7 +778,7 @@ const getPropiedadById = async (req, res) => {
         if (!propiedad) {
             return res.status(404).json({
                 ok: false,
-                message: "Propiedad no encontrada",
+                mensaje: "Propiedad no encontrada",
             });
         }
         // Buscar las 2 últimas propiedades PUBLICADAS del mismo usuario, excluyendo esta propiedad
@@ -717,7 +833,7 @@ const getPropiedadById = async (req, res) => {
         console.error("Error al buscar la propiedad:", error);
         return res.status(500).json({
             ok: false,
-            message: "Error interno del servidor",
+            mensaje: "Error interno del servidor",
         });
     }
 };
@@ -856,43 +972,61 @@ const buscarPropiedades = async (req, res) => {
     catch (error) {
         console.error("Error en buscarPropiedades:", error);
         return res.status(500).json({
-            message: "Error interno al buscar propiedades.",
+            mensaje: "Error interno al buscar propiedades.",
             error: error.message,
         });
     }
 };
 exports.buscarPropiedades = buscarPropiedades;
 const enviarConsultaPropiedad = async (req, res) => {
-    const { nombres, dni, email, celular, mensaje, idPropiedad } = req.body;
+    const { nombres, dni, email, celular, mensaje, idPropiedad, ciudad, tipo_propiedad } = req.body;
     try {
-        const propiedad = await prisma.propiedad.findUnique({
-            where: { id: idPropiedad },
-            include: {
-                usuario: true, // Asegúrate que tu modelo tiene la relación definida
-            },
-        });
-        if (!propiedad || !propiedad.usuario) {
-            return res.status(404).json({
-                message: "Propiedad o usuario no encontrados",
+        let emailDestinatario = "";
+        let datosExtra = {};
+        if (idPropiedad && idPropiedad !== "") {
+            // 🔹 Buscar propiedad solo si existe un ID válido
+            const propiedad = await prisma.propiedad.findUnique({
+                where: { id: idPropiedad },
+                include: {
+                    usuario: true,
+                },
             });
+            if (!propiedad || !propiedad.usuario) {
+                return res.status(404).json({
+                    mensaje: "Propiedad o usuario no encontrados",
+                });
+            }
+            emailDestinatario = propiedad.usuario.email;
+            datosExtra = {
+                tipoPropiedad: tipo_propiedad,
+                ciudad: ciudad,
+            };
         }
-        const emailDestinatario = propiedad.usuario.email;
-        await (0, mail_controller_1.sendEmail)(`${emailDestinatario}`, "Nueva consulta", `NuevaConsulta.html`, {
-            nombres: nombres,
-            email: email,
-            dni: dni,
-            celular: celular,
-            mensaje: mensaje,
+        else {
+            // 🔹 Caso cuando no hay idPropiedad
+            emailDestinatario = config_1.ENV.ADMIN_EMAIL; // ✅ Aquí pon el correo por defecto
+            datosExtra = {
+                tipoPropiedad: tipo_propiedad || "No especificado",
+                ciudad: ciudad || "No especificada",
+            };
+        }
+        await (0, mail_controller_1.sendEmail)(emailDestinatario, "Nueva consulta", `NuevaConsulta.html`, {
+            nombres,
+            email,
+            dni,
+            celular,
+            mensaje,
+            ...datosExtra,
         });
-        res.json({
+        return res.json({
             mensaje: `Se envió tu consulta correctamente`,
             status: 200,
         });
     }
     catch (error) {
-        console.error("Error al registrar usuario", error);
+        console.error("Error al enviar consulta", error);
         return res.status(500).json({
-            message: "Error interno del servidor",
+            mensaje: "Error interno del servidor",
         });
     }
 };

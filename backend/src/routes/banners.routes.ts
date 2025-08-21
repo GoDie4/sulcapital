@@ -12,7 +12,8 @@ import {
 } from "../controllers/banners.controller";
 
 const router = Router();
-const UPLOAD_DIR = path.resolve(__dirname, "../../public/banners");
+const UPLOAD_DIR = path.join(process.cwd(), "public", "banners");
+
 
 router.get("/", getAllBanners);
 

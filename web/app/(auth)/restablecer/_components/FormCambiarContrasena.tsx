@@ -29,7 +29,7 @@ const FormCambiarContrasena = () => {
 
     try {
       const response = await axios.put(
-        `${config.API_URL}/user/cambiarContrasena`,
+        `${config.API_URL}/user/cambiarContrasena/token`,
         data,
         {
           headers: { "Content-Type": "application/json" },

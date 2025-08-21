@@ -9,7 +9,6 @@ import { LoginRequest } from "interfaces/auth.interfaces";
 import { formatFechaHora } from "../logic/formatearFechas";
 import { OAuth2Client } from "google-auth-library";
 import axios from "axios";
-
 const client = new OAuth2Client(ENV.GOOGLE_CLIENT_ID);
 
 export const login = async (
@@ -61,7 +60,6 @@ export const login = async (
     });
 
     console.error("ENV.COOKIE_DOMAIN:", ENV.COOKIE_DOMAIN);
-
 
     const primerNombre = usuarioExiste.nombres.split(" ");
 
@@ -234,27 +232,119 @@ export const recuperarContrasena = async (req: any, res: any) => {
   });
 };
 
+
+export const cambiarContrasenaConToken = async (req: any, res: any) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Token y nueva contraseña son obligatorios" });
+    }
+
+    // 1️⃣ Buscar el token en la base de datos
+    const tokenRecord = await prisma.passwordResetToken.findUnique({
+      where: {
+        token,
+      },
+    });
+
+    if (!tokenRecord) {
+      return res.status(400).json({ message: "Token inválido" });
+    }
+
+    // 2️⃣ Verificar si expiró
+    if (tokenRecord.expiresAt < new Date()) {
+      return res.status(400).json({ message: "El token ha expirado" });
+    }
+
+    // 3️⃣ Hashear la nueva contraseña
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // 4️⃣ Actualizar la contraseña del usuario
+    await prisma.usuario.update({
+      where: { id: tokenRecord.userId },
+      data: { password: hashedPassword },
+    });
+
+    // 5️⃣ Eliminar el token para que no se reutilice
+    await prisma.passwordResetToken.delete({
+      where: { id: tokenRecord.id },
+    });
+
+    return res.json({ message: "Contraseña cambiada correctamente" });
+  } catch (error) {
+    console.error("Error al cambiar la contraseña:", error);
+    return res.status(500).json({ message: "Error al cambiar la contraseña" });
+  }
+};
+
+export const cambiarContrasenaLogueado = async (req: any, res: any) => {
+  try {
+    const { newPassword } = req.body;
+
+    if (!newPassword) {
+      return res.status(400).json({ message: "Faltan datos" });
+    }
+
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: req.user.id },
+    });
+
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.usuario.update({
+      where: { id: usuario.id },
+      data: { password: hashedPassword },
+    });
+
+    return res.json({ message: "Contraseña actualizada correctamente" });
+  } catch (error) {
+    console.error("Error al cambiar contraseña:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
+
 export const cambiarContrasena = async (req: any, res: any) => {
   const { token, newPassword } = req.body;
 
-  const registro = await prisma.passwordResetToken.findUnique({
-    where: { token },
-  });
+  let userId: string | undefined = undefined;
 
-  if (!registro || registro.expiresAt < new Date()) {
-    return res.status(400).json({ message: "Token inválido o expirado" });
+  if (token) {
+    // 🔹 Modo recuperación vía email
+    const registro = await prisma.passwordResetToken.findUnique({
+      where: { token },
+    });
+
+    if (!registro || registro.expiresAt < new Date()) {
+      return res.status(400).json({ message: "Token inválido o expirado" });
+    }
+
+    userId = registro.userId;
+
+    // Borramos el token ya usado
+    await prisma.passwordResetToken.delete({ where: { token } });
+  } else if (req.user?.id) {
+    // 🔹 Modo usuario logueado
+    userId = req.user.id;
+  } else {
+    return res.status(401).json({ message: "No autorizado" });
   }
 
+  // 🔹 Actualizamos contraseña
   const hashed = await bcrypt.hash(newPassword, 10);
 
   await prisma.usuario.update({
-    where: { id: registro.userId },
+    where: { id: userId },
     data: { password: hashed },
   });
 
-  await prisma.passwordResetToken.delete({ where: { token } });
-
-  res.json({ message: "Contraseña actualizada con éxito" });
+  return res.json({ message: "Contraseña actualizada con éxito" });
 };
 
 export const logout = (req: any, res: any) => {

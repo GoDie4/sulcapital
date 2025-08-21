@@ -53,9 +53,7 @@ export const recuperarSchema = z.object({
 });
 
 export const cambiarContrasenaSchema = z.object({
-  token: z.string({
-    required_error: "Token requerido",
-  }),
+
   newPassword: z.string({
     required_error: "La contraseña es requerida",
   }),

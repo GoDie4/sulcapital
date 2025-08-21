@@ -126,14 +126,18 @@ export const columnsPropiedad: ColumnDef<Propiedad>[] = [
     accessorKey: "imagenes",
     header: "Imágenes",
     cell: ({ row }) => {
-      console.log(row.original);
-      console.log(row.getValue("imagenes"));
-      const imagenes = row.getValue("imagenes") as { url: string }[];
+      const imagenes = row.getValue("imagenes") as { url: string }[] | undefined;
+  
+      const url =
+        imagenes && imagenes.length > 0 && imagenes[0].url
+          ? `${config.API_IMAGE_URL}${imagenes[0].url}`
+          : "/placeholder.jpg"; // imagen por defecto
+  
       return (
         <div className="flex gap-1">
           <img
-            src={`${config.API_IMAGE_URL}${imagenes[0].url}`}
-            alt={`Imagen`}
+            src={url}
+            alt="Imagen"
             className="h-10 w-10 object-cover rounded"
           />
         </div>

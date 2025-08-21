@@ -7,7 +7,6 @@ import axios from "axios";
 import { useFormik } from "formik";
 import React, { useState } from "react";
 import { toast } from "sonner";
-import Numeros, { NumerosItem } from "./Numeros";
 import Correos, { CorreosItem } from "./Correos";
 import { ButtonCancelar } from "@/components/form/ButtonCancelar";
 import { ButtonSubmit } from "@/components/form/ButtonSubmit";
@@ -17,14 +16,14 @@ type Props = {
 };
 export const FormEditContacto = ({ initialData }: Props) => {
   const [load, setLoading] = useState<boolean>(false);
-  const [numeros, setNumeros] = useState<NumerosItem[]>(() =>
-    initialData?.TelefonoEmpresa?.length
-      ? initialData.TelefonoEmpresa.map((tel: any, i: number) => ({
-          numero: tel.numero,
-          position: Number(tel.posicion?.replace(/\D/g, "")) || i + 1,
-        }))
-      : [{ numero: "", position: 1 }]
-  );
+//   const [numeros, setNumeros] = useState<NumerosItem[]>(() =>
+//     initialData?.TelefonoEmpresa?.length
+//       ? initialData.TelefonoEmpresa.map((tel: any, i: number) => ({
+//           numero: tel.numero,
+//           position: Number(tel.posicion?.replace(/\D/g, "")) || i + 1,
+//         }))
+//       : [{ numero: "", position: 1 }]
+//   );
 
   const [correos, setCorreos] = useState<CorreosItem[]>(() =>
     initialData?.CorreoEmpresa?.length
@@ -35,7 +34,7 @@ export const FormEditContacto = ({ initialData }: Props) => {
       : [{ correo: "", position: 1 }]
   );
   const upadateBanner = async (): Promise<void> => {
-    if (correos.length < 1 || numeros.length < 1) {
+    if (correos.length < 1 ) {
       toast.error("Correos o números al menos debe tener 1 registro");
       setLoading(false);
       return;
@@ -47,11 +46,11 @@ export const FormEditContacto = ({ initialData }: Props) => {
       return;
     }
 
-    if (numeros[0].numero === "" || numeros[0].numero === null) {
-      toast.error("El número no puede estar vacío");
-      setLoading(false);
-      return;
-    }
+    // if (numeros[0].numero === "" || numeros[0].numero === null) {
+    //   toast.error("El número no puede estar vacío");
+    //   setLoading(false);
+    //   return;
+    // }
     setLoading(true);
     const payload = {
       ...values,
@@ -59,10 +58,10 @@ export const FormEditContacto = ({ initialData }: Props) => {
         email: c.correo,
         posicion: `${c.position}`,
       })),
-      telefonos: numeros.map((n) => ({
-        numero: n.numero,
-        posicion: `${n.position}`,
-      })),
+    //   telefonos: numeros.map((n) => ({
+    //     numero: n.numero,
+    //     posicion: `${n.position}`,
+    //   })),
     };
     try {
       const respuesta = await axios.post(
@@ -100,9 +99,6 @@ export const FormEditContacto = ({ initialData }: Props) => {
 
   return (
     <form className="rounded-xl" onSubmit={handleSubmit}>
-      <section className="w-full flex flex-col  gap-2">
-        <Numeros numeros={numeros} setNumeros={setNumeros} />
-      </section>
 
       <section className="w-full flex flex-col gap-2">
         <Correos correos={correos} setCorreos={setCorreos} />

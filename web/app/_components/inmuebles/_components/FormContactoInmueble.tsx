@@ -18,8 +18,12 @@ import { usePathname, useRouter } from "next/navigation";
 
 export const FormContactoInmueble = ({
   idPropiedad,
+  tipo,
+  ciudad,
 }: {
   idPropiedad: string;
+  tipo: string;
+  ciudad: string;
 }) => {
   const { authUser } = useAuth();
 
@@ -41,10 +45,12 @@ export const FormContactoInmueble = ({
         {
           idPropiedad: idPropiedad,
           celular: values.celular,
-          mensaje: `Hola deseo que se comuniquen conmigo por este inmueble ${config.DOMAIN}${path}`,
+          mensaje: values.mensaje,
           nombres: values.nombre,
           dni: values.dni,
           email: values.email,
+          tipo_propiedad: tipo,
+          ciudad,
         },
         {
           withCredentials: true,
