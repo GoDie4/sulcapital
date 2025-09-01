@@ -39,13 +39,10 @@ async function getUser() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value || "";
 
-  // Si no hay token, devolver null
   if (!token) return null;
 
-  // Validar que sea un JWT válido en formato (3 partes)
   if (token.split(".").length !== 3) {
-    cookieStore.delete("token");
-    return null;
+    return null; // ❌ NO borrar aquí
   }
 
   try {
@@ -57,19 +54,14 @@ async function getUser() {
       withCredentials: true,
     });
 
-    // Validar que la API realmente devuelva el usuario
     if (response.data?.usuario) {
       return response.data.usuario;
     } else {
-      // Si la API no devuelve el usuario esperado, borrar token
-      cookieStore.delete("token");
-      return null;
+      return null; // ❌ NO borrar aquí tampoco
     }
   } catch (error) {
     console.error("Error al obtener usuario:", error);
-    // Si hay error (401, 500, etc.), eliminar token y devolver null
-    cookieStore.delete("token");
-    return null;
+    return null; // ❌ NO borrar aquí
   }
 }
 

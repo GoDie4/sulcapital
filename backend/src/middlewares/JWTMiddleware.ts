@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import { ENV } from "../config/config";
 import prisma from "../config/database";
+import createAccessToken from "../utils/jwt";
 
 dotenv.config();
 
@@ -221,35 +222,98 @@ export const addUserReq = async (req: any, res: any, next: NextFunction) => {
         .json({ message: "Token no encontrado en cookies." });
     }
 
-    const decoded = jwt.verify(
-      token,
-      process.env.TOKEN_SECRET as string
-    ) as DecodedToken;
+    try {
+      // Intentar verificar el token actual
+      const decoded = jwt.verify(
+        token,
+        process.env.TOKEN_SECRET as string
+      ) as DecodedToken;
 
-    const user = await prisma.usuario.findUnique({
-      where: { id: decoded.id },
-    });
+      const user = await prisma.usuario.findUnique({
+        where: { id: decoded.id },
+      });
 
-    if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado." });
+      if (!user) {
+        return res.status(404).json({ message: "Usuario no encontrado." });
+      }
+
+      req.user = user;
+      next();
+    } catch (tokenError: any) {
+      // Si el token expiró, intentar renovar automáticamente
+      if (tokenError.name === "TokenExpiredError") {
+        try {
+          console.log(
+            "🔄 Token expirado, intentando renovar automáticamente..."
+          );
+
+          // Decodificar el token expirado para obtener el userId (sin verificar)
+          const expiredDecoded = jwt.decode(token) as DecodedToken;
+
+          if (!expiredDecoded || !expiredDecoded.id) {
+            return res.status(401).json({ message: "Token inválido" });
+          }
+
+          // Buscar el usuario y verificar que tenga una sesión válida reciente
+          const user = await prisma.usuario.findUnique({
+            where: { id: expiredDecoded.id },
+          });
+
+          if (!user) {
+            return res.status(404).json({ message: "Usuario no encontrado." });
+          }
+
+          // Obtener el rol para el nuevo token
+          const role = await prisma.rol.findFirst({
+            where: { id: user.rol_id },
+          });
+
+          // Generar nuevo token con la misma duración que el original
+          const newToken = await createAccessToken({
+            id: user.id,
+            role: role?.nombre !== undefined ? role.nombre : "",
+          });
+
+          // Actualizar la cookie con el nuevo token
+          // Detectar si era mantenerConexion basado en la duración original
+          const shouldMaintainConnection = true; // Por defecto mantener conexión para usuarios regulares
+
+          res.cookie("token", newToken, {
+            sameSite: "lax",
+            secure: false,
+            httpOnly: true,
+            domain: process.env.COOKIE_DOMAIN,
+            maxAge: shouldMaintainConnection
+              ? 30 * 24 * 60 * 60 * 1000
+              : 2 * 60 * 60 * 1000,
+          });
+
+          console.log(
+            "✅ Token renovado automáticamente para usuario:",
+            user.id
+          );
+
+          req.user = user;
+          next();
+        } catch (renewError: any) {
+          console.error(
+            "❌ Error al renovar token automáticamente:",
+            renewError
+          );
+          return res.status(401).json({
+            message: "Sesión expirada, inicia sesión nuevamente",
+          });
+        }
+      } else if (tokenError.name === "JsonWebTokenError") {
+        // Token completamente inválido
+        return res.status(401).json({ message: "Token inválido" });
+      } else {
+        // Otros errores de token
+        return res.status(401).json({ message: "Error de autenticación" });
+      }
     }
-
-    req.user = user;
-    next();
   } catch (error: any) {
     console.error("Error en attachUser middleware:", error);
-
-    // Detectar token vencido
-    if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Token expirado" });
-    }
-
-    // Detectar token inválido
-    if (error.name === "JsonWebTokenError") {
-      return res.status(401).json({ message: "Token inválido" });
-    }
-
-    // Otros errores
     return res
       .status(500)
       .json({ message: "Error al autenticar usuario.", error: error.message });
