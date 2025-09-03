@@ -52,11 +52,12 @@ export const login = async (
     console.error("TOKEN GENERADO:", token);
 
     res.cookie("token", token, {
-      sameSite: "lax", // "lax" funciona bien localmente
+      sameSite: "none", // "lax" funciona bien localmente
       secure: false, // false porque en localhost normalmente usas http
       httpOnly: true,
       domain: ENV.COOKIE_DOMAIN, // o simplemente omítelo en entorno local
       maxAge: mantenerConexion ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
+      //maxAge: mantenerConexion ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
     });
 
     console.error("ENV.COOKIE_DOMAIN:", ENV.COOKIE_DOMAIN);

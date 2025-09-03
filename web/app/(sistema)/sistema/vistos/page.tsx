@@ -14,7 +14,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
     : limitParam ?? "10";
   const pageParam = searchParams?.page;
 
-  const limit = parseInt(rawLimit);
+   const limit = Math.max(1, parseInt(rawLimit) || 10);
 
   const page = parseInt(
     Array.isArray(pageParam) ? pageParam[0] : pageParam ?? "1"
@@ -49,6 +49,8 @@ export default async function page({ searchParams }: { searchParams: any }) {
       },
     }
   );
+    console.log(res)
+
   const { data, pagination } = await res.json();
   return <>
    <WrapperSecciones

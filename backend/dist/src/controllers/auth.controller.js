@@ -36,11 +36,12 @@ const login = async (req, res) => {
         });
         console.error("TOKEN GENERADO:", token);
         res.cookie("token", token, {
-            sameSite: "lax", // "lax" funciona bien localmente
+            sameSite: "none", // "lax" funciona bien localmente
             secure: false, // false porque en localhost normalmente usas http
             httpOnly: true,
             domain: config_1.ENV.COOKIE_DOMAIN, // o simplemente omítelo en entorno local
             maxAge: mantenerConexion ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
+            //maxAge: mantenerConexion ? 30 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
         });
         console.error("ENV.COOKIE_DOMAIN:", config_1.ENV.COOKIE_DOMAIN);
         const primerNombre = usuarioExiste.nombres.split(" ");

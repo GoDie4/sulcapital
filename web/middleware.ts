@@ -1,12 +1,16 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { compactVerify } from "jose";
-export interface JWTPayload {
-  id: number | string;
-  role: number | string;
-}
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextRequest, NextResponse } from "next/server";
+import { jwtVerify } from "jose";
+
+// Configuración de rutas por rol
 const ROLE_ROUTES: Record<string, string[]> = {
-  administrador: ["/ciudades", "/usuarios", "/propiedades", "/sistema/perfil", "banners"],
+  administrador: [
+    "/ciudades",
+    "/usuarios",
+    "/propiedades",
+    "/sistema/perfil",
+    "banners",
+  ],
   anunciante: [
     "/sistema/ciudades",
     "/sistema/propiedades",
@@ -22,16 +26,25 @@ const ROLE_ROUTES: Record<string, string[]> = {
   ],
 };
 
- async function getUserRoleFromToken(token: string): Promise<string | null> {
+async function getUserRoleFromToken(token: string): Promise<string | null> {
   try {
-    const secret = new TextEncoder().encode('SULCAPITAL__LOGOSPERU_2025');
+    const JWT_SECRET = "SULCAPITAL__LOGOSPERU_2025";
+    if (!JWT_SECRET) {
+      console.error("❌ JWT_SECRET no configurado");
+      return null;
+    }
 
-    const { payload } = await compactVerify(token, secret);
-    const decodedPayload = JSON.parse(new TextDecoder().decode(payload)) as JWTPayload;
+    // jose necesita la secret en Uint8Array
+    const secret = new TextEncoder().encode(JWT_SECRET);
 
-    return decodedPayload?.role?.toString() ?? null;
-  } catch (err) {
-    console.error("❌ Error verificando JWT con jose:", err);
+    // Verificar token
+    const { payload } = await jwtVerify(token, secret);
+
+    const role = (payload as any)?.role || (payload as any)?.user?.role;
+
+    return role || null;
+  } catch (error) {
+    console.error("❌ Error verificando token:", error);
     return null;
   }
 }
@@ -40,59 +53,63 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   console.log("🚀 Middleware para:", pathname);
 
+  // Solo procesar rutas del sistema
   if (!pathname.startsWith("/sistema")) {
     return NextResponse.next();
   }
 
+  // Verificar token en cookies
   const token = request.cookies.get("token")?.value;
-  console.log("📦 Token desde cookie:", token);
+  console.log("📦 Token encontrado:", !!token);
 
+  // Si no hay token, redirigir al login
   if (!token) {
-    const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/iniciar-sesion";
-    return NextResponse.redirect(loginUrl);
+    console.log("🚫 Sin token - redirigiendo a login");
+    return NextResponse.redirect(new URL("/iniciar-sesion", request.url));
   }
 
+  // Obtener rol del usuario
   const role = await getUserRoleFromToken(token);
-  console.log("🧑‍💼 Rol obtenido:", role);
+  console.log("🧑‍💼 Rol del usuario:", role);
 
-  // Si token inválido o sin rol → /iniciar-sesion
+  // Si token inválido o sin rol, redirigir al login y limpiar cookie
   if (!role) {
-    const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/iniciar-sesion";
-    return NextResponse.redirect(loginUrl);
+    console.log("🚫 Token inválido - redirigiendo a login");
+    const response = NextResponse.redirect(
+      new URL("/iniciar-sesion", request.url)
+    );
+    response.cookies.delete("token");
+    return response;
   }
 
-  // Si es administrador, acceso total
+  // Los administradores tienen acceso total
   if (role === "administrador") {
+    console.log("✅ Administrador - acceso completo");
     return NextResponse.next();
   }
 
-  // Rutas permitidas para este rol
-  const allowed = ROLE_ROUTES[role] || [];
-  const isAllowed = allowed.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
-  );
-  console.log(
-    "🔍 Permitido para",
-    role,
-    ":",
-    allowed,
-    "| isAllowed:",
-    isAllowed
+  // Verificar permisos para otros roles
+  const allowedRoutes = ROLE_ROUTES[role] || [];
+  const isAuthorized = allowedRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
-  if (isAllowed) {
+  console.log(`🔍 Verificando permisos para ${role}:`, {
+    allowedRoutes,
+    currentPath: pathname,
+    isAuthorized,
+  });
+
+  if (isAuthorized) {
+    console.log("✅ Acceso autorizado");
     return NextResponse.next();
   }
 
-  // Si no está permitido → /no-autorizado
-  const noAuthUrl = request.nextUrl.clone();
-  noAuthUrl.pathname = "/no-autorizado";
-  return NextResponse.redirect(noAuthUrl);
+  // Si no está autorizado, redirigir a página de error
+  console.log("🚫 Acceso denegado - redirigiendo a no-autorizado");
+  return NextResponse.redirect(new URL("/no-autorizado", request.url));
 }
 
-// Solo interceptamos rutas que empiecen con `/sistema`
 export const config = {
   matcher: ["/sistema/:path*"],
 };
