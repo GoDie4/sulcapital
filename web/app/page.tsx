@@ -34,7 +34,6 @@ export default function Home() {
   const [ocultarSideBar, setOcultarSideBar] = useState<boolean>(false);
 
   useEffect(() => {
-    if(showMenu) setShowMenu(false)
 
     const alreadyShown = localStorage.getItem("modalShownAfterLogin");
 

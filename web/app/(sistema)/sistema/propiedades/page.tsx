@@ -32,10 +32,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
       ? searchParams.disponibilidad
       : "";
 
-  const tipo =
-    typeof searchParams.tipo === "string"
-      ? searchParams.tipo
-      : "";
+  const tipo = typeof searchParams.tipo === "string" ? searchParams.tipo : "";
 
   const ciudad =
     typeof searchParams.ciudad === "string" ? searchParams.ciudad : "";
@@ -113,7 +110,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
         renderAddForm={
           <AgregarPropiedad
             pagination={pagination}
-            totalItems={Number(data.length)}
+            totalItems={Number(data?.length)}
           />
         }
         pagination={pagination}
@@ -123,12 +120,12 @@ export default async function page({ searchParams }: { searchParams: any }) {
         deleteOptions={{
           apiEndpoint: "/propiedades/eliminar",
           pagination: {
-            limit: pagination.limit,
-            page: pagination.page,
-            total: pagination.total,
-            totalPages: pagination.totalPages,
+            limit: pagination?.limit,
+            page: pagination?.page,
+            total: pagination?.total,
+            totalPages: pagination?.totalPages,
           },
-          totalItems: Number(data.length),
+          totalItems: Number(data?.length),
         }}
         actionsSeccion="propiedades"
       />

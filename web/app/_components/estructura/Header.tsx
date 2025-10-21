@@ -10,7 +10,6 @@ import { HiMenu } from "react-icons/hi";
 import { TipoPropiedad } from "../../(sistema)/sistema/tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 import { CiudadList } from "../../(sistema)/sistema/ciudades/_components/interfaces/CiudadesInterfaces";
 import { useAuth } from "@/assets/context/AuthContext";
-import { MenuLogeado } from "./MenuLoggeado";
 import { EmpresaContacto } from "../../(sistema)/sistema/contacto/_components/interface/ContactoInterfaces";
 import { useRouter } from "next/navigation";
 import { AgregarPropiedad } from "../../(sistema)/sistema/propiedades/_components/form/AgregarPropiedad";
@@ -45,6 +44,10 @@ export const Header = ({
   const router = useRouter();
   const { authUser, setShowMenu, showMenu, setModalContent, openModal } =
     useAuth();
+
+    useEffect(() => {
+    console.log("CAmbio estado: ", showMenu)        
+    }, [showMenu]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -131,8 +134,10 @@ export const Header = ({
               <>
                 <button
                   type="button"
+                  title="button_auth"
                   onClick={() => {
-                    setShowMenu(!showMenu);
+                    console.log("clic")
+                    setShowMenu(true);
                   }}
                   className={`flex md:hidden items-center justify-center   relative flex-col ${
                     scrollY ? "text-secondary-main" : "text-white-main"
@@ -155,7 +160,6 @@ export const Header = ({
                   )}
                   <p>{authUser.nombres}</p>
 
-                  <MenuLogeado />
                 </button>
 
                 <Link
@@ -182,7 +186,6 @@ export const Header = ({
                   )}
                   <p>{authUser.nombres}</p>
 
-                  <MenuLogeado />
                 </Link>
               </>
             ) : (

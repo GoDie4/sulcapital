@@ -24,8 +24,12 @@ export const FormLogin = () => {
 
   const router = useRouter();
 
-  const searchParams = new URLSearchParams(window.location.search);
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const [callbackUrl, setCallbackUrl] = useState("/");
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    setCallbackUrl(searchParams.get("callbackUrl") || "/");
+  }, []);
 
   const login = async (values: LoginInterface): Promise<void> => {
     setLoading(true);

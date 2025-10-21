@@ -98,7 +98,7 @@ export const ContenedorBusqueda = ({
           <select
             id="limit"
             className="py-2 px-3 outline-none text-sm border text-black-main bg-white-main rounded-main"
-            value={searchParams.get("limit") || pagination.limit}
+            value={searchParams.get("limit") || pagination?.limit}
             onChange={(e) => {
               const params = new URLSearchParams(searchParams.toString());
               params.set("limit", e.target.value);

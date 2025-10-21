@@ -5,7 +5,7 @@ import { handleImageUpload, upload } from "../middlewares/images/uploadImage";
 import path from "path";
 import { verifyAdmin } from "../middlewares/JWTMiddleware";
 import {
-    createBanner,
+  createBanner,
   deleteBanner,
   getAllBanners,
   updateBanner,
@@ -13,7 +13,6 @@ import {
 
 const router = Router();
 const UPLOAD_DIR = path.join(process.cwd(), "public", "banners");
-
 
 router.get("/", getAllBanners);
 
@@ -24,7 +23,7 @@ router.post(
   handleImageUpload("imagen", {
     uploadDir: UPLOAD_DIR,
     filePrefix: "banner",
-    thumbnailSize: { width: 4000, height: 2000 },
+    // thumbnailSize: { width: 4000, height: 2000 },
   }),
   createBanner
 );
@@ -36,7 +35,7 @@ router.put(
   handleImageUpload("imagen", {
     uploadDir: UPLOAD_DIR,
     filePrefix: "bannner",
-    thumbnailSize: { width: 4000, height: 2000 },
+    // thumbnailSize: { width: 4000, height: 2000 },
   }),
   updateBanner
 );

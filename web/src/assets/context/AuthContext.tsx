@@ -33,7 +33,7 @@ interface AuthContextInterface {
   dataTiposPropiedades: TipoPropiedad[];
   dataCiudades: CiudadList[];
   dataContacto: EmpresaContacto;
-  dataBanners: Banner[]
+  dataBanners: Banner[];
   authUser: UserInterface | null;
   setAuthUser: Dispatch<SetStateAction<UserInterface | null>>;
   setShowMenu: Dispatch<SetStateAction<boolean>>;
@@ -128,7 +128,7 @@ export const AuthProvider: React.FC<AuthProviderInterface> = ({
         dataContacto,
         setShowMenu,
         showMenu,
-        dataBanners
+        dataBanners,
       }}
     >
       {children}

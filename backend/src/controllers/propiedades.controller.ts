@@ -532,24 +532,6 @@ export const editarPropiedad = async (req: any, res: any) => {
   try {
     const { id } = req.params;
 
-    // Helper para convertir cadenas en arrays
-    const parseToArray = (v: any): string[] => {
-      if (!v) return [];
-      if (Array.isArray(v)) return v;
-      if (typeof v === "string") {
-        try {
-          const parsed = JSON.parse(v);
-          if (Array.isArray(parsed)) return parsed;
-        } catch {
-          return v
-            .split(",")
-            .map((s: string) => s.trim())
-            .filter(Boolean);
-        }
-      }
-      return [];
-    };
-
     const {
       titulo,
       descripcionLarga,
@@ -565,12 +547,21 @@ export const editarPropiedad = async (req: any, res: any) => {
       estado,
     } = req.body;
 
-    // Arrays de imágenes que llegan (pueden incluir antiguas y nuevas)
-    const imagenesIncoming = parseToArray(req.body.imagenes);
-    const portadasIncoming = parseToArray(req.body.fondoPortada);
+    const publicDir = path.join(process.cwd(), "public");
+
+    // 📷 Imágenes (galería)
+    const imagenesExistentes: string[] = req.body.imagenesExistentes || [];
+    const imagenesNuevas: string[] = req.body.imagenes || []; // middleware ya puso estas rutas
+    const imagenesIncoming = [...imagenesExistentes, ...imagenesNuevas];
 
     if (imagenesIncoming.length > 6)
       return res.status(400).json({ mensaje: "Máximo 6 imágenes permitidas" });
+
+    // 🖼️ Portadas (si las usas)
+    const portadasExistentes: string[] = req.body.portadasExistentes || [];
+    const portadasNuevas: string[] = req.body.portadas || []; // middleware también podría llenarlas
+    const portadasIncoming = [...portadasExistentes, ...portadasNuevas];
+
     if (portadasIncoming.length > 6)
       return res
         .status(400)
@@ -584,8 +575,6 @@ export const editarPropiedad = async (req: any, res: any) => {
       .replace(/-+/g, "-")
       .replace(/^-+|-+$/g, "");
     const slugUnico = await generarSlugUnico(slugBase);
-
-    const publicDir = path.join(process.cwd(), "public");
 
     await prisma.$transaction(async (tx) => {
       // 1) Actualizar datos de la propiedad
@@ -622,6 +611,11 @@ export const editarPropiedad = async (req: any, res: any) => {
 
         // Eliminar físicamente las que se quitan
         for (const row of toDelete) {
+          // console.log("row para borrar:", row);
+          if (!row.url) {
+            // console.warn("row.url es undefined, se saltará esta fila", row);
+            continue;
+          }
           try {
             const absolute = path.join(publicDir, row.url.replace(/^\/*/, ""));
             await fses.unlink(absolute).catch(() => {});
@@ -637,10 +631,9 @@ export const editarPropiedad = async (req: any, res: any) => {
           });
         }
 
-        // Agregar nuevas (las que no están en la DB)
         const existingUrls = new Set(oldNormal.map((img) => img.url));
         const newImages = imagenesIncoming.filter(
-          (url) => !existingUrls.has(url)
+          (url) => url && !existingUrls.has(url)
         );
 
         if (newImages.length > 0) {
@@ -660,9 +653,16 @@ export const editarPropiedad = async (req: any, res: any) => {
         });
 
         const urlsToKeep = new Set(portadasIncoming);
-        const toDelete = oldPortadas.filter((img) => !urlsToKeep.has(img.url));
+        const toDelete = oldPortadas.filter(
+          (img) => img.url && !urlsToKeep.has(img.url)
+        );
 
         for (const row of toDelete) {
+          // console.log("row para borrar:", row);
+          if (!row.url) {
+            // console.warn("row.url es undefined, se saltará esta fila", row);
+            continue;
+          }
           try {
             const absolute = path.join(publicDir, row.url.replace(/^\/*/, ""));
             await fses.unlink(absolute).catch(() => {});
@@ -679,7 +679,7 @@ export const editarPropiedad = async (req: any, res: any) => {
 
         const existingUrls = new Set(oldPortadas.map((img) => img.url));
         const newImages = portadasIncoming.filter(
-          (url) => !existingUrls.has(url)
+          (url) => url && !existingUrls.has(url)
         );
 
         if (newImages.length > 0) {
@@ -1091,68 +1091,71 @@ export const buscarPropiedades = async (req: any, res: any) => {
 };
 
 export const enviarConsultaPropiedad = async (
-    req: any,
-    res: any
-  ): Promise<any | undefined> => {
-    const { nombres, dni, email, celular, mensaje, idPropiedad, ciudad, tipo_propiedad } = req.body;
-  
-    try {
-      let emailDestinatario = "";
-      let datosExtra = {};
-  
-      if (idPropiedad && idPropiedad !== "") {
-        // 🔹 Buscar propiedad solo si existe un ID válido
-        const propiedad = await prisma.propiedad.findUnique({
-          where: { id: idPropiedad },
-          include: {
-            usuario: true,
-          },
+  req: any,
+  res: any
+): Promise<any | undefined> => {
+  const {
+    nombres,
+    dni,
+    email,
+    celular,
+    mensaje,
+    idPropiedad,
+    ciudad,
+    tipo_propiedad,
+  } = req.body;
+
+  try {
+    let emailDestinatario = "";
+    let datosExtra = {};
+
+    if (idPropiedad && idPropiedad !== "") {
+      // 🔹 Buscar propiedad solo si existe un ID válido
+      const propiedad = await prisma.propiedad.findUnique({
+        where: { id: idPropiedad },
+        include: {
+          usuario: true,
+        },
+      });
+
+      if (!propiedad || !propiedad.usuario) {
+        return res.status(404).json({
+          mensaje: "Propiedad o usuario no encontrados",
         });
-  
-        if (!propiedad || !propiedad.usuario) {
-          return res.status(404).json({
-            mensaje: "Propiedad o usuario no encontrados",
-          });
-        }
-  
-        emailDestinatario = propiedad.usuario.email;
-        datosExtra = {
-          tipoPropiedad:  tipo_propiedad,
-          ciudad: ciudad,
-        };
-      } else {
-        // 🔹 Caso cuando no hay idPropiedad
-        emailDestinatario = ENV.ADMIN_EMAIL; // ✅ Aquí pon el correo por defecto
-        datosExtra = {
-          tipoPropiedad: tipo_propiedad || "No especificado",
-          ciudad: ciudad || "No especificada",
-        };
       }
-  
-      await sendEmail(
-        emailDestinatario,
-        "Nueva consulta",
-        `NuevaConsulta.html`,
-        {
-          nombres,
-          email,
-          dni,
-          celular,
-          mensaje,
-          ...datosExtra,
-        }
-      );
-  
-      return res.json({
-        mensaje: `Se envió tu consulta correctamente`,
-        status: 200,
-      });
-  
-    } catch (error: any) {
-      console.error("Error al enviar consulta", error);
-  
-      return res.status(500).json({
-        mensaje: "Error interno del servidor",
-      });
+
+      emailDestinatario = propiedad.usuario.email;
+      datosExtra = {
+        tipoPropiedad: tipo_propiedad,
+        ciudad: ciudad,
+      };
+    } else {
+      // 🔹 Caso cuando no hay idPropiedad
+      emailDestinatario = ENV.ADMIN_EMAIL; // ✅ Aquí pon el correo por defecto
+      datosExtra = {
+        tipoPropiedad: tipo_propiedad || "No especificado",
+        ciudad: ciudad || "No especificada",
+      };
     }
-  };
+
+    await sendEmail(emailDestinatario, "Nueva consulta", `NuevaConsulta.html`, {
+      nombres,
+      email,
+      dni,
+      celular,
+      mensaje,
+      ...datosExtra,
+    });
+
+    return res.json({
+      mensaje: `Se envió tu consulta correctamente`,
+      status: 200,
+    });
+  } catch (error: any) {
+    console.error("Error al enviar consulta", error);
+
+    return res.status(500).json({
+      mensaje: "Error interno del servidor",
+    });
+  }
+};

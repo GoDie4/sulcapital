@@ -63,9 +63,9 @@ export const AgregarBanner = ({
       );
       if (response.status === 201) {
         const newTotalItems = totalItems + 1;
-        const totalPagesAfterAdd = Math.ceil(newTotalItems / pagination.limit);
+        const totalPagesAfterAdd = Math.ceil(newTotalItems / pagination?.limit);
 
-        if (page === pagination.totalPages && totalPagesAfterAdd > page) {
+        if (page === pagination?.totalPages && totalPagesAfterAdd > page) {
           router.push(`${pathname}?page=${page + 1}`);
         } else {
           const currentPath = `${pathname}?${searchParams.toString()}`;

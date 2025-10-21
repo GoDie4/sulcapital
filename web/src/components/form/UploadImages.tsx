@@ -88,7 +88,8 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
       }
 
       setFiles(newFiles);
-      onChange(newFiles.filter((f): f is File => typeof f !== "string"));
+      // onChange(newFiles.filter((f): f is File => typeof f !== "string"));
+      onChange(newFiles);
     },
     [files, maxFiles, maxSize, maxWidth, maxHeight, onChange]
   );
@@ -117,7 +118,8 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
   const removeImage = (index: number) => {
     const newFiles = files.filter((_, i) => i !== index);
     setFiles(newFiles);
-    onChange(newFiles.filter((f): f is File => typeof f !== "string"));
+    // onChange(newFiles.filter((f): f is File => typeof f !== "string"));
+    onChange(newFiles);
   };
 
   return (
@@ -164,13 +166,15 @@ const UploadImages: React.FC<ImageDropzoneProps> = ({
       {errors.length > 0 && (
         <ul className="mt-2 text-red-600">
           {errors.map((err, i) => (
-            <li key={i} className="text-sm">• {err}</li>
+            <li key={i} className="text-sm">
+              • {err}
+            </li>
           ))}
         </ul>
       )}
 
       <p className="mt-2 text-sm text-gray-800">
-        Seleccionaste {files.length} archivo{files.length !== 1 ? 's' : ''}.
+        Seleccionaste {files.length} archivo{files.length !== 1 ? "s" : ""}.
       </p>
     </div>
   );

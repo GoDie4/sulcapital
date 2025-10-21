@@ -6,6 +6,7 @@ import { WrapperSecciones } from "../../_components/estructura/WrapperSecciones"
 import { EditarUbicacion } from "./_components/form/EditarUbicacion";
 
 export default async function page({ searchParams }: { searchParams: any }) {
+  console.log("hola desde ciudadpage");
   const limitParam = searchParams?.limit;
 
   const rawLimit = Array.isArray(limitParam)
@@ -28,10 +29,10 @@ export default async function page({ searchParams }: { searchParams: any }) {
       config.API_URL
     }/ciudades?page=${safePage}&limit=${limit}&search=${encodeURIComponent(
       search
-    )}`,
+    )}`
   );
   const { data, pagination } = await res.json();
-  console.log("DATA: ", data)
+  console.log("DATA: ", data);
   return (
     <>
       <WrapperSecciones
@@ -49,12 +50,12 @@ export default async function page({ searchParams }: { searchParams: any }) {
         deleteOptions={{
           apiEndpoint: "/ciudades/eliminar",
           pagination: {
-            limit: pagination.limit,
-            page: pagination.page,
-            total: pagination.total,
-            totalPages: pagination.totalPages,
+            limit: pagination?.limit,
+            page: pagination?.page,
+            total: pagination?.total,
+            totalPages: pagination?.totalPages,
           },
-          totalItems: Number(data.length),
+          totalItems: Number(data?.length),
         }}
       />
     </>
