@@ -14,7 +14,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
     : limitParam ?? "10";
   const pageParam = searchParams?.page;
 
-   const limit = Math.max(1, parseInt(rawLimit) || 10);
+  const limit = Math.max(1, parseInt(rawLimit) || 10);
 
   const page = parseInt(
     Array.isArray(pageParam) ? pageParam[0] : pageParam ?? "1"
@@ -49,31 +49,33 @@ export default async function page({ searchParams }: { searchParams: any }) {
       },
     }
   );
-    console.log(res)
+  console.log(res);
 
   const { data, pagination } = await res.json();
-  return <>
-   <WrapperSecciones
-          columns={columnsVistos}
-          data={data}
-          searchColumnId="nombre"
-          renderAddForm={<></>}
-          pagination={pagination}
-          renderEditForm={<></>}
-          modalSize="medium"
-          filters={[]}
-          noRenderAddButton
-          disabledActionsColumn
-          deleteOptions={{
-            apiEndpoint: "",
-            pagination: {
-              limit: pagination.limit,
-              page: pagination.page,
-              total: pagination.total,
-              totalPages: pagination.totalPages,
-            },
-            totalItems: Number(data.length),
-          }}
-        />
-  </>;
+  return (
+    <>
+      <WrapperSecciones
+        columns={columnsVistos}
+        data={data}
+        searchColumnId="nombre"
+        renderAddForm={<></>}
+        pagination={pagination}
+        renderEditForm={<></>}
+        modalSize="medium"
+        filters={[]}
+        noRenderAddButton
+        disabledActionsColumn
+        deleteOptions={{
+          apiEndpoint: "",
+          pagination: {
+            limit: pagination?.limit,
+            page: pagination?.page,
+            total: pagination?.total,
+            totalPages: pagination?.totalPages,
+          },
+          totalItems: Number(data?.length),
+        }}
+      />
+    </>
+  );
 }

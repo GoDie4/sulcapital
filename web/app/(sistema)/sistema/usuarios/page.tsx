@@ -44,7 +44,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
   );
   const { data, pagination } = await res.json();
 
-  console.log("DAATA: ", data)
+  console.log("DAATA: ", data);
   const filtros = [
     {
       name: "rol",
@@ -95,12 +95,12 @@ export default async function page({ searchParams }: { searchParams: any }) {
         deleteOptions={{
           apiEndpoint: "",
           pagination: {
-            limit: pagination.limit,
-            page: pagination.page,
-            total: pagination.total,
-            totalPages: pagination.totalPages,
+            limit: pagination?.limit,
+            page: pagination?.page,
+            total: pagination?.total,
+            totalPages: pagination?.totalPages,
           },
-          totalItems: Number(data.length),
+          totalItems: Number(data?.length),
         }}
         actionsSeccion="usuarios"
       />

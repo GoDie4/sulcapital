@@ -46,10 +46,10 @@ export const AgregarTipoPropiedad = ({
       return;
     }
     if (icono.length === 0) {
-        toast.error("Debes agregar un icono para el tipo de propiedad");
-        setLoading(false);
-        return;
-      }
+      toast.error("Debes agregar un icono para el tipo de propiedad");
+      setLoading(false);
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append("nombre", values.nombre);
@@ -70,9 +70,9 @@ export const AgregarTipoPropiedad = ({
       );
       if (response.status === 201) {
         const newTotalItems = totalItems + 1;
-        const totalPagesAfterAdd = Math.ceil(newTotalItems / pagination.limit);
+        const totalPagesAfterAdd = Math.ceil(newTotalItems / pagination?.limit);
 
-        if (page === pagination.totalPages && totalPagesAfterAdd > page) {
+        if (page === pagination?.totalPages && totalPagesAfterAdd > page) {
           router.push(`${pathname}?page=${page + 1}`);
         } else {
           const currentPath = `${pathname}?${searchParams.toString()}`;

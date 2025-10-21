@@ -1,27 +1,30 @@
 // src/middlewares/uploadImage.ts
 import multer from "multer";
-import sharp from "sharp";
+// import sharp from "sharp";
 import { Request, Response, NextFunction } from "express";
 import path from "path";
 import fs from "fs/promises";
 
 // Configuración de Multer: usamos memoryStorage para procesar con Sharp
 const storage = multer.memoryStorage();
-export const upload = multer({ storage });
+export const upload = multer({
+  storage,
+  limits: { fieldSize: 10 * 1024 * 1024 },
+});
 
 // Función para procesar y guardar imágenes + miniatura
 export function handleImageUpload(
   fieldName: string,
   opts: {
     uploadDir: string; // carpeta donde guardar
-    filePrefix?: string; // prefijo de nombre (por ej. 'ubicacion')
-    thumbnailSize?: { width: number; height: number };
+    filePrefix?: string;
+    // thumbnailSize?: { width: number; height: number };
   }
 ) {
   const {
     uploadDir,
     filePrefix = "",
-    thumbnailSize = { width: 120, height: 120 },
+    // thumbnailSize = { width: 120, height: 120 },
   } = opts;
 
   // Asegurarse de que exista la carpeta
@@ -32,28 +35,16 @@ export function handleImageUpload(
     const fileField = files[fieldName]?.[0];
     if (!fileField) return next();
 
-    // Extensión original
-    const ext = path.extname(fileField.originalname).toLowerCase();
-    const baseName = `${filePrefix}-${Date.now()}`;
-
-    // Nombres de salida
-    const originalName = `${baseName}${ext}`;
-    const thumbName = `${baseName}-${fieldName}${ext}`;
-
     try {
-      // Guardar original
-    //   await sharp(file.buffer).toFile(path.join(uploadDir, originalName));
+      const baseName = `${filePrefix}-${Date.now()}`;
+      const finalName = `${baseName}-imagen.webp`;
+      const finalPath = path.join(uploadDir, finalName);
 
-      // Generar y guardar miniatura
-      await sharp(fileField.buffer)
-        .resize(thumbnailSize.width, thumbnailSize.height)
-        .toFile(path.join(uploadDir, thumbName));
+      await fs.writeFile(finalPath, fileField.buffer);
 
-      // Inyectar rutas en req.body (o donde prefieras)
-      const relativePath = uploadDir.split('public')[1].replace(/\\/g, '/');
-
-      req.body[`${fieldName}`]          = `${relativePath}/${originalName}`;
-      req.body[`${fieldName}Thumbnail`] = `${relativePath}/${thumbName}`;
+      // Inyectar la ruta relativa en req.body para el controlador
+      const relativePath = uploadDir.split("public")[1].replace(/\\/g, "/");
+      req.body[`${fieldName}Thumbnail`] = `${relativePath}/${finalName}`;
 
       next();
     } catch (err) {

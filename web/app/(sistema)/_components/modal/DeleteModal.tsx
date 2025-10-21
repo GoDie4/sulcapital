@@ -56,7 +56,7 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
         toast.success(response.data.mensaje);
         const newTotalItems = totalItems - 1;
         const totalPagesAfterDelete = Math.ceil(
-          newTotalItems / pagination.limit
+          newTotalItems / pagination?.limit
         );
 
         if (page > totalPagesAfterDelete) {

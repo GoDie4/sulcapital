@@ -39,13 +39,13 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 }) => {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
-  const {  setShowMenu } = useAuth();
+  const { setShowMenu } = useAuth();
 
   const pathname = usePathname();
   const toggleMenu = (title: string) => {
     setOpenMenu(openMenu === title ? null : title);
-    setShowMenu(false)
-    setMenuRealSistemShow?.(false)
+    setShowMenu(false);
+    setMenuRealSistemShow?.(false);
   };
 
   const [submenuHeight, setSubmenuHeight] = useState(0);
@@ -126,8 +126,8 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   menuItem.title === "Web" ? "/" : `/sistema/${menuItem.route}`
                 } `}
                 onClick={() => {
-                  setOcultarSideBar(false);
                   setShowMenu(false);
+                  setOcultarSideBar(false);
                   setMenuRealSistemShow?.(true);
                 }}
                 className={`flex items-center w-full ${

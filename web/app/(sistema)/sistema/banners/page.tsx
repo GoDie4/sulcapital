@@ -39,7 +39,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
         searchColumnId="nombre"
         renderAddForm={
           <AgregarBanner
-            pagination={pagination }
+            pagination={pagination}
             totalItems={data ? Number(data.length) : 0}
           />
         }
@@ -48,7 +48,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
         deleteOptions={{
           apiEndpoint: "/banners/eliminar",
           pagination: {
-            limit: pagination ? pagination.limit : 0,
+            limit: pagination ? pagination?.limit : 0,
             page: pagination ? pagination?.page : 0,
             total: pagination ? pagination?.total : 0,
             totalPages: pagination ? pagination?.totalPages : 0,

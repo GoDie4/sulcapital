@@ -42,7 +42,7 @@ router.post(
   upload.fields([{ name: "imagenes", maxCount: 6 }]),
   handleMultipleImagesUpload("imagenes", {
     uploadDir: UPLOAD_DIR,
-    filePrefix: "foto",
+    filePrefix: "propiedad",
   }),
   crearPropiedad
 );
@@ -52,7 +52,7 @@ router.put(
   upload.fields([{ name: "imagenes", maxCount: 6 }]),
   handleMultipleImagesUpload("imagenes", {
     uploadDir: UPLOAD_DIR,
-    filePrefix: "foto",
+    filePrefix: "propiedad",
   }),
   editarPropiedad
 );

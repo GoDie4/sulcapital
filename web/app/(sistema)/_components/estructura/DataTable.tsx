@@ -111,8 +111,8 @@ export function DataTable<TData, TValue>({
     setFilterValues(newFilters);
   }, [searchParams, filters]);
   const [paginationState, setPaginationState] = React.useState({
-    pageIndex: pagination.page - 1, // porque TanStack usa 0-based index
-    pageSize: pagination.limit,
+    pageIndex: pagination?.page - 1, // porque TanStack usa 0-based index
+    pageSize: pagination?.limit,
   });
   const columns = React.useMemo(() => {
     const memoizedColumns = [...initialColumns];
@@ -178,7 +178,7 @@ export function DataTable<TData, TValue>({
     },
     onPaginationChange: setPaginationState,
     manualPagination: true,
-    pageCount: pagination.totalPages,
+    pageCount: pagination?.totalPages,
   });
   const getPageUrl = (newPage: number) => {
     const params = new URLSearchParams(searchParams?.toString());
@@ -189,11 +189,11 @@ export function DataTable<TData, TValue>({
   const router = useRouter();
 
   const nextPage = () => {
-    router.push(getPageUrl(pagination.page + 1));
+    router.push(getPageUrl(pagination?.page + 1));
   };
 
   const prevPage = () => {
-    router.push(getPageUrl(pagination.page - 1));
+    router.push(getPageUrl(pagination?.page - 1));
   };
 
   React.useEffect(() => {
@@ -433,7 +433,7 @@ export function DataTable<TData, TValue>({
           <select
             id="limit"
             className="py-2 px-3 outline-none text-sm border text-black-main bg-white-main rounded-main"
-            value={searchParams.get("limit") || pagination.limit}
+            value={searchParams.get("limit") || pagination?.limit}
             onChange={(e) => {
               const params = new URLSearchParams(searchParams.toString());
               params.set("limit", e.target.value);
@@ -465,7 +465,7 @@ export function DataTable<TData, TValue>({
             variant="outline"
             size="sm"
             onClick={() => nextPage()}
-            disabled={pagination.page === pagination.totalPages}
+            disabled={pagination.page === pagination?.totalPages}
           >
             Siguiente
           </Button>

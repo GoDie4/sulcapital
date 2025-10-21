@@ -22,6 +22,7 @@ import { CiudadList } from "../../../ciudades/_components/interfaces/CiudadesInt
 import { SelectForm } from "@/components/form/SelectForm";
 import { TipoPropiedad } from "../../../tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 import RichTextEditor from "@/components/form/TextEditor";
+import { compressImage } from "../../../../_helpers/compressImage";
 
 export const AgregarPropiedad = ({
   pagination,
@@ -81,11 +82,14 @@ export const AgregarPropiedad = ({
       formData.append("idUser", String(authUser?.id));
 
       if (imagenes.length > 0) {
-        imagenes.forEach((file) => {
+        const optimizedFiles = await Promise.all(
+          imagenes.map((file) => compressImage(file as File))
+        );
+
+        optimizedFiles.forEach((file) => {
           formData.append("imagenes", file);
         });
       }
-
       const response = await axios.post(
         `${config.API_URL}/propiedades/agregar`,
         formData,
@@ -96,9 +100,9 @@ export const AgregarPropiedad = ({
       );
       if (response.status === 201) {
         const newTotalItems = totalItems + 1;
-        const totalPagesAfterAdd = Math.ceil(newTotalItems / pagination.limit);
+        const totalPagesAfterAdd = Math.ceil(newTotalItems / pagination?.limit);
 
-        if (page === pagination.totalPages && totalPagesAfterAdd > page) {
+        if (page === pagination?.totalPages && totalPagesAfterAdd > page) {
           router.push(`${pathname}?page=${page + 1}`);
         } else {
           const currentPath = `${pathname}?${searchParams.toString()}`;

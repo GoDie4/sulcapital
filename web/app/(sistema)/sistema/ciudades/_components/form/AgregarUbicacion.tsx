@@ -15,6 +15,7 @@ import { Errors } from "@/components/form/Errors";
 import { useAuth } from "@/assets/context/AuthContext";
 import { Pagination } from "../../../../_components/interfaces/Pagination";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { compressImage } from "../../../../_helpers/compressImage";
 
 export const AgregarUbicacion = ({
   pagination,
@@ -41,13 +42,13 @@ export const AgregarUbicacion = ({
       return;
     }
     try {
+      const optimizedFile = await compressImage(files[0] as File);
+
       const formData = new FormData();
       formData.append("nombre", values.nombre);
       formData.append("descripcion", values.descripcion);
       formData.append("coordenadas", values.coordenadas);
-      if (files.length > 0) {
-        formData.append("imagen", files[0]);
-      }
+      formData.append("imagen", optimizedFile);
 
       const response = await axios.post(
         `${config.API_URL}/ciudades/agregar`,
@@ -59,9 +60,9 @@ export const AgregarUbicacion = ({
       );
       if (response.status === 201) {
         const newTotalItems = totalItems + 1;
-        const totalPagesAfterAdd = Math.ceil(newTotalItems / pagination.limit);
+        const totalPagesAfterAdd = Math.ceil(newTotalItems / pagination?.limit);
 
-        if (page === pagination.totalPages && totalPagesAfterAdd > page) {
+        if (page === pagination?.totalPages && totalPagesAfterAdd > page) {
           router.push(`${pathname}?page=${page + 1}`);
         } else {
           const currentPath = `${pathname}?${searchParams.toString()}`;

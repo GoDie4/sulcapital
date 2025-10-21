@@ -21,6 +21,8 @@ import { CiudadList } from "../../../ciudades/_components/interfaces/CiudadesInt
 import { SelectForm } from "@/components/form/SelectForm";
 import { TipoPropiedad } from "../../../tipo-propiedades/_components/table/ColumnasTipoPropiedad";
 import RichTextEditor from "@/components/form/TextEditor";
+import { compressImage } from "../../../../_helpers/compressImage";
+// import { compressImage } from "../../../../_helpers/compressImage";
 
 export const EditarPropiedad = () => {
   const { closeModal, authUser, rowEdit } = useAuth();
@@ -76,12 +78,74 @@ export const EditarPropiedad = () => {
       formData.append("estado", values.estado);
       formData.append("idUser", String(authUser?.id));
 
-      if (imagenes.length > 0) {
-        imagenes.forEach((file) => {
-          formData.append("imagenes", file);
-        });
+      // const imagenesExistentes = rowEdit.imagenes.filter(
+      //   (img: string | File) => typeof img === "string"
+      // );
+      // const imagenesNuevas = imagenes.filter((img) => img instanceof File);
+
+      // imagenesExistentes.forEach((url: string) =>
+      //   formData.append("imagenesExistentes", url)
+      // );
+
+      // if (imagenesNuevas.length > 0) {
+      //   const processedImages = await Promise.all(
+      //     imagenesNuevas.map((file) => compressImage(file as File))
+      //   );
+      //   processedImages.forEach((file) => formData.append("imagenes", file));
+      //   console.log("imagenesNuevas procesadas:", processedImages);
+      // }
+
+      // console.log("imagenesExistentes:", imagenesExistentes);
+
+      // Separar imágenes existentes y nuevas
+      // 🔹 1. Separar imágenes existentes y nuevas
+      // const imagenesExistentes = rowEdit.imagenes
+      //   .filter((img: any) => typeof img === "object" && img.url)
+      //   .map((img: any) => img.url);
+
+      // const imagenesNuevas = imagenes.filter((img) => img instanceof File);
+
+      // // 🔹 2. Enviar URLs de imágenes existentes
+      // imagenesExistentes.forEach((url: string) => {
+      //   formData.append("imagenesExistentes", url);
+      // });
+
+      // // 🔹 3. Comprimir y enviar imágenes nuevas
+      // if (imagenesNuevas.length > 0) {
+      //   const optimizedFiles = await Promise.all(
+      //     imagenesNuevas.map((file) => compressImage(file as File))
+      //   );
+
+      //   optimizedFiles.forEach((file) => {
+      //     formData.append("imagenes", file);
+      //   });
+
+      //   console.log("🧩 Imágenes nuevas comprimidas:", optimizedFiles);
+      // }
+
+      // 🔹 Separar imágenes existentes (urls) y nuevas (Files)
+      const imagenesExistentes = imagenes.filter(
+        (img) => typeof img === "string"
+      );
+      const imagenesNuevas = imagenes.filter((img) => img instanceof File);
+
+      // 🔹 Enviar URLs de imágenes existentes
+      imagenesExistentes.forEach((url: string) => {
+        // OJO: quitar la base del dominio (dejamos solo "/propiedades/archivo.webp")
+        const relativeUrl = url.replace(config.API_IMAGE_URL, "");
+        formData.append("imagenesExistentes", relativeUrl);
+      });
+
+      // 🔹 Comprimir y enviar imágenes nuevas
+      if (imagenesNuevas.length > 0) {
+        const optimizedFiles = await Promise.all(
+          imagenesNuevas.map((file) => compressImage(file as File))
+        );
+
+        optimizedFiles.forEach((file) => formData.append("imagenes", file));
       }
 
+      // console.log("📁 Imágenes existentes:", imagenesExistentes);
       const response = await axios.put(
         `${config.API_URL}/propiedades/editar/${String(rowEdit.id)}`,
         formData,
@@ -193,6 +257,11 @@ export const EditarPropiedad = () => {
       }
       setDescripcion(html);
     }
+
+    const urls = rowEdit.imagenes.map(
+      (img: any) => `${config.API_IMAGE_URL}${img.url}`
+    );
+    setImagenes(urls);
   }, [rowEdit, setValues, setFieldValue]);
 
   return (

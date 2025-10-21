@@ -14,7 +14,6 @@ import { verifyAdmin } from "../middlewares/JWTMiddleware";
 const router = Router();
 const UPLOAD_DIR = path.join(process.cwd(), "public", "tipo_propiedades");
 
-
 router.get("/", getTiposPropiedades);
 
 router.post(
@@ -27,12 +26,12 @@ router.post(
   handleImageUpload("imagen", {
     uploadDir: UPLOAD_DIR,
     filePrefix: "tipo_propiedad",
-    thumbnailSize: { width: 550, height: 768 },
+    // thumbnailSize: { width: 550, height: 768 },
   }),
   handleImageUpload("icono", {
     uploadDir: UPLOAD_DIR,
     filePrefix: "tipo_propiedad",
-    thumbnailSize: { width: 64, height: 64 },
+    // thumbnailSize: { width: 64, height: 64 },
   }),
   createTipoPropiedad
 );
@@ -47,12 +46,12 @@ router.put(
   handleImageUpload("imagen", {
     uploadDir: UPLOAD_DIR,
     filePrefix: "tipo_propiedad",
-    thumbnailSize: { width: 550, height: 768 },
+    // thumbnailSize: { width: 550, height: 768 },
   }),
   handleImageUpload("icono", {
     uploadDir: UPLOAD_DIR,
     filePrefix: "tipo_propiedad",
-    thumbnailSize: { width: 64, height: 64 },
+    // thumbnailSize: { width: 64, height: 64 },
   }),
   updateTipoPropiedad
 );

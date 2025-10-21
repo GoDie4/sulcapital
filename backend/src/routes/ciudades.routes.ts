@@ -14,7 +14,6 @@ import { verifyAdmin } from "../middlewares/JWTMiddleware";
 const router = Router();
 const UPLOAD_DIR = path.join(process.cwd(), "public", "ciudades");
 
-
 router.get("/", getCiudades);
 
 // Crear con imagen
@@ -25,7 +24,7 @@ router.post(
   handleImageUpload("imagen", {
     uploadDir: UPLOAD_DIR,
     filePrefix: "ciudad",
-    thumbnailSize: { width: 120, height: 120 },
+    // thumbnailSize: { width: 120, height: 120 },
   }),
   createCiudad
 );
@@ -38,7 +37,7 @@ router.put(
   handleImageUpload("imagen", {
     uploadDir: UPLOAD_DIR,
     filePrefix: "ciudad",
-    thumbnailSize: { width: 120, height: 120 },
+    // thumbnailSize: { width: 120, height: 120 },
   }),
   updateCiudad
 );

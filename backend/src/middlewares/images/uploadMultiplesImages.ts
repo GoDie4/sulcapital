@@ -9,9 +9,13 @@ interface UploadOptions {
   // thumbnailSize?: { width: number; height: number }; // ← ya no se usa
 }
 
-// Usamos memoryStorage: los archivos vienen en memoria (buffer)
 const storage = multer.memoryStorage();
-export const upload = multer({ storage });
+export const upload = multer({
+  storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+});
 
 export const handleMultipleImagesUpload = (
   fieldName: string,
@@ -38,13 +42,15 @@ export const handleMultipleImagesUpload = (
 
       const processedFiles: string[] = [];
       // nombre de la carpeta pública (p.ej. "propiedades")
-      const publicFolderName = path.basename(uploadDir); 
+      const publicFolderName = path.basename(uploadDir);
 
       for (const file of files) {
-        const ext = path.extname(file.originalname) || ".jpg";
-        const baseName = `${filePrefix}-${Date.now()}-${Math.round(
-          Math.random() * 1e9
-        )}${ext}`;
+        // const ext = path.extname(file.originalname) || ".jpg";
+        // const baseName = `${filePrefix}-${Date.now()}-${Math.round(
+        //   Math.random() * 1e9
+        // )}${ext}`;
+        const baseName = `${filePrefix}-${Date.now()}-imagen.webp`;
+
         const filePath = path.join(uploadDir, baseName);
 
         // 👉 Guardar el archivo tal cual (SIN sharp)
@@ -60,9 +66,10 @@ export const handleMultipleImagesUpload = (
       next();
     } catch (err) {
       console.error("Error al procesar múltiples imágenes:", err);
-      res
-        .status(500)
-        .json({ message: "Error al procesar las imágenes", error: String(err) });
+      res.status(500).json({
+        message: "Error al procesar las imágenes",
+        error: String(err),
+      });
     }
   };
 };

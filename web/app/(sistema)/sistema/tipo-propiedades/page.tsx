@@ -28,7 +28,7 @@ export default async function page({ searchParams }: { searchParams: any }) {
       config.API_URL
     }/tipo_propiedades?page=${safePage}&limit=${limit}&search=${encodeURIComponent(
       search
-    )}`,
+    )}`
   );
   const { data, pagination } = await res.json();
 
@@ -45,19 +45,16 @@ export default async function page({ searchParams }: { searchParams: any }) {
           />
         }
         pagination={pagination}
-        renderEditForm={
-          <EditarTipoPropiedad
-          />
-        }
+        renderEditForm={<EditarTipoPropiedad />}
         deleteOptions={{
           apiEndpoint: "/tipo_propiedades/eliminar",
           pagination: {
-            limit: pagination.limit,
-            page: pagination.page,
-            total: pagination.total,
-            totalPages: pagination.totalPages,
+            limit: pagination?.limit,
+            page: pagination?.page,
+            total: pagination?.total,
+            totalPages: pagination?.totalPages,
           },
-          totalItems: Number(data.length),
+          totalItems: Number(data?.length),
         }}
       />
     </>

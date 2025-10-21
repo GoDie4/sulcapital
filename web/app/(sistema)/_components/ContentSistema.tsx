@@ -31,7 +31,7 @@ export function ContentSistema({ children }: { children: React.ReactNode }) {
     <SistemaProvider>
       <Link
         href={"/"}
-        className="bg-primary-main fixed bottom-6 left-2 rounded-full py-2 px-4 text-sm text-white-main text-center"
+        className="bg-primary-main z-[999] fixed bottom-6 left-2 rounded-full py-2 px-4 text-sm text-white-main text-center"
       >
         Regresar a la web
       </Link>
